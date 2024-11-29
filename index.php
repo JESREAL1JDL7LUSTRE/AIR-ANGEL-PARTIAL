@@ -6,11 +6,10 @@
     <title>CRUD App</title>
 </head>
 <body>
-    <h1>Welcome to the CRUD Application!!!!!!!</h1>
-    <p>Select the table you want to manage:</p>
+    <h1>Welcome to AirAngel!!!!!!!</h1>
     <ul>
-        <li><a href="user_index.php">Manage Users</a></li>
-        <li><a href="employee_index.php">Manage Employees</a></li>
+        <li><a href="signin.php">Sign In</a></li>
+        <li><a href="signup.php">Sign Ip</a></li>
     </ul>
 </body>
 </html>
