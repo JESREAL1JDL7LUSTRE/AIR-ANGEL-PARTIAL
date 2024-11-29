@@ -1,14 +1,28 @@
 <?php include 'db.php'; ?>
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $Account_Last_Name = $_POST['Last Name'];
-    $Account_First_Name = $_POST['First Name'];
-    $Account_Email = $_POST['Email'];
-    $Account_PhoneNumber = $_POST['Phone Number'];
-    $Username = $_POST['Username'];
+    $Account_Email = $_POST['Email']; // Using correct form field name
     $Password = $_POST['Password'];
 
-    $conn->query("INSERT INTO Account (Account_Last_Name, Account_First_Name, Account_Email, Account_PhoneNumber, Username, Password) VALUES ('$Account_Last_Name', '$Account_First_Name', '$Account_Email', '$Account_PhoneNumber', '$Username', '$Password')");
+    // Check if user exists
+    $stmt = $conn->prepare("SELECT Password FROM Account WHERE Account_Email = ?");
+    $stmt->bind_param("s", $Account_Email); // Using correct variable
+    $stmt->execute();
+    $stmt->bind_result($hashed_password);
+    $stmt->fetch();
+
+    // Verify password
+    if ($hashed_password && password_verify($Password, $hashed_password)) {
+        // Start a session before setting the session variable
+        session_start();
+        $_SESSION['user_email'] = $Account_Email;
+        header("Location: dashboard.php"); // Redirect after successful sign-in
+        exit(); // Prevent further code execution
+    } else {
+        echo "Invalid email or password.";
+    }
+
+    $stmt->close();
 }
 ?>
 <!DOCTYPE html>
@@ -16,21 +30,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AirAngel Sign In</title>
+    <title>Sign In</title>
 </head>
 <body>
-    <h1>Add New User</h1>
+    <h1>Sign In</h1>
     <form method="POST">
-        <label>Name:</label>
-        <input type="text" name="name" required><br>
         <label>Email:</label>
-        <input type="email" name="email" required><br>
-        <label>Phone:</label>
-        <input type="text" name="phone" required><br>
-        <button type="submit">Add User</button>
+        <input type="email" name="Email" required><br> <!-- Fixed name -->
+        <label>Password:</label>
+        <input type="password" name="Password" required><br> <!-- Fixed name -->
+        <button type="submit">Sign In</button>
     </form>
-	
-	<a href="user_index.php" style="margin-bottom: 20px; display: inline-block;">&larr; Back </a>
-
+    <a href="signup.php" style="margin-top: 20px; display: inline-block;">Don't have an account? Register here</a>
 </body>
 </html>
