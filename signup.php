@@ -1,4 +1,4 @@
-<?php include 'db.php'; ?>
+<?php include 'db.php'; ?> 
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $Account_Last_Name = $_POST['Last_Name'];  // Fixed input name
@@ -7,6 +7,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $Account_PhoneNumber = $_POST['Phone_Number']; // Fixed input name
     $Username = $_POST['Username'];
     $Password = $_POST['Password'];
+    $Confirm_Password = $_POST['Confirm_Password']; // Get the confirm password field
+
+    // Check if passwords match
+    if ($Password !== $Confirm_Password) {
+        echo "Passwords do not match!";
+        exit;
+    }
 
     // Hash the password
     $hashed_password = password_hash($Password, PASSWORD_BCRYPT);
@@ -45,8 +52,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <input type="text" name="Username" required><br>
         <label>Password:</label>
         <input type="password" name="Password" required><br>
+        <label>Confirm Password:</label>
+        <input type="password" name="Confirm_Password" required><br> <!-- Confirm password field -->
         <button type="submit">Create Account</button>
     </form>
+    
+    <br>
+
+    <a href="signin.php">Already a member? Sign In</a> <!-- Sign In link -->
+
+    <br><br>
     <a href="index.php" style="margin-bottom: 20px; display: inline-block;">&larr; Back </a>
 </body>
 </html>
