@@ -120,12 +120,12 @@ $sql_create_tables = [
         Baggage_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
         Baggage_Weight VARCHAR(20) NOT NULL,
         Price DECIMAL(10,2) NOT NULL,
-        Available_Flights_Number_ID_FK VARCHAR(15),
+        Available_Flights_Number_ID_FK INT(15),
         FOREIGN KEY (Available_Flights_Number_ID_FK) REFERENCES Available_Flights(Available_Flights_Number_ID)
     )",
 
     "CREATE TABLE IF NOT EXISTS Available_Flights (
-        Available_Flights_Number_ID VARCHAR(15) AUTO_INCREMENT PRIMARY KEY,
+        Available_Flights_Number_ID INT(15) AUTO_INCREMENT PRIMARY KEY,
         Departure_Date DATE NOT NULL,
         Arrival_Date DATE NOT NULL,
         Origin VARCHAR(50) NOT NULL,
@@ -136,8 +136,8 @@ $sql_create_tables = [
     )",
 
     "CREATE TABLE IF NOT EXISTS Flight_to_Reservation_to_Passenger (
-        FRP_Number_ID VARCHAR(10) AUTO_INCREMENT PRIMARY KEY,
-        Available_Flights_Number_ID_FK VARCHAR(15),
+        FRP_Number_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
+        Available_Flights_Number_ID_FK INT(15),
         Reservation_to_Passenger_ID_FK INT(10),
         FOREIGN KEY (Available_Flights_Number_ID_FK) REFERENCES Available_Flights(Available_Flights_Number_ID),
         FOREIGN KEY (Reservation_to_Passenger_ID_FK) REFERENCES Reservation_to_Passenger(Reservation_to_Passenger_ID)
@@ -145,7 +145,7 @@ $sql_create_tables = [
 
     "CREATE TABLE IF NOT EXISTS Add_on (
         Add_on_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
-        FRP_Number_ID_FK VARCHAR(15),
+        FRP_Number_ID_FK INT(15),
         Seat_Selector_ID_FK INT(10),
         Food_ID_FK INT(10),
         Baggage_ID_FK INT(10),
@@ -160,7 +160,7 @@ $sql_create_tables = [
         Employee_Role VARCHAR(50) NOT NULL,
         Employee_ID_FK INT(10),
         Department_ID_FK INT(10),
-        Available_Flights_Number_ID_FK VARCHAR(15),
+        Available_Flights_Number_ID_FK INT(15),
         FOREIGN KEY (Employee_ID_FK) REFERENCES Employees(Employee_ID),
         FOREIGN KEY (Department_ID_FK) REFERENCES Department(Department_ID),
         FOREIGN KEY (Available_Flights_Number_ID_FK) REFERENCES Available_Flights(Available_Flights_Number_ID)
@@ -194,7 +194,7 @@ $sql_create_tables = [
         Price DECIMAL(10,2) NOT NULL,
         Seat_Type VARCHAR(20) NOT NULL,
         Passenger_ID_FK INT(10),
-        Available_Flights_Number_ID_FK VARCHAR(15),
+        Available_Flights_Number_ID_FK INT(15),
         FOREIGN KEY (Passenger_ID_FK) REFERENCES Passenger(Passenger_ID),
         FOREIGN KEY (Available_Flights_Number_ID_FK) REFERENCES Available_Flights(Available_Flights_Number_ID)
     )"
