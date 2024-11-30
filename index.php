@@ -1,15 +1,20 @@
-<!DOCTYPE html> 
+<?php
+session_start(); // Start the session to access session data
+
+// Check if the user is logged in
+$is_logged_in = isset($_SESSION['user_email']);
+?>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AirAngel - Airline Reservation</title>
     <script>
-        // JavaScript to show/hide return date based on flight type selection
         function toggleReturnDate() {
             const roundTrip = document.getElementById('round_trip');
             const returnDateField = document.getElementById('return_date_container');
-
             if (roundTrip.checked) {
                 returnDateField.style.display = 'block'; // Show return date field
             } else {
@@ -20,9 +25,14 @@
 </head>
 <body>
     <h1>Welcome to AirAngel!</h1> 
+
     <ul>
-        <li><a href="signin.php">Sign In</a></li>
-        <li><a href="signup.php">Sign Up</a></li>
+        <?php if (!$is_logged_in): ?>
+            <li><a href="signin.php">Sign In</a></li>
+            <li><a href="signup.php">Sign Up</a></li>
+        <?php else: ?>
+            <li><a href="logout.php">Logout</a></li> <!-- Show Logout if logged in -->
+        <?php endif; ?>
     </ul>
 
     <h2>Book Your Flight</h2>

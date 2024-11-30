@@ -1,10 +1,10 @@
 <?php
-$servername = "localhost";
-$username = "root"; // Default XAMPP username
-$password = "";     // Default XAMPP password (empty)
-$dbname = "airangel";
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db_name = "airangel";
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($host, $user, $pass, $db_name);
 
 // Check connection
 if ($conn->connect_error) {
