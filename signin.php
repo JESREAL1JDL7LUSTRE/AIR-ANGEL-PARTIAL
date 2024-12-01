@@ -4,46 +4,45 @@ include 'db.php'; // Include your database connection
 
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['Email'];
-    $password = $_POST['Password'];
+    $email = trim($_POST['Email']);
+    $password = trim($_POST['Password']);
 
-    // Prepare and execute query to fetch user data based on email
-    $sql = "SELECT Account_ID, Account_Email, Password, Account_First_Name, Account_Last_Name, Account_PhoneNumber, Username, is_admin FROM Account WHERE Account_Email = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
+    // Admin credentials
+    $boss_email = 'admin@boss.com';
+    $boss_password = 'jesreal';
 
-    // Bind the result to variables
-    $stmt->store_result();
-    $stmt->bind_result($Account_ID, $Account_Email, $hashed_password, $Account_First_Name, $Account_Last_Name, $Account_PhoneNumber, $Username, $is_admin);
-
-    // Check if the user exists and validate the password
-    if ($stmt->fetch()) {
-        // Check if the password is correct
-        if (password_verify($password, $hashed_password)) {
-            // Password is correct, start session and set session variables
-            $_SESSION['user_email'] = $Account_Email;
-            $_SESSION['is_admin'] = $is_admin;
-            $_SESSION['user_first_name'] = $Account_First_Name;
-            $_SESSION['user_last_name'] = $Account_Last_Name;
-            $_SESSION['user_id'] = $Account_ID;
-
-            // Redirect based on whether the user is an admin
-            if ($is_admin == 1) {
-                header("Location: admin_dashboard.php");  // Admin dashboard
-            } else {
-                header("Location: user_dashboard.php");  // User dashboard
-            }
-            exit();
-        } else {
-            echo "Invalid password!";
-        }
+    // Check if admin credentials are used
+    if ($email === $boss_email && $password === $boss_password) {
+        // Admin login
+        $_SESSION['user_role'] = 'admin';
+        $_SESSION['email'] = $email;
+        header('Location: admin.php'); // Redirect to admin dashboard
+        exit;
     } else {
-        echo "Invalid email!";
-    }
+        // Check the database for normal user credentials
+        $stmt = $conn->prepare("SELECT * FROM Account WHERE Account_Email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    // Close the statement
-    $stmt->close();
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+
+            // Verify password
+            if (password_verify($password, $user['Password'])) {
+                // User login
+                $_SESSION['user_role'] = 'user';
+                $_SESSION['email'] = $user['Account_Email'];
+                $_SESSION['user_id'] = $user['Account_ID'];
+                header('Location: user_dashboard.php'); // Redirect to user dashboard
+                exit;
+            } else {
+                echo "Invalid email or password.";
+            }
+        } else {
+            echo "Invalid email or password.";
+        }
+    }
 }
 ?>
 

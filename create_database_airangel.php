@@ -1,6 +1,6 @@
 <?php  
 // Database credentials
-$host = "localhost";
+$host = "localhost:8111";
 $user = "root";
 $pass = "";
 
@@ -30,7 +30,7 @@ $sql_create_tables = [
         Account_Last_Name VARCHAR(50) NOT NULL,
         Account_First_Name VARCHAR(50) NOT NULL,
         Account_Email VARCHAR(50) NOT NULL,
-        Account_PhoneNumber VARCHAR(50) NOT NULL,
+        Account_PhoneNumber INT(11) NOT NULL,
         Username VARCHAR(50) NOT NULL,
         Password VARCHAR(255) NOT NULL  -- Increased password size for hashed password
     )",
@@ -83,7 +83,7 @@ $sql_create_tables = [
     "CREATE TABLE IF NOT EXISTS Available_Flights (
         Available_Flights_Number_ID INT(15) AUTO_INCREMENT PRIMARY KEY,
         Departure_Date DATE NOT NULL,
-        Arrival_Date DATE NOT NULL,
+        Departure_Date DATE NOT NULL,
         Origin VARCHAR(50) NOT NULL,
         Destination VARCHAR(50) NOT NULL,
         Departure_Time TIME NOT NULL,

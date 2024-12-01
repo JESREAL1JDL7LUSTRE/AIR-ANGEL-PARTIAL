@@ -2,15 +2,21 @@
 session_start();
 include 'db.php'; // Include your database connection
 
-// Check if form is submitted
+// Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $Account_Email = $_POST['Email'];
-    $Password = $_POST['Password'];
-    $Confirm_Password = $_POST['Confirm_Password'];
-    $Account_First_Name = $_POST['First_Name'];
-    $Account_Last_Name = $_POST['Last_Name'];
-    $Account_PhoneNumber = $_POST['Phone_Number'];
-    $Username = $_POST['Username'];
+    $Account_Email = trim($_POST['Email']);
+    $Password = trim($_POST['Password']);
+    $Confirm_Password = trim($_POST['Confirm_Password']);
+    $Account_First_Name = trim($_POST['First_Name']);
+    $Account_Last_Name = trim($_POST['Last_Name']);
+    $Account_PhoneNumber = trim($_POST['Phone_Number']);
+    $Username = trim($_POST['Username']);
+
+    // Validate phone number
+    if (!is_numeric($Account_PhoneNumber)) {
+        echo "Phone number must be numeric.";
+        exit();
+    }
 
     // Check if passwords match
     if ($Password !== $Confirm_Password) {
@@ -21,22 +27,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Hash the password
     $hashed_password = password_hash($Password, PASSWORD_BCRYPT);
 
-    // Check if this is the first user
-    $sql_check_first_user = "SELECT COUNT(*) AS total FROM Account";
-    $result = $conn->query($sql_check_first_user);
-    $row = $result->fetch_assoc();
-    $is_admin = ($row['total'] == 0) ? 1 : 0;  // Make the first user an admin
-
-    // Insert the new user into the database
-    $sql = "INSERT INTO Account (Account_Email, Password, Account_First_Name, Account_Last_Name, Account_PhoneNumber, Username, is_admin) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
+    // Prepare SQL to insert a new user into the database
+    $sql = "INSERT INTO Account (Account_Email, Password, Account_First_Name, Account_Last_Name, Account_PhoneNumber, Username) 
+            VALUES (?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssi", $Account_Email, $hashed_password, $Account_First_Name, $Account_Last_Name, $Account_PhoneNumber, $Username, $is_admin);
 
+    // Bind the parameters to the query
+    $stmt->bind_param("ssssss", $Account_Email, $hashed_password, $Account_First_Name, $Account_Last_Name, $Account_PhoneNumber, $Username);
+
+    // Execute the statement
     if ($stmt->execute()) {
         echo "Account created successfully!";
-        header("Location: signin.php");  // Redirect to sign in page after successful registration
+        header("Location: signin.php"); // Redirect to sign-in page after successful registration
         exit();
     } else {
         echo "Error: " . $stmt->error;
@@ -60,14 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <label>Last Name:</label><br>
         <input type="text" name="Last_Name" required><br>
         
-        <label>Email:</label><br>
-        <input type="email" name="Email" required><br>
+        <label>Username:</label><br>
+        <input type="text" name="Username" required><br>
         
         <label>Phone Number:</label><br>
         <input type="text" name="Phone_Number" required><br>
         
-        <label>Username:</label><br>
-        <input type="text" name="Username" required><br>
+        <label>Email:</label><br>
+        <input type="email" name="Email" required><br>
         
         <label>Password:</label><br>
         <input type="password" name="Password" required><br>

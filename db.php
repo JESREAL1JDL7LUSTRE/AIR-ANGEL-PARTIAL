@@ -1,5 +1,5 @@
 <?php
-$host = "localhost";
+$host = "localhost:8111";
 $user = "root";
 $pass = "";
 $db_name = "airangel";
