@@ -54,6 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
+    <script>
+        function goBack() {
+            window.location.href = 'index.php';
+        }
+    </script>
 </head>
 <body>
     <h1>Create an Account</h1>
@@ -81,5 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <button type="submit">Sign Up</button>
     </form>
+    <h2> </h2>
+    <button type="button" onclick="goBack()">Go Back</button>
+    <p>Already have an account? <a href="signin.php">Sign in</a></p>
 </body>
 </html>

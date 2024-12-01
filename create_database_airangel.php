@@ -22,7 +22,7 @@ if ($conn->query($sql_create_db) === TRUE) {
 
 // Select the database
 $conn->select_db($db_name);
-
+$hashed_password = password_hash('thebest', PASSWORD_DEFAULT);
 // Create tables
 $sql_create_tables = [
     "CREATE TABLE IF NOT EXISTS Account (
@@ -32,8 +32,13 @@ $sql_create_tables = [
         Account_Email VARCHAR(50) NOT NULL,
         Account_PhoneNumber INT(11) NOT NULL,
         Username VARCHAR(50) NOT NULL,
-        Password VARCHAR(255) NOT NULL  -- Increased password size for hashed password
+        Password VARCHAR(500) NOT NULL,
+        Is_Admin INT(1) NOT NULL DEFAULT 0
     )",
+    
+    "INSERT INTO Account (Account_ID, Account_Last_Name, Account_First_Name, Account_Email, Account_PhoneNumber, Username, Password, Is_Admin) 
+    VALUES (1, 'Lustre', 'Jesreal', 'jsrl.lustre@admin.com', '09750000000', 'BOSS', '$hashed_password', 1)",
+
     "CREATE TABLE IF NOT EXISTS Saved_Detail (
         Saved_Detail_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
         Saved_Detail_LastName VARCHAR(50) NOT NULL,
@@ -72,7 +77,7 @@ $sql_create_tables = [
     )",
     "CREATE TABLE IF NOT EXISTS Reservation (
         Reservation_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
-        Booking_date DATE NOT NULL,
+        Booking_date DATE NOT NULL
 
     )",
     "CREATE TABLE IF NOT EXISTS Baggage (
@@ -83,7 +88,7 @@ $sql_create_tables = [
     "CREATE TABLE IF NOT EXISTS Available_Flights (
         Available_Flights_Number_ID INT(15) AUTO_INCREMENT PRIMARY KEY,
         Departure_Date DATE NOT NULL,
-        Departure_Date DATE NOT NULL,
+        Arrival_Date DATE NOT NULL,
         Origin VARCHAR(50) NOT NULL,
         Destination VARCHAR(50) NOT NULL,
         Departure_Time TIME NOT NULL,

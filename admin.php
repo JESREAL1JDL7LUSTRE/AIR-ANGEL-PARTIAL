@@ -4,11 +4,10 @@ session_start();
 include 'db.php';
 
 // Check if the admin is logged in
-if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
-    header('Location: login.php'); // Redirect to login page if not an admin
+if (!isset($_SESSION['Account_Email']) && $_SESSION['Is_Admin'] != 1) {
+    header('Location: signin.php');
     exit;
 }
-
 ?>
 
 <!DOCTYPE html>

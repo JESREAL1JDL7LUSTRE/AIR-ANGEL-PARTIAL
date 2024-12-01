@@ -93,8 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <label for="one_way">One Way</label><br>
         <input type="radio" id="round_trip" name="flight_type" value="Round Trip" onclick="toggleReturnDate()">
         <label for="round_trip">Round Trip</label><br>
-        <input type="radio" id="multi_city" name="flight_type" value="Multi City" onclick="toggleReturnDate()">
-        <label for="multi_city">Multi City</label><br><br>
 
         <!-- Departure Location and Destination -->
         <label for="from">From:</label><br>
