@@ -1,0 +1,82 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4; /* Light background color */
+    margin: 0;
+    padding: 20px; /* Padding around the body */
+    color: #333; /* Dark text color */
+}
+
+h1 {
+    text-align: center; /* Center the main heading */
+    color: #007bff; /* Primary color for the heading */
+    margin-bottom: 20px; /* Space below the heading */
+}
+
+h2 {
+    text-align: center; /* Center the subheading */
+    color: #555; /* Darker color for subheading */
+    margin-bottom: 30px; /* Space below the subheading */
+}
+
+/* Link Styles */
+a {
+    display: inline-block; /* Inline block for spacing */
+    margin: 10px 20px; /* Margin around links */
+    padding: 10px 15px; /* Padding inside links */
+    background-color: #007bff; /* Primary button color */
+    color: white; /* Text color */
+    text-decoration: none; /* Remove underline */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition for background color and scale */
+}
+
+a:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Table Styles */
+table {
+    width: 100%; /* Full width for the table */
+    border-collapse: collapse; /* Collapse borders */
+    margin-top: 20px; /* Space above the table */
+}
+
+th, td {
+    padding: 12px; /* Padding inside table cells */
+    text-align: left; /* Align text to the left */
+    border: 1px solid #ddd; /* Light border for table cells */
+}
+
+th {
+    background-color: #007bff; /* Header background color */
+    color: white; /* Header text color */
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Zebra striping for even rows */
+}
+
+tr:hover {
+    background-color: #e9ecef; /* Highlight row on hover */
+}
+
+/* No Users Found Message */
+td[colspan="6"] {
+    text-align: center; /* Center the message */
+    font-style: italic; /* Italicize the message */
+    color: #888; /* Gray color for the message */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    a {
+        margin: 10px 5px; /* Adjust margin for smaller screens */
+        padding: 8px; /* Adjust padding for smaller screens */
+    }
+
+    th, td {
+        padding: 8px; /* Adjust padding for smaller screens */
+    }
+}

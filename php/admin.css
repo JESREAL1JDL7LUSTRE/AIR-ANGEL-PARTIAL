@@ -1,0 +1,38 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4; /* Light background color */
+    margin: 0;
+    padding: 20px; /* Padding around the body */
+    color: #333; /* Dark text color */
+}
+
+h1 {
+    text-align: center; /* Center the heading */
+    color: #007bff; /* Primary color for the heading */
+    margin-bottom: 30px; /* Space below the heading */
+}
+
+/* Link Styles */
+a {
+    display: inline-block; /* Inline block for spacing */
+    margin: 10px 20px; /* Margin around links */
+    padding: 10px 15px; /* Padding inside links */
+    background-color: #007bff; /* Primary button color */
+    color: white; /* Text color */
+    text-decoration: none; /* Remove underline */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+a:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    a {
+        margin: 10px 5px; /* Adjust margin for smaller screens */
+        padding: 10px; /* Adjust padding for smaller screens */
+    }
+}

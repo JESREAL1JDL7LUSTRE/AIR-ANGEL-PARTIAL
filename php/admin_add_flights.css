@@ -1,0 +1,105 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4; /* Light background color */
+    margin: 0;
+    padding: 20px; /* Padding around the body */
+    color: #333; /* Dark text color */
+}
+
+h1 {
+    text-align: center; /* Center the main heading */
+    color: #007bff; /* Primary color for the heading */
+    margin-bottom: 20px; /* Space below the heading */
+}
+
+h2 {
+    text-align: center; /* Center the subheading */
+    color: #555; /* Darker color for subheading */
+    margin-bottom: 30px; /* Space below the subheading */
+}
+
+/* Link Styles */
+a {
+    display: inline-block; /* Inline block for spacing */
+    margin: 10px 20px; /* Margin around links */
+    padding: 10px 15px; /* Padding inside links */
+    background-color: #007bff; /* Primary button color */
+    color: white; /* Text color */
+    text-decoration: none; /* Remove underline */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition for background color and scale */
+}
+
+a:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Form Styles */
+form {
+    background: white; /* White background for the form */
+    border-radius: 10px; /* Rounded corners */
+    padding: 30px; /* Padding around the form */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    max-width: 500px; /* Maximum width for the form */
+    margin: 0 auto; /* Center the form */
+}
+
+label {
+    display: block; /* Block display for labels */
+    margin-bottom: 5px; /* Space below labels */
+    font-weight: bold; /* Bold text for labels */
+    color: #555; /* Darker color for labels */
+}
+
+input[type="date"],
+input[type="text"],
+input[type="time"],
+input[type="number"] {
+    width: 100%; /* Full width for input fields */
+    padding: 12px; /* Padding inside input fields */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 5px; /* Rounded corners for input fields */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    margin-bottom: 20px; /* Space below input fields */
+    transition: border-color 0.3s; /* Smooth transition for border color */
+}
+
+input[type="date"]:focus,
+input[type="text"]:focus,
+input[type="time"]:focus,
+input[type="number"]:focus {
+    border-color: #007bff; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
+}
+
+button {
+    width: 100%; /* Full width for the button */
+    padding: 12px; /* Padding inside the button */
+    background-color: #28a745; /* Success color for the button */
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners for button */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size for button text */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition for background color and scale */
+}
+
+button:hover {
+    background-color: #218838; /* Darker shade on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    form {
+        padding: 20px; /* Adjust padding for smaller screens */
+    }
+
+    a {
+        margin: 10px 5px; /* Adjust margin for smaller screens */
+        padding: 10px; /* Adjust padding for smaller screens */
+    }
+}
