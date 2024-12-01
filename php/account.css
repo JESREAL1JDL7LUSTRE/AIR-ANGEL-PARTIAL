@@ -1,0 +1,132 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-image: url('background.jpg'); /* Background image */
+    background-size: cover; /* Cover the entire background */
+    background-position: center; /* Center the image */
+    margin: 0;
+    padding: 0;
+    color: #333; /* Default text color */
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.95); /* White background with slight transparency */
+    border-radius: 15px; /* Rounded corners */
+    padding: 40px; /* Padding around the content */
+    max-width: 900px; /* Maximum width for the container */
+    margin: 50px auto; /* Center container */
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    animation: fadeIn 0.6s ease; /* Fade-in effect for the container */
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Headings Styles */
+h1 {
+    text-align: center;
+    color: #007bff; /* Primary color */
+    margin-bottom: 20px;
+    font-size: 2.8em; /* Larger font size */
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-top: 10px;
+    font-size: 2em; /* Slightly larger subheading */
+}
+
+h3, h4 {
+    color: #007bff; /* Use primary color for subheadings */
+    margin-top: 25px;
+    border-bottom: 2px solid #007bff; /* Underline effect */
+    padding-bottom: 5px; /* Space below the heading */
+}
+
+/* Navigation Links */
+.nav-links {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0; /* Remove padding */
+    text-align: center; /* Center the links */
+    margin-bottom: 20px; /* Space below links */
+}
+
+.nav-links li {
+    display: inline; /* Display links inline */
+    margin: 0 15px; /* Space between links */
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #007bff; /* Primary color */
+    font-weight: bold;
+    transition: color 0.3s, transform 0.3s; /* Transition for hover effect */
+}
+
+.nav-links a:hover {
+    color: #0056b3; /* Darker shade on hover */
+    transform: translateY(-2px); /* Lift effect on hover */
+}
+
+/* Table Styles */
+table {
+    width: 100%; /* Full width */
+    border-collapse: collapse; /* Collapse borders */
+    margin-top: 20px; /* Space above the table */
+}
+
+th, td {
+    padding: 12px; /* Padding inside cells */
+    text-align: left; /* Align text to the left */
+    border: 1px solid #ddd; /* Light border for cells */
+    transition: background-color 0.3s; /* Transition for hover effect */
+}
+
+th {
+    background-color: #007bff; /* Header background color */
+    color: white; /* Header text color */
+}
+
+tr:hover {
+    background-color: rgba(0, 123, 255, 0.1); /* Light blue background on row hover */
+}
+
+td {
+    background-color: white; /* Default cell background color */
+}
+
+/* No Data Found Row */
+td[colspan] {
+    text-align: center; /* Center text for colspan cells */
+    font-style: italic; /* Italic style for no data found */
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px; /* Less padding on smaller screens */
+    }
+
+    h1 {
+        font-size: 2.2em; /* Smaller heading on mobile */
+    }
+
+    h2 {
+        font-size: 1.8em; /* Smaller subheading on mobile */
+    }
+
+    .nav-links li {
+        display: block; /* Stack links vertically on mobile */
+        margin: 10px 0; /* Space between links */
+    }
+}

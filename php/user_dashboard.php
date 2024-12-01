@@ -1,14 +1,13 @@
 <?php
-ob_start();  // Start output buffering to ensure no output before header()
-session_start();  // Start the session to access session data
-include 'db.php';  // Include the database connection
+session_start();
+include 'db.php';
 
 // Check if the user is logged in
 $is_logged_in = isset($_SESSION['user_email']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Get values from the form and sanitize them
-    $departure_date = $_POST['depart_date'];
+    $departure_date = $_POST['depart_time'];
     $origin = $_POST['from'];
     $destination = $_POST['to'];
     $flight_type = $_POST['flight_type'];
@@ -69,23 +68,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     </script>
+    <link rel="stylesheet" href="user_dashboard.css">
 </head>
 <body>
-    <h1>Welcome to AirAngel!</h1> 
+<div class="header">
+        <div class="logo-container">
+            <img id="logo-img" src="/assets/images/logo.png" alt="AirAngel Logo">
+            <p id="logo-text">AirAngel</p>
+        </div>
 
-    <ul>
-        <?php if (!$is_logged_in): ?>
-            <li><a href="signin.php">Sign In</a></li>
-            <li><a href="signup.php">Sign Up</a></li>
-        <?php else: ?>
-            <li><a href="logout.php">Logout</a></li> <!-- Show Logout if logged in -->
-        <?php endif; ?>
-    </ul>
+        <div class="title">
+            <h1>Welcome to AirAngel!</h1>
+        </div>
+
+        <div class="login">
+            <ul>
+                <li><a href="account.php">Account</a></li>
+                <li><a href="logout.php">Logout</a></li> <!-- Show Logout if logged in -->
+            </ul>
+        </div>
+    </div>
+
 
     <h2>Book Your Flight</h2>
     <form method="POST">
         <!-- Flight Type Selection -->
-        <label>Select Flight Type:</label><br>
+        <label for="flight_type">Select Flight Type:</label><br>
         <input type="radio" id="one_way" name="flight_type" value="One Way" onclick="toggleReturnDate()" required>
         <label for="one_way">One Way</label><br>
         <input type="radio" id="round_trip" name="flight_type" value="Round Trip" onclick="toggleReturnDate()">
@@ -94,20 +102,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <label for="multi_city">Multi City</label><br><br>
 
         <!-- Departure Location and Destination -->
-        <label for="from">From:</label><br>
-        <input type="text" id="from" name="from" placeholder="Departure City" required><br>
+        <label for="from">From:</label>
+        <input type="text" id="from" name="from" placeholder="Departure City" required><br><br>
 
-        <label for="to">To:</label><br>
-        <input type="text" id="to" name="to" placeholder="Destination City" required><br>
+        <label for="to">To:</label>
+        <input type="text" id="to" name="to" placeholder="Destination City" required><br><br>
 
         <!-- Departure Time -->
-        <label for="depart_date">Departure Date:</label><br>
-        <input type="date" name="depart_date" required><br>
+        <label for="depart_time">Departure Date:</label>
+        <input type="date" id="depart_time" name="depart_time" required><br><br>
 
         <!-- Return Date (Visible only for Round Trip) -->
         <div id="return_date_container" style="display: none;">
-            <label for="return_date">Return Date:</label><br>
-            <input type="date" id="return_date" name="return_date"><br>
+            <label for="return_date">Return Date:</label>
+            <input type="date" id="return_date" name="return_date"><br><br>
         </div>
 
         <!-- Search Button -->

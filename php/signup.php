@@ -53,32 +53,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
+    <link rel="stylesheet" href="signup.css"> <!-- Link to the CSS file -->
 </head>
 <body>
-    <h1>Create an Account</h1>
-    <form method="POST">
-        <label>First Name:</label><br>
-        <input type="text" name="First_Name" required><br>
-        
-        <label>Last Name:</label><br>
-        <input type="text" name="Last_Name" required><br>
-        
-        <label>Username:</label><br>
-        <input type="text" name="Username" required><br>
-        
-        <label>Phone Number:</label><br>
-        <input type="text" name="Phone_Number" required><br>
-        
-        <label>Email:</label><br>
-        <input type="email" name="Email" required><br>
-        
-        <label>Password:</label><br>
-        <input type="password" name="Password" required><br>
-
-        <label>Confirm Password:</label><br>
-        <input type="password" name="Confirm_Password" required><br>
-        
-        <button type="submit">Sign Up</button>
-    </form>
+    <div class="container">
+        <h1>Create an Account</h1>
+        <form method="POST">
+            <div class="form-group">
+                <label for="first-name">First Name:</label>
+                <input type="text" id="first-name" name="First_Name" required>
+            </div>
+            <div class="form-group">
+                <label for="last-name">Last Name:</label>
+                <input type="text" id="last-name" name="Last_Name" required>
+            </div>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="Username" required>
+            </div>
+            <div class="form-group">
+                <label for="phone-number">Phone Number:</label>
+                <input type="text" id="phone-number" name="Phone_Number" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="Email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="Password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password:</label>
+                <input type="password" id="confirm-password" name="Confirm_Password" required>
+            </div>
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
 </body>
 </html>

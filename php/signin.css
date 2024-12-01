@@ -1,0 +1,99 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-image: url('background.jpg'); /* Background image */
+    background-size: cover; /* Cover the entire background */
+    background-position: center; /* Center the image */
+    margin: 0;
+    padding: 0;
+    color: #333; /* Default text color */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Full viewport height */
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.95); /* White background with slight transparency */
+    border-radius: 15px; /* Rounded corners */
+    padding: 40px; /* Padding around the content */
+    width: 100%; /* Full width */
+    max-width: 400px; /* Maximum width for the container */
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3); /* Shadow effect */
+    animation: fadeIn 0.6s ease; /* Fade-in effect for the container */
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Headings Styles */
+h1 {
+    text-align: center;
+    color: #007bff; /* Primary color */
+    margin-bottom: 20px;
+    font-size: 2.5em; /* Larger font size */
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 20px; /* Space between form elements */
+}
+
+label {
+    display: block; /* Block display for labels */
+    margin-bottom: 5px; /* Space below labels */
+    font-weight: bold; /* Bold text for labels */
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%; /* Full width */
+    padding: 12px; /* Padding inside input fields */
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+    transition: border-color 0.3s; /* Transition for focus effect */
+    font-size: 1em; /* Font size for input fields */
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+    border-color: #007bff; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+button {
+    width: 100%; /* Full width */
+    padding: 12px; /* Padding inside button */
+    background-color: #007bff; /* Primary button color */
+    color: white; /* Button text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 1.1em; /* Larger font size for button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s, transform 0.3s; /* Transition for hover effect */
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    transform: translateY(-2px); /* Lift effect on hover */
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px; /* Less padding on smaller screens */
+    }
+
+    h1 {
+        font-size: 2em; /* Smaller heading on mobile */
+    }
+}
