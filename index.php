@@ -4,7 +4,8 @@ session_start();  // Start the session to access session data
 include 'db.php';  // Include the database connection
 
 // Check if the user is logged in
-$is_logged_in = isset($_SESSION['user_email']);
+$is_logged_in = isset($_SESSION['Account_Email']) && !empty($_SESSION['Account_Email']);
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Get values from the form and sanitize them
@@ -74,13 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <h1>Welcome to AirAngel!</h1> 
 
     <ul>
-        <?php if (!$is_logged_in): ?>
-            <li><a href="signin.php">Sign In</a></li>
-            <li><a href="signup.php">Sign Up</a></li>
-        <?php else: ?>
-            <li><a href="logout.php">Logout</a></li> <!-- Show Logout if logged in -->
-        <?php endif; ?>
+    <?php if (!$is_logged_in): ?>
+        <li><a href="signin.php">Sign In</a></li>
+        <li><a href="signup.php">Sign Up</a></li>
+    <?php else: ?>
+        <li><a href="logout.php">Logout</a></li> <!-- Show Logout if logged in -->
+        <li><a href="account.php">Account</a></li>
+    <?php endif; ?>
     </ul>
+
 
     <h2>Book Your Flight</h2>
     <form method="POST">

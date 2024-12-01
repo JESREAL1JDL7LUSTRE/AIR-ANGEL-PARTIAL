@@ -1,7 +1,13 @@
 <?php
+ob_start();  // Start output buffering to ensure no output before header()
 session_start();
 include 'db.php';
 
+// Check if the admin is logged in
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+    header('Location: login.php'); // Redirect to login page if not an admin
+    exit;
+}
 
 // Fetch all users from the database
 $sql = "SELECT Account_ID, Account_Last_Name, Account_First_Name, Account_Email, Account_PhoneNumber, Username FROM Account";
@@ -17,10 +23,10 @@ $result = $conn->query($sql);
 </head>
 <body>
     <h1>Welcome Admin!</h1>
-    <a href="logout.php">Logout</a>
-    <a href="admin_see_accounts.php">See all users</a>
-    <a href="admin_add_flights.php">Add flights</a>
-    <a href="see_flights.php">See flights</a>
+            <a href="logout.php">Logout</a> <!-- Show Logout if logged in -->
+            <a href="admin_see_accounts.php">See all users</a>
+            <a href="admin_add_flights.php">Add flights</a>
+            <a href="see_flights.php">See flights</a>
     <h2>All Users</h2>
     <table border="1">
         <tr>

@@ -1,6 +1,13 @@
 <?php
+ob_start();  // Start output buffering to ensure no output before header()
 session_start();
 include 'db.php';
+
+// Check if the admin is logged in
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+    header('Location: login.php'); // Redirect to login page if not an admin
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $Departure_Date = trim($_POST['Departure_Date']);
@@ -39,10 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <h1>Welcome Admin!</h1>
-    <a href="logout.php">Logout</a>
-    <a href="admin_see_accounts.php">See all users</a>
-    <a href="admin_add_flights.php">Add flights</a>
-    <a href="see_flights.php">See flights</a>
+            <a href="logout.php">Logout</a> <!-- Show Logout if logged in -->
+            <a href="admin_see_accounts.php">See all users</a>
+            <a href="admin_add_flights.php">Add flights</a>
+            <a href="see_flights.php">See flights</a>
     <h2>Add Flight</h2>
     <form method="POST">
         <label>Departure_Date:</label><br>

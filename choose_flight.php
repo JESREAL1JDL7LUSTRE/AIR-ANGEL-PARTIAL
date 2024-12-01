@@ -1,7 +1,12 @@
 <?php
+ob_start();  // Start output buffering to ensure no output before header()
 session_start();  // Start the session to access session data
 
+// Check if the user is logged in
+$is_logged_in = isset($_SESSION['Account_Email']) && !empty($_SESSION['Account_Email']);
+
 // Check if the flights data exists in the session
+
 if (!isset($_SESSION['available_flights']) || empty($_SESSION['available_flights'])) {
     echo "<p>No available flights to choose from.</p>";
     exit();
@@ -30,6 +35,17 @@ $available_flights = $_SESSION['available_flights'];
 </head>
 <body>
     <h1>Select Your Flight</h1>
+
+    <ul>
+    <?php if (!$is_logged_in): ?>
+        <li><a href="signin.php">Sign In</a></li>
+        <li><a href="signup.php">Sign Up</a></li>
+    <?php else: ?>
+        <li><a href="logout.php">Logout</a></li> <!-- Show Logout if logged in -->
+        <li><a href="account.php">Account</a></li>
+    <?php endif; ?>
+    </ul>
+
 
     <form method="POST" action="confirm_booking.php">
         

@@ -1,4 +1,5 @@
 <?php
+ob_start();  // Start output buffering to ensure no output before header()
 session_start();
 include 'db.php'; // Include your database connection
 

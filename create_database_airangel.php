@@ -73,7 +73,7 @@ $sql_create_tables = [
     "CREATE TABLE IF NOT EXISTS Reservation (
         Reservation_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
         Booking_date DATE NOT NULL,
-        Class VARCHAR(20) NOT NULL
+
     )",
     "CREATE TABLE IF NOT EXISTS Baggage (
         Baggage_ID INT(10) AUTO_INCREMENT PRIMARY KEY,

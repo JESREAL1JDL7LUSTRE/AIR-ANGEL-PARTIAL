@@ -1,15 +1,18 @@
 <?php
+ob_start();  // Start output buffering to ensure no output before header()
 session_start();
 include 'db.php';  // Include database connection
+// Check if the user is logged in
+$is_logged_in = isset($_SESSION['Account_Email']) && !empty($_SESSION['Account_Email']);
 
 // Ensure the user is logged in
-if (!isset($_SESSION['email'])) {
+if (!isset($_SESSION['Account_Email'])) {
     header("Location: signin.php");  // Redirect to sign-in page if not logged in
     exit;
 }
 
 // Get logged-in user email
-$user_email = $_SESSION['email'];
+$user_email = $_SESSION['Account_Email'];
 
 // Fetch user account information from the database
 $sql_user_info = "SELECT * FROM Account WHERE Account_Email = ?";
@@ -37,8 +40,13 @@ $flights_result = $stmt->get_result();
     <h1>Account</h1>
 
     <ul>
+    <?php if (!$is_logged_in): ?>
+        <li><a href="signin.php">Sign In</a></li>
+        <li><a href="signup.php">Sign Up</a></li>
+    <?php else: ?>
         <li><a href="logout.php">Logout</a></li> <!-- Show Logout if logged in -->
         <li><a href="account.php">Account</a></li>
+    <?php endif; ?>
     </ul>
 
     <h2>Welcome User!</h2>

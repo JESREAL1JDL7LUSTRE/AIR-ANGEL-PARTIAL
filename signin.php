@@ -1,11 +1,12 @@
 <?php
+ob_start();  // Start output buffering to ensure no output before header()
 session_start();
 include 'db.php'; // Include your database connection
 
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = trim($_POST['Email']);
-    $password = trim($_POST['Password']);
+    $Account_Email = trim($_POST['Account_Email']);
+    $Password = trim($_POST['Password']);
 
     // Admin credentials
     $boss_email = 'admin@boss.com';
@@ -21,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         // Check the database for normal user credentials
         $stmt = $conn->prepare("SELECT * FROM Account WHERE Account_Email = ?");
-        $stmt->bind_param("s", $email);
+        $stmt->bind_param("s", $Account_Email);
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -29,11 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user = $result->fetch_assoc();
 
             // Verify password
-            if (password_verify($password, $user['Password'])) {
+            if (password_verify($Password, $user['Password'])) {
                 // User login
-                $_SESSION['user_role'] = 'user';
-                $_SESSION['email'] = $user['Account_Email'];
-                $_SESSION['user_id'] = $user['Account_ID'];
+                $_SESSION['Account_Email'] = $user['Account_Email'];
+                $_SESSION['Account_ID'] = $user['Account_ID'];
                 header('Location: user_dashboard.php'); // Redirect to user dashboard
                 exit;
             } else {
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <h1>Sign In</h1>
     <form method="POST">
         <label>Email:</label><br>
-        <input type="email" name="Email" required><br>
+        <input type="email" name="Account_Email" required><br>
         
         <label>Password:</label><br>
         <input type="password" name="Password" required><br>

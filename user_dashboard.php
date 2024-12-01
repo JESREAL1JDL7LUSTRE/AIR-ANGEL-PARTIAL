@@ -1,10 +1,18 @@
 <?php
+ob_start();  // Start output buffering to ensure no output before header()
 session_start();
 include 'db.php';
 
 // Check if the user is logged in
-$is_logged_in = isset($_SESSION['user_email']);
+$is_logged_in = isset($_SESSION['Account_Email']) && !empty($_SESSION['Account_Email']);
 
+// If the user is logged in and has already selected a flight, redirect them to choose_flight.php
+if ($is_logged_in && isset($_SESSION['available_flights']) && !empty($_SESSION['available_flights'])) {
+    header("Location: choose_flight.php");
+    exit();  // Ensure no further code is executed after redirection
+}
+
+// Process flight search form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Get values from the form and sanitize them
     $departure_date = $_POST['depart_time'];
@@ -73,9 +81,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <h1>Welcome to AirAngel!</h1> 
 
     <ul>
+    <?php if (!$is_logged_in): ?>
+        <li><a href="signin.php">Sign In</a></li>
+        <li><a href="signup.php">Sign Up</a></li>
+    <?php else: ?>
         <li><a href="logout.php">Logout</a></li> <!-- Show Logout if logged in -->
         <li><a href="account.php">Account</a></li>
+    <?php endif; ?>
     </ul>
+
 
     <h2>Book Your Flight</h2>
     <form method="POST">
