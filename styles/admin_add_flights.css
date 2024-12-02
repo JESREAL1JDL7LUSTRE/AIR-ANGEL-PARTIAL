@@ -1,0 +1,132 @@
+/* General body and text styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    text-align: center;
+}
+
+/* Header styling */
+h1 {
+    font-size: 32px;
+    margin: 20px 0;
+    color: #333;
+}
+
+h2 {
+    font-size: 28px;
+    margin: 30px 0 20px;
+    color: #333;
+}
+
+/* Form Styling */
+form {
+    background-color: #fff;
+    padding: 20px;
+    margin: 20px auto;
+    width: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+form label {
+    font-size: 16px;
+    margin-bottom: 8px;
+    display: inline-block;
+    text-align: left;
+    width: 100%;
+    color: #555;
+}
+
+form input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+form button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+}
+
+form button:hover {
+    background-color: #45a049;
+    transform: scale(0.98); /* Slightly shrink the button */
+    transition: transform 0.3s ease; /* Smooth transition */
+}
+
+/* Link styling */
+a {
+    display: inline-block;
+    text-decoration: none;
+    color: #fff;
+    background-color: #4CAF50;
+    padding: 12px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the links */
+a:hover {
+    background-color: #45a049;
+    transform: scale(0.98); /* Slightly shrink the button */
+    transition: transform 0.3s ease; /* Smooth transition */
+}
+
+/* Center align links in a row */
+body {
+    text-align: center; /* Centers the links horizontally */
+}
+
+a {
+    margin: 10px 15px; /* Add some margin to space the links */
+}
+
+/* Responsive Design for smaller screens */
+@media (max-width: 768px) {
+    /* Stack the links vertically on smaller screens */
+    a {
+        display: block;
+        width: 80%;
+        margin: 10px auto;
+    }
+
+    /* Adjust form width for smaller screens */
+    form {
+        width: 80%;
+    }
+}
+
+/* General styling for button */
+button[type="button"] {
+    background-color: #f44336; /* Red */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 200px;
+    margin-top: 20px;
+}
+
+button[type="button"]:hover {
+    background-color: #e53935; /* Darker red */
+    transform: scale(0.98); /* Slightly shrink the button */
+    transition: transform 0.3s ease; /* Smooth transition */
+}

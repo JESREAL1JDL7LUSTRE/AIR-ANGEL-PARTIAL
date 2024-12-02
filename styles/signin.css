@@ -1,0 +1,206 @@
+/* General Resets */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+    background-image: url('/AIR-ANGEL-PARTIAL/assets/images/indexBG.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* Header Styling */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+header .logo img {
+    height: 50px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+nav ul li a:hover {
+    background-color: #007BFF;
+}
+
+/* Main Sign-In Form Container */
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 80vh;
+    padding-top: 80px; /* To avoid overlap with the fixed header */
+}
+
+.signin-form-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+form input {
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+form input:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+button[type="submit"] {
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+    margin-top: 10px;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+button[type="button"] {
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+    width: auto;
+}
+
+button[type="button"]:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+p {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+p a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
+
+/* Button to toggle password visibility */
+button#togglePassword {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border: none;
+    background-color: #007BFF;
+    color: #f0f0f0;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    width: auto;
+}
+
+button#togglePassword:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+button#togglePassword:focus {
+    outline: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 20px;
+    }
+
+    header {
+        top: 10px;
+        left: 10px;
+    }
+
+    .signin-form-container {
+        width: 90%;
+        padding: 1.5rem;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+}

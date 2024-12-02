@@ -1,0 +1,111 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* Header styling */
+h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin: 20px 0;
+}
+
+/* Links styling */
+a {
+    display: inline-block;
+    text-decoration: none;
+    color: #fff;
+    background-color: #4CAF50;
+    padding: 12px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+a:hover {
+    background-color: #45a049;
+    transform: scale(0.98); /* Slightly shrink the button */
+    transition: transform 0.3s ease; /* Smooth transition */
+}
+
+/* Table styling */
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #28a745;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Button styling */
+button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+/* Container for links and buttons */
+button, a {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+/* Go Back Button styling */
+button[type="button"] {
+    background-color: #f44336; /* Red */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 200px;
+    margin-top: 20px;
+}
+
+button[type="button"]:hover {
+    background-color: #e53935; /* Darker red */
+    transform: scale(0.98); /* Slightly shrink the button */
+    transition: transform 0.3s ease; /* Smooth transition */
+}
+
+/* Styling for the Go Back button and links */
+a, button {
+    margin-top: 15px;
+    text-decoration: none;
+}
