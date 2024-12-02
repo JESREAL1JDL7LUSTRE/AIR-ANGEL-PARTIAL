@@ -19,17 +19,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc(); // Fetch the user data
 
-            // Check if the user is an admin
-            if ($user['Is_Admin'] === 1) {
-                // Admin login logic
-                if (password_verify($Password, $user['Password'])) {
-                    $_SESSION['Account_Email'] = $user['Account_Email'];
-                    $_SESSION['Account_ID'] = $user['Account_ID'];
-                    header('Location: admin.php'); // Redirect to admin dashboard
-                    exit;
-                } else {
-                    $error = "Invalid email or password.";
-                }
+        // Check if the user is an admin
+        if ($user['Is_Admin'] === 1) {
+            // Admin login logic
+            if (password_verify($Password, $user['Password'])) {
+                // Set session variables for the admin
+                $_SESSION['Account_Email'] = $user['Account_Email'];
+                $_SESSION['Account_ID'] = $user['Account_ID'];
+                $_SESSION['Is_Admin'] = 1; // Mark the user as an admin in the session
+
+                // Redirect to see_flights.php
+                header('Location: admin.php');
+                exit;
+            } else {
+                $error = "Invalid email or password.";
+            }
             } else {
                 // Regular user login logic
                 if (password_verify($Password, $user['Password'])) {

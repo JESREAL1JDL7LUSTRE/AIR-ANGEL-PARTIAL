@@ -3,9 +3,10 @@ ob_start();  // Start output buffering to ensure no output before header()
 session_start();
 include 'db.php';
 
+
 // Check if the admin is logged in
-if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
-    header('Location: login.php'); // Redirect to login page if not an admin
+if (!isset($_SESSION['Is_Admin']) || $_SESSION['Is_Admin'] !== 1) {
+    header('Location: signin.php'); // Redirect to login page if not an admin
     exit;
 }
 
@@ -43,6 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Flight</title>
+    <script>
+        function goBack() {
+            window.location.href = 'admin.php';
+        }
+    </script>
 </head>
 <body>
     <h1>Welcome Admin!</h1>
@@ -75,6 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <button type="submit">Add Flight</button>
     </form>
+    <h2> </h2>
+    <button type="button" onclick="goBack()">Go Back</button>
 </body>
 </html>
 

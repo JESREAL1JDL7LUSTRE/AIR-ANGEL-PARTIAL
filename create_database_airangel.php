@@ -138,7 +138,7 @@ $sql_create_tables = [
         Seat_Type VARCHAR(20) NOT NULL
     )",
     "CREATE TABLE IF NOT EXISTS Reservation_to_Passenger (
-        Reservation_to_Passenger INT(10) AUTO_INCREMENT PRIMARY KEY
+        Reservation_to_Passenger_ID INT(10) AUTO_INCREMENT PRIMARY KEY
     )",
 ];
 
@@ -258,7 +258,7 @@ $sql_add_foreign_keys = [
     "ALTER TABLE Flight_to_Reservation_to_Passenger ADD COLUMN Available_Flights_Number_ID_FK INT(15)",
     "ALTER TABLE Flight_to_Reservation_to_Passenger ADD INDEX (Flight_to_Reservation_ID_FK)",
     "ALTER TABLE Flight_to_Reservation_to_Passenger ADD INDEX (Available_Flights_Number_ID_FK)",
-    "ALTER TABLE Flight_to_Reservation_to_Passenger ADD FOREIGN KEY (Flight_to_Reservation_ID_FK) REFERENCES Flight_to_Reservation_to_Passenger(Flight_to_Reservation_to_Passenger_ID)",
+    "ALTER TABLE Flight_to_Reservation_to_Passenger ADD FOREIGN KEY (Flight_to_Reservation_ID_FK) REFERENCES Reservation_to_Passenger(Reservation_to_Passenger_ID)",
     "ALTER TABLE Flight_to_Reservation_to_Passenger ADD FOREIGN KEY (Available_Flights_Number_ID_FK) REFERENCES Available_Flights (Available_Flights_Number_ID)",
 
 ];

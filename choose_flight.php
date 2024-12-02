@@ -32,6 +32,12 @@ $available_flights = $_SESSION['available_flights'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Choose Your Flight</title>
+    <script>
+        is 
+        function goBack() {
+            window.location.href = 'user_dashboard.php';
+        }
+    </script>
 </head>
 <body>
     <h1>Select Your Flight</h1>
@@ -143,5 +149,7 @@ $available_flights = $_SESSION['available_flights'];
 
         <button type="submit">Book Selected Flight</button>
     </form>
+    <h2> </h2>
+    <button type="button" onclick="goBack()">Go Back</button>
 </body>
 </html>
