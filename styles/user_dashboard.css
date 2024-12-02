@@ -1,0 +1,124 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Header styling */
+h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin: 20px 0;
+}
+
+/* Links styling */
+a {
+    text-decoration: none;
+    color: #fff;
+    background-color: #4CAF50;
+    padding: 12px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    display: inline-block;
+    width: 200px; /* Consistent width */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+a:hover {
+    color: white;
+    background-color: #45a049;
+    transform: scale(0.98); /* Slightly shrink the button */
+}
+
+/* Form styling */
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Input field styling */
+input[type="text"], input[type="date"], button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* Button styling */
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+    transform: scale(0.98);
+}
+
+/* Radio button styling */
+input[type="radio"] {
+    margin: 0 10px 0 0;
+}
+
+label {
+    font-size: 1rem;
+    color: #333;
+}
+
+/* Styling for hidden return date input */
+#return_date_container {
+    display: none;
+}
+
+/* Links container */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+ul li {
+    display: inline-block;
+    margin: 0 15px;
+}
+
+/* Styling for when user is logged in */
+ul li a {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+ul li a:hover {
+    background-color: #45a049;
+}
+
+/* Container for the page content */
+.container {
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+}
