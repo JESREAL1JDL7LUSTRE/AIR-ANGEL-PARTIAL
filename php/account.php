@@ -73,22 +73,6 @@ $flights_result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account</title>
     <link rel="stylesheet" href="/ANGEL/styles/account.css">
-    <style>
-        .editable {
-            background-color: #f0f0f0;
-        }
-        .view-only {
-            background-color: transparent;
-            border: none;
-        }
-        .radio-group {
-            display: flex;
-            gap: 10px;
-        }
-        .radio-group input {
-            margin-right: 5px;
-        }
-    </style>
 </head>
 <body>
     <h1>Account</h1>
