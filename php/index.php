@@ -59,77 +59,169 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AirAngel - Airline Reservation</title>
     <link rel="stylesheet" href="/AIR-ANGEL-PARTIAL/styles/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Oleo+Script&family=Source+Serif+Pro:wght@400;700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <script>
-        // Toggle the visibility of the return date field with animation
+        // Function to toggle return date visibility
         function toggleReturnDate() {
             const roundTrip = document.getElementById('round_trip');
             const returnDateField = document.getElementById('return_date_container');
+            
+            // Check the state of the 'round_trip' checkbox and toggle visibility accordingly
             if (roundTrip.checked) {
-                returnDateField.classList.add('show'); // Add the class to animate and show
+                returnDateField.style.display = 'block'; // Show return date field for round trip
             } else {
-                returnDateField.classList.remove('show'); // Remove the class to hide
+                returnDateField.style.display = 'none'; // Hide return date field for one way
             }
         }
+
+        // Run the function once on page load to set the initial state
+        document.addEventListener('DOMContentLoaded', toggleReturnDate);
+
+        // Attach event listener to the checkbox to toggle on change
+        document.getElementById('round_trip').addEventListener('change', toggleReturnDate);
+    
+        window.addEventListener('scroll', function () {
+            const section1 = document.querySelector('.section-1');
+            const scrollPosition = window.scrollY;
+
+            // Create a parallax effect by adjusting the background position
+            section1.style.backgroundPosition = `center ${scrollPosition * -0.5}px`;
+        });
     </script>
+
 </head>
 <body>
-    <header>
-        <div class="header-container">
-            <div class="logo">
-                <img src="/path/to/logo.png" alt="AirAngel Logo">
-                <h1 class="site-title">AirAngel - Airline Reservation</h1>
-            </div>
-            <nav>
-                <ul>
-                    <?php if (!$is_logged_in): ?>
-                        <li><a href="signin.php">Sign In</a></li>
-                        <li><a href="signup.php">Sign Up</a></li>
-                    <?php else: ?>
-                        <li><a href="logout.php">Logout</a></li>
-                        <li><a href="account.php">Account</a></li>
-                    <?php endif; ?>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-
     <main>
-        <section class="booking-form-section">
-            <h2>Book Your Flight</h2>
-            <form method="POST">
-                <!-- Flight Type Selection -->
-                <fieldset>
-                    <legend>Select Flight Type:</legend>
-                    <div class="radio-group">
-                        <input type="radio" id="one_way" name="flight_type" value="One Way" onclick="toggleReturnDate()" required>
-                        <label for="one_way">One Way</label>
-                        <input type="radio" id="round_trip" name="flight_type" value="Round Trip" onclick="toggleReturnDate()">
-                        <label for="round_trip">Round Trip</label>
+        <header>
+            <div class="header">
+                <!-- Logo Section -->
+                <div class="logo-container">
+                    <img id="logo-img" src="/AIR-ANGEL-PARTIAL/assets/images/logo.png" alt="AirAngel Logo">
+                    <h1 id="logo-text">AirAngel</h1>
+                </div>
+        
+                <!-- Main Navigation -->
+                <nav class="navbar">
+                    <ul>
+                        <li><a href="index.php">Book</a></li>
+                        <li><a href="index.php">Explore</a></li>
+                        <li><a href="index.php">Manage</a></li>
+                        <li><a href="index.php">About</a></li>
+                    </ul>
+                </nav>
+        
+                <!-- Authentication Links (Sign In / Sign Up / Logout) -->
+                <nav class="auth-nav">
+                    <ul>
+                        <?php if (!$is_logged_in): ?>
+                            <li><a href="signin.php">Sign In</a></li>
+                            <li><a href="signup.php">Sign Up</a></li>
+                        <?php else: ?>
+                            <li><a href="logout.php">Logout</a></li>
+                            <li><a href="account.php">Account</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+        
+        <div class="section section-1">
+            <div class="center-text-container">
+                <h1>Fly high through safe skies</h1>
+                <h3>Book now!</h3>
+            </div>
+            
+            <section class="booking-form-section">
+                <h2>Book Your Flight</h2>
+                <form method="POST">
+                    <!-- Flight Type Selection -->
+                    <fieldset>
+                        <legend>Select Flight Type</legend>
+                        <div class="radio-group">
+                            <div class="option">
+                                <input type="radio" id="one_way" name="flight_type" value="One Way" onclick="toggleReturnDate()" required>
+                                <label for="one_way">One Way</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="round_trip" name="flight_type" value="Round Trip" onclick="toggleReturnDate()">
+                                <label for="round_trip">Round Trip</label>
+                            </div>                            
+                        </div>
+                    </fieldset>
+
+                    <!-- Departure Location and Destination -->
+                    <div class="location"> 
+                        <label for="from" style="margin-right: 2px; margin-left: 5px">From:</label>
+                        <input type="text" id="from" name="from" placeholder="Departure City" required>
+
+                        <label for="to" style="margin-right: 2px; margin-left: 5px">To:</label>
+                        <input type="text" id="to" name="to" placeholder="Destination City" required>
                     </div>
-                </fieldset>
 
-                <!-- Departure Location and Destination -->
-                <label for="from">From:</label>
-                <input type="text" id="from" name="from" placeholder="Departure City" required>
+                    <!-- Departure Time -->
+                    <div class="date">
+                        <div id="depart_date_container" class="return-date-container">
+                            <label for="depart_date" style="margin-right: 2px; margin-left: 5px">Departure Date:</label>
+                            <input type="date" id="depart_date" name="depart_date" required>
+                        </div>
 
-                <label for="to">To:</label>
-                <input type="text" id="to" name="to" placeholder="Destination City" required>
+                        <!-- Return Date (Visible only for Round Trip) -->
+                        <div id="return_date_container" class="return-date-container">
+                            <label for="return_date" style="margin-right: 2px; margin-left: 5px">Return Date:</label>
+                            <input type="date" id="return_date" name="return_date">
+                        </div>
+                    </div>
 
-                <!-- Departure Time -->
-                <label for="depart_date">Departure Date:</label>
-                <input type="date" id="depart_date" name="depart_date" required>
 
-                <!-- Return Date (Visible only for Round Trip) -->
-                <div id="return_date_container" class="return-date-container">
-                    <label for="return_date">Return Date:</label>
-                    <input type="date" id="return_date" name="return_date">
+
+                    <!-- Search Button -->
+                    <button id="search-button" type="submit">Search Flight</button>
+                </form>
+            </section>
+        </div>
+
+        <div class="section section-2">
+            <h1>Explore</h1>
+            <div class="image-container">
+                <a href=""><img src="/AIR-ANGEL-PARTIAL/assets/images/Card.png"></a>
+                <a href=""><img src="/AIR-ANGEL-PARTIAL/assets/images/Cardo.png"></a>
+                <a href=""><img src="/AIR-ANGEL-PARTIAL/assets/images/Carding.png"></a>
+            </div>
+            <button>Discover More</button>
+        </div>
+
+        <div class="section section-3">
+            <h1>Our Services</h1>
+            <div class="container">
+                <div class="choice">
+                    <a href="">
+                        <img src="/AIR-ANGEL-PARTIAL/assets/images/Luggage.png">
+                        <h3>Luggage</h3>
+                    </a>
+                    
+                </div>
+                
+                <div class="choice">
+                    <a href="">
+                        <img src="/AIR-ANGEL-PARTIAL/assets/images/Aircraft Seat Middle.png">
+                        <h3>Seat Selection</h3>
+                    </a>                    
                 </div>
 
-                <!-- Search Button -->
-                <button type="submit">Search Flight</button>
-            </form>
-        </section>
+                <div class="choice">
+                    <a href="">
+                        <img src="/AIR-ANGEL-PARTIAL/assets/images/Buffet Breakfast.png">
+                        <h3>Food</h3>
+                    </a>                    
+                </div>
+            </div>
+        </div>
+
+        <div class="section section-4">
+            <h1>About Us</h1>
+            <p id="about-us">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorum quaerat eius at! Itaque impedit quis atque consequuntur nihil ducimus, non ad unde, perferendis magni eligendi illum sunt inventore nobis quaerat?</p>
+            <button>Book a Flight Now!</button>
+        </div>
     </main>
 </body>
 </html>
