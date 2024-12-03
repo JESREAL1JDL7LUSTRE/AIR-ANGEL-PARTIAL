@@ -1,0 +1,45 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Header styling */
+h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin: 20px 0;
+}
+
+/* Links styling */
+a {
+    text-decoration: none;
+    color: #fff;
+    background-color: #4CAF50;
+    padding: 12px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    display: inline-block;
+    width: 200px; /* Ensure all links have the same width */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover effect for links */
+a:hover {
+    color: white;
+    background-color: #45a049;
+    transform: scale(0.98); /* Slightly shrink the button */
+}
+
+/* Container for links */
+a {
+    margin-top: 10px;
+}
