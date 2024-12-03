@@ -87,6 +87,7 @@ $sql_create_tables = [
     )",
     "CREATE TABLE IF NOT EXISTS Available_Flights (
         Available_Flights_Number_ID INT(15) AUTO_INCREMENT PRIMARY KEY,
+        Flights_Number VARCHAR(20) NOT NULL
         Departure_Date DATE NOT NULL,
         Arrival_Date DATE NOT NULL,
         Origin VARCHAR(50) NOT NULL,

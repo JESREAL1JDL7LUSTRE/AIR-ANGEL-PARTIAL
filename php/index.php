@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AirAngel - Airline Reservation</title>
-    <link rel="stylesheet" href="/AIR-ANGEL-PARTIAL/styles/index.css">
+    <link rel="stylesheet" href="/ANGEL/styles/index.css">
     <script>
         // Toggle the visibility of the return date field with animation
         function toggleReturnDate() {
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <header>
         <div class="header-container">
             <div class="logo">
-                <img src="/path/to/logo.png" alt="AirAngel Logo">
+                <img src="/ANGEL/assets/images/logo.png" alt="AirAngel Logo">
                 <h1 class="site-title">AirAngel - Airline Reservation</h1>
             </div>
             <nav>

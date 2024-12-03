@@ -35,7 +35,7 @@ $flights_result = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account</title>
-    <link rel="stylesheet" href="/AIR-ANGEL-PARTIAL/styles/account.css">
+    <link rel="stylesheet" href="/ANGEL/styles/account.css">
 </head>
 <body>
     <h1>Account</h1>
@@ -47,6 +47,7 @@ $flights_result = $stmt->get_result();
     <?php else: ?>
         <li><a href="logout.php">Logout</a></li> <!-- Show Logout if logged in -->
         <li><a href="account.php">Account</a></li>
+        <li><a href="user_dashboard.php">Home</a></li>
     <?php endif; ?>
     </ul>
 
@@ -55,7 +56,6 @@ $flights_result = $stmt->get_result();
     <h3>User Information</h3>
     <table border="1">
         <tr>
-            <th>ID</th>
             <th>Last Name</th>
             <th>First Name</th>
             <th>Email</th>
@@ -66,7 +66,6 @@ $flights_result = $stmt->get_result();
         <?php if ($user_result && $user_result->num_rows > 0): ?>
             <?php while ($row = $user_result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($row['Account_ID']); ?></td>
                     <td><?php echo htmlspecialchars($row['Account_Last_Name']); ?></td>
                     <td><?php echo htmlspecialchars($row['Account_First_Name']); ?></td>
                     <td><?php echo htmlspecialchars($row['Account_Email']); ?></td>
@@ -98,8 +97,8 @@ $flights_result = $stmt->get_result();
         <?php if ($flights_result && $flights_result->num_rows > 0): ?>
             <?php while ($row = $flights_result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($row['Booking_ID']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Available_Flights_Number_ID']); ?></td>
+                    <td><?php echo htmlspecialchars($row['FRP_Number_ID']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Flights_Number']); ?></td>
                     <td><?php echo htmlspecialchars($row['Departure_Date']); ?></td>
                     <td><?php echo htmlspecialchars($row['Arrival_Date']); ?></td>
                     <td><?php echo htmlspecialchars($row['Origin']); ?></td>

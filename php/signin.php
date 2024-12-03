@@ -79,12 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     </script>
-    <link rel="stylesheet" href="/AIR-ANGEL-PARTIAL/styles/signin.css">
+    <link rel="stylesheet" href="/ANGEL/styles/signin.css">
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="/AIR-ANGEL-PARTIAL/assets/images/logo.png" alt="Logo">
+            <img src="/ANGEL/assets/images/logo.png" alt="Logo">
         </div>
         <nav>
             <ul>
@@ -115,9 +115,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 <button type="submit">Sign In</button>
             </form>
-            
-            <button type="button" onclick="goBack()">Go Back</button>
-
             <p>Don't have an account? <a href="signup.php">Sign up</a></p>
         </div>
     </main>

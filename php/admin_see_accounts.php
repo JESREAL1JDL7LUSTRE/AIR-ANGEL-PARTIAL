@@ -25,7 +25,7 @@ $result = $conn->query($sql);
             window.location.href = 'admin.php';
         }
     </script>
-        <link rel="stylesheet" href="/AIR-ANGEL-PARTIAL/styles/admin_see_accounts.css">
+        <link rel="stylesheet" href="/ANGEL/styles/admin_see_accounts.css">
 
 </head>
 <body>

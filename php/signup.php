@@ -75,12 +75,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     </script>
-    <link rel="stylesheet" href="/AIR-ANGEL-PARTIAL/styles/signup.css">
+    <link rel="stylesheet" href="/ANGEL/styles/signup.css">
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="/AIR-ANGEL-PARTIAL/assets/images/logo.png" alt="Logo">
+            <img src="/ANGEL/assets/images/logo.png" alt="Logo">
         </div>
         <nav>
             <ul>
