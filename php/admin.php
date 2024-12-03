@@ -33,6 +33,7 @@ foreach ($queries as $label => $sql) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <a href="logout.php">Logout</a> <!-- Show Logout if logged in -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
@@ -50,7 +51,7 @@ foreach ($queries as $label => $sql) {
         <a href="employees.php" class="button">Employees (<?php echo htmlspecialchars($counts['Total Employees']); ?>)</a>
         <a href="admin_see_accounts.php" class="button">Users (<?php echo htmlspecialchars($counts['Total Users']); ?>)</a>
         <a href="add_admins.php" class="button">Admins (<?php echo htmlspecialchars($counts['Total Admins']); ?>)</a>
-        <a href="add_ons.php" class="button">Add-ons</a>
+        <a href="admin_add_ad_ons.php" class="button">Add-ons</a>
         <a href="admin_add_flights.php" class="button">Add Flight</a>
 
 </body>

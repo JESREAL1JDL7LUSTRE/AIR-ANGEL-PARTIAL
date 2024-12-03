@@ -41,22 +41,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <a href="logout.php">Logout</a> <!-- Show Logout if logged in -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Flight</title>
     <link rel="stylesheet" href="/ANGEL/styles/admin_add_flights.css">
-    <script>
-        function goBack() {
-            window.location.href = 'admin.php';
-        }
-    </script>
 </head>
 <body>
     <h1>Welcome Admin!</h1>
-            <a href="logout.php">Logout</a> <!-- Show Logout if logged in -->
-            <a href="admin_see_accounts.php">See all users</a>
-            <a href="admin_add_flights.php">Add flights</a>
-            <a href="see_flights.php">See flights</a>
+            <a href="admin.php">Home</a>
+
     <h2>Add Flight</h2>
     <form method="POST">
         <label>Departure_Date:</label><br>
@@ -83,7 +77,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="submit">Add Flight</button>
     </form>
     <h2> </h2>
-    <button type="button" onclick="goBack()">Go Back</button>
 </body>
 </html>
 

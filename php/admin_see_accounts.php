@@ -10,13 +10,15 @@ if (!isset($_SESSION['Is_Admin']) || $_SESSION['Is_Admin'] !== 1) {
 }
 
 // Fetch all users from the database
-$sql = "SELECT Account_ID, Account_Last_Name, Account_First_Name, Account_Email, Account_PhoneNumber, Username FROM Account";
+$sql = "SELECT Account_ID, Account_Last_Name, Account_First_Name, Account_Email, Account_PhoneNumber, Username FROM Account WHERE Is_Admin = 0";
 $result = $conn->query($sql);
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <a href="logout.php">Logout</a> <!-- Show Logout if logged in -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
@@ -30,10 +32,7 @@ $result = $conn->query($sql);
 </head>
 <body>
     <h1>Welcome Admin!</h1>
-            <a href="logout.php">Logout</a> <!-- Show Logout if logged in -->
-            <a href="admin_see_accounts.php">See all users</a>
-            <a href="admin_add_flights.php">Add flights</a>
-            <a href="see_flights.php">See flights</a>
+            <a href="admin.php">Home</a>
     <h2>All Users</h2>
     <table border="1">
         <tr>
