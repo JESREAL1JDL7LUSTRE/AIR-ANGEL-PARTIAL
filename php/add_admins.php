@@ -102,11 +102,10 @@ $result = $conn->query($sql);
             </ul>
         </nav>
     </header>
-
-    <main>  
+ 
         <h1>Welcome Admin!</h1>
         <a href="admin.php">Home</a>
-        <button type="button" onclick="toggleAdminForm()">Add Admin</button>
+        <nav><button type="button" onclick="toggleAdminForm()">Add Admin</button></nav>
 
         <!-- Admin Signup Form (Initially Hidden) -->
         <div id="adminSignupForm" style="display:none;">
@@ -167,6 +166,5 @@ $result = $conn->query($sql);
                 </tr>
             <?php endif; ?>
         </table>
-    </main>
 </body>
 </html>
