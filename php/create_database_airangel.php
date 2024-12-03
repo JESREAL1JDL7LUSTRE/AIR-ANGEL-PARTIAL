@@ -89,7 +89,7 @@ $sql_create_tables = [
     )",
     "CREATE TABLE IF NOT EXISTS Available_Flights (
         Available_Flights_Number_ID INT(15) AUTO_INCREMENT PRIMARY KEY,
-        Flights_Number VARCHAR(20) NOT NULL
+        Flight_Number VARCHAR(20) NOT NULL,
         Departure_Date DATE NOT NULL,
         Arrival_Date DATE NOT NULL,
         Origin VARCHAR(50) NOT NULL,
@@ -127,7 +127,7 @@ $sql_create_tables = [
         Employee_Emergency_Contact_No VARCHAR(11) NOT NULL,
         Employee_Salary DECIMAL(50) NOT NULL,
         Employee_Health_Insurance VARCHAR(50) NOT NULL,
-        Employees_Email VARCHAR(50) NOT NULL
+        Employee_Email VARCHAR(50) NOT NULL
         
     )",
     "CREATE TABLE IF NOT EXISTS Seat_Selector (
