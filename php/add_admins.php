@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt = $conn->prepare($sql);
 
     // Bind the parameters to the query
-    $stmt->bind_param("ssssssi", $Account_Email, $hashed_password, $Account_First_Name, $Account_Last_Name, $Account_PhoneNumber, $Username, $Is_Admin);
+    $stmt->bind_param("ssssss", $Account_Email, $hashed_password, $Account_First_Name, $Account_Last_Name, $Account_PhoneNumber, $Username);
 
     // Execute the statement
     if ($stmt->execute()) {
@@ -134,7 +134,7 @@ $result = $conn->query($sql);
 
                 <button type="button" id="togglePasswordBtn" onclick="togglePassword()">Show Password</button><br><br>
 
-                <button type="submit">Sign Up</button>
+                <button type="submit">Add Admin</button>
             </form>
         </div>
 

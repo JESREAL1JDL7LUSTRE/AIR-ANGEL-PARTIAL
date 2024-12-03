@@ -12,6 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $Account_Last_Name = trim($_POST['Last_Name']);
     $Account_PhoneNumber = trim($_POST['Phone_Number']);
     $Username = trim($_POST['Username']);
+    $Account_Middle_Name = trim($_POST['Middle_Name']);
+    $Account_Birthday = trim($_POST['Birthday']);
+    $Account_Sex = trim($_POST['Sex']);
 
     // Validate phone number
     if (!is_numeric($Account_PhoneNumber)) {
@@ -29,13 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $hashed_password = password_hash($Password, PASSWORD_BCRYPT);
 
     // Prepare SQL to insert a new user into the database
-    $sql = "INSERT INTO Account (Account_Email, Password, Account_First_Name, Account_Last_Name, Account_PhoneNumber, Username) 
-            VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO Account (Account_Email, Password, Account_First_Name, Account_Last_Name, Account_PhoneNumber, Username, Account_Middle_Name, Account_Birthday, Account_Sex)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
 
     // Bind the parameters to the query
-    $stmt->bind_param("ssssss", $Account_Email, $hashed_password, $Account_First_Name, $Account_Last_Name, $Account_PhoneNumber, $Username);
+    $stmt->bind_param("sssssssss", $Account_Email, $hashed_password, $Account_First_Name, $Account_Last_Name, $Account_PhoneNumber, $Username, $Account_Middle_Name, $Account_Birthday, $Account_Sex);
 
     // Execute the statement
     if ($stmt->execute()) {
@@ -101,8 +104,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label for="lastName">Last Name:</label><br>
                 <input type="text" id="lastName" name="Last_Name" required><br>
 
+                <label for="MiddleName">Last Name:</label><br>
+                <input type="text" id="MiddleName" name="Middle_Name" required><br>
+
                 <label for="username">Username:</label><br>
                 <input type="text" id="username" name="Username" required><br>
+                
+
+                    <label>Sex:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="Male" name="Sex" value="Male" required>
+                        <label for="Male">Male</label>
+                        <input type="radio" id="Female" name="Sex" value="Female">
+                        <label for="Female">Female</label></div>
+
+
+                <label for="Birthday">Last Name:</label><br>
+                <input type="date" id="Birthday" name="Birthday" required><br>
 
                 <label for="phoneNumber">Phone Number:</label><br>
                 <input type="text" id="phoneNumber" name="Phone_Number" required><br>

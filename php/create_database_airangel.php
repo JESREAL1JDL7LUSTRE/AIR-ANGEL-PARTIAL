@@ -29,6 +29,7 @@ $sql_create_tables = [
         Account_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
         Account_Last_Name VARCHAR(50) NOT NULL,
         Account_First_Name VARCHAR(50) NOT NULL,
+        Account_Middle_Name VARCHAR(50) NOT NULL,
         Account_Email VARCHAR(50) NOT NULL,
         Account_PhoneNumber INT(11) NOT NULL,
         Account_Birthday DATE NOT NULL,
