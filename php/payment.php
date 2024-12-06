@@ -25,22 +25,17 @@ foreach ($selectedAddons as $addon) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $paymentMethod = $_POST['payment_method'] ?? null;
 
-    if ($paymentMethod === 'Card') {
-        $cardNumber = $_POST['card_number'] ?? '';
-        $expiryDate = $_POST['expiry_date'] ?? '';
-        $cvv = $_POST['cvv'] ?? '';
-
-        // Here you would typically process the card details with a payment gateway
-        echo "Card Payment submitted: $cardNumber, $expiryDate, $cvv";
-    } elseif ($paymentMethod === 'ECash') {
-        // Handle ECash payment
-        echo "ECash payment submitted.";
-    } elseif ($paymentMethod === 'Cash') {
-        // Handle Cash payment
-        echo "Cash payment submitted.";
-    } else {
+    if (!$paymentMethod) {
         echo "Error: Please select a payment method.";
+        exit;
     }
+
+    // Save the selected payment method to the session
+    $_SESSION['payment_method'] = $paymentMethod;
+
+    // Redirect to the confirmation page
+    header("Location: confirm_booking.php");
+    exit;
 }
 ?>
 
@@ -111,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h3>Total: $<?php echo number_format($totalPrice, 2); ?> USD</h3>
 
 <h2>Payment Methods</h2>
-<form method="POST" action="confirm_booking.php">
+<form method="POST">
     <label><input type="radio" name="payment_method" value="Cash" onclick="toggleCashPay()" required> Cash</label><br>
     <label><input type="radio" name="payment_method" value="ECash" onclick="toggleEcashPay()"> ECash</label><br>
     <label><input type="radio" name="payment_method" value="Card" onclick="toggleCardPay()"> Card</label><br>
@@ -125,14 +120,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <div id="card_payment" style="display: none;">
         <h3>Enter Card Details</h3>
-        <label>Card Number: <input type="text" name="card_number" required></label><br>
-        <label>Expiry Date: <input type="month" name="expiry_date" required></label><br>
-        <label>CVV: <input type="text" name="cvv" required></label>
+        <label>Card Number: <input type="text" name="card_number"></label><br>
+        <label>Expiry Date: <input type="month" name="expiry_date"></label><br>
+        <label>CVV: <input type="text" name="cvv"></label>
     </div>
 
     <button type="submit">Submit Payment</button>
 </form>
-
 
 </body>
 </html>
