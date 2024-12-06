@@ -59,10 +59,6 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <script>
-        function goBack() {
-            window.location.href = 'index.php';
-        }
-
         function togglePassword() {
             var password = document.getElementById("password");
             var confirmPassword = document.getElementById("confirmPassword");
@@ -88,7 +84,9 @@ $result = $conn->query($sql);
                 form.style.display = "none";
             }
         }
+
     </script>
+
     <link rel="stylesheet" href="/ANGEL/styles/signup.css">
 </head>
 <body>
@@ -98,13 +96,14 @@ $result = $conn->query($sql);
         </div>
         <nav>
             <ul>
+                <li><a href="admin.php">Home</a></li>
                 <li><a href="logout.php">Logout</a></li>
             </ul>
         </nav>
     </header>
  
         <h1>Welcome Admin!</h1>
-        <a href="admin.php">Home</a>
+        
         <nav><button type="button" onclick="toggleAdminForm()">Add Admin</button></nav>
 
         <!-- Admin Signup Form (Initially Hidden) -->

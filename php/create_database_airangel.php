@@ -126,7 +126,7 @@ $sql_create_tables = [
         Employee_Address VARCHAR(50) NOT NULL,
         Employee_PhoneNumber VARCHAR(11) NOT NULL,
         Employee_Emergency_Contact_No VARCHAR(11) NOT NULL,
-        Employee_Salary DECIMAL(50) NOT NULL,
+        Employee_Salary DECIMAL(50,2) NOT NULL,
         Employee_Health_Insurance VARCHAR(50) NOT NULL,
         Employee_Email VARCHAR(50) NOT NULL
         
@@ -134,8 +134,7 @@ $sql_create_tables = [
     "CREATE TABLE IF NOT EXISTS Seat_Selector (
         Seat_Selector_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
         Seat_Selector_Number VARCHAR(10) NOT NULL,
-        Price DECIMAL(10,2) NOT NULL,
-        Seat_Type VARCHAR(20) NOT NULL
+        Price DECIMAL(10,2) NOT NULL
     )",
     "CREATE TABLE IF NOT EXISTS Food (
         Food_ID INT(10) AUTO_INCREMENT PRIMARY KEY,

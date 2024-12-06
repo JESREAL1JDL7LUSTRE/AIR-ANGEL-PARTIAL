@@ -33,18 +33,22 @@ foreach ($queries as $label => $sql) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <a href="logout.php">Logout</a> <!-- Show Logout if logged in -->
+        <nav>
+            <ul>
+                <li><a href="admin.php">Home</a></li>
+                <li><a href="logout.php">Logout</a></li>
+            </ul>
+        </nav>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="/ANGEL/styles/admin.css">
-    <script>
-        function navigateTo(url) {
-            window.location.href = url;
-        }
-    </script>
+
 </head>
 <bod>
+    <header>
+        
+    </header>
     <h1>Welcome Admin!</h1>
         <a href="see_flights.php" class="button">Available Flights (<?php echo htmlspecialchars($counts['Total Flights']); ?>)</a>
         <a href="see_reservations.php" class="button">Available Reservations (<?php echo htmlspecialchars($counts['Total Reservations']); ?>)</a>
