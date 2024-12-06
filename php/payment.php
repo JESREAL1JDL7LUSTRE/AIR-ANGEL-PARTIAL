@@ -6,29 +6,41 @@ $selectedFlight = $_SESSION['selected_flight'] ?? null;
 $numPassengers = $_SESSION['num_passengers'] ?? 0;
 $selectedAddons = $_SESSION['selected_addons'] ?? [];
 
-// Debugging: Print the contents of selected_flight to check the structure
-echo "<pre>";
-print_r($selectedFlight);
-echo "</pre>";
-
-// Error message if no flight selected
-if (!$selectedFlight) {
-    echo "Error: No flight selected. Please choose a flight first.";
-    exit(); 
-}
-
-// Initialize total price
-$totalPrice = 0;
-
 // Calculate total price
+$totalPrice = 0;
+$flightPrice = 0;
+
 if ($selectedFlight) {
-    // Assuming 'Amount' is the price of the selected flight
-    $totalPrice += $selectedFlight['Amount'] * $numPassengers;
+    // Multiply the flight price by the number of passengers
+    $flightPrice = $selectedFlight['Amount'] * $numPassengers;
+    $totalPrice += $flightPrice;
 }
 
 // Add price for each selected addon
 foreach ($selectedAddons as $addon) {
     $totalPrice += $addon['Price'];
+}
+
+// Handle form submission for payment
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $paymentMethod = $_POST['payment_method'] ?? null;
+
+    if ($paymentMethod === 'Card') {
+        $cardNumber = $_POST['card_number'] ?? '';
+        $expiryDate = $_POST['expiry_date'] ?? '';
+        $cvv = $_POST['cvv'] ?? '';
+
+        // Here you would typically process the card details with a payment gateway
+        echo "Card Payment submitted: $cardNumber, $expiryDate, $cvv";
+    } elseif ($paymentMethod === 'ECash') {
+        // Handle ECash payment
+        echo "ECash payment submitted.";
+    } elseif ($paymentMethod === 'Cash') {
+        // Handle Cash payment
+        echo "Cash payment submitted.";
+    } else {
+        echo "Error: Please select a payment method.";
+    }
 }
 ?>
 
@@ -38,6 +50,25 @@ foreach ($selectedAddons as $addon) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Summary</title>
+    <script>
+        function toggleCashPay() {
+            document.getElementById('cash_payment').style.display = 'block';
+            document.getElementById('ecash_payment').style.display = 'none';
+            document.getElementById('card_payment').style.display = 'none';
+        }
+
+        function toggleEcashPay() {
+            document.getElementById('ecash_payment').style.display = 'block';
+            document.getElementById('cash_payment').style.display = 'none';
+            document.getElementById('card_payment').style.display = 'none';
+        }
+
+        function toggleCardPay() {
+            document.getElementById('card_payment').style.display = 'block';
+            document.getElementById('cash_payment').style.display = 'none';
+            document.getElementById('ecash_payment').style.display = 'none';
+        }
+    </script>
 </head>
 <body>
 
@@ -45,11 +76,11 @@ foreach ($selectedAddons as $addon) {
 
 <h2>Flight Information</h2>
 <?php if ($selectedFlight): ?>
-    <p>Flight Number: <?php echo htmlspecialchars($selectedFlight['FlightNumber'] ?? 'N/A'); ?></p>
-    <p>Departure Date: <?php echo htmlspecialchars($selectedFlight['DepartureDate'] ?? 'N/A'); ?></p>
+    <p>Flight Number: <?php echo htmlspecialchars($selectedFlight['Flight_Number'] ?? 'N/A'); ?></p>
+    <p>Departure Date: <?php echo htmlspecialchars($selectedFlight['Departure_Date'] ?? 'N/A'); ?></p>
     <p>Origin: <?php echo htmlspecialchars($selectedFlight['Origin'] ?? 'N/A'); ?></p>
     <p>Destination: <?php echo htmlspecialchars($selectedFlight['Destination'] ?? 'N/A'); ?></p>
-    <p>Amount: $<?php echo number_format($selectedFlight['Amount'], 2); ?></p>
+    <p>Amount: $<?php echo number_format($selectedFlight['Amount'], 2); ?> per passenger</p>
 <?php else: ?>
     <p>No flight selected.</p>
 <?php endif; ?>
@@ -72,10 +103,36 @@ foreach ($selectedAddons as $addon) {
     <p>No add-ons selected.</p>
 <?php endif; ?>
 
-<h2>Total Price: $<?php echo number_format($totalPrice, 2); ?> USD</h2>
+<h2>Total Price</h2>
+<p>Flight Price (for <?php echo $numPassengers; ?> passengers): $<?php echo number_format($flightPrice, 2); ?></p>
+<?php if ($totalPrice > $flightPrice): ?>
+    <p>Add-ons: $<?php echo number_format($totalPrice - $flightPrice, 2); ?></p>
+<?php endif; ?>
+<h3>Total: $<?php echo number_format($totalPrice, 2); ?> USD</h3>
 
 <h2>Payment Methods</h2>
-<!-- Add payment methods or form here -->
+<form method="POST" action="confirm_booking.php">
+    <label><input type="radio" name="payment_method" value="Cash" onclick="toggleCashPay()" required> Cash</label><br>
+    <label><input type="radio" name="payment_method" value="ECash" onclick="toggleEcashPay()"> ECash</label><br>
+    <label><input type="radio" name="payment_method" value="Card" onclick="toggleCardPay()"> Card</label><br>
+
+    <div id="cash_payment" style="display: none;">
+        <h3>Pay at a branch</h3>
+        <p>Take the flight details and pay at a branch. Your reference ID is: 12345.</p>
+    </div>
+    <div id="ecash_payment" style="display: none;">
+        <h3>Here is the account number: 0963874825383</h3>
+    </div>
+    <div id="card_payment" style="display: none;">
+        <h3>Enter Card Details</h3>
+        <label>Card Number: <input type="text" name="card_number" required></label><br>
+        <label>Expiry Date: <input type="month" name="expiry_date" required></label><br>
+        <label>CVV: <input type="text" name="cvv" required></label>
+    </div>
+
+    <button type="submit">Submit Payment</button>
+</form>
+
 
 </body>
 </html>
