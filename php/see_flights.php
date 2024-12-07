@@ -18,19 +18,18 @@ $result = $conn->query($sql);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <a href="logout.php">Logout</a> <!-- Show Logout if logged in -->
+        <nav>
+            <ul>
+                <li><a href="admin.php">Home</a></li>
+                <li><a href="logout.php">Logout</a></li>
+            </ul>
+        </nav>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <script>
-        function goBack() {
-            window.location.href = 'admin.php';
-        }
-    </script>
 </head>
 <body>
     <h1>Welcome Admin!</h1>
-            <a href="admin.php">Home</a>
     <h2>All Users</h2>
     <table border="1">
         <tr>
@@ -64,6 +63,5 @@ $result = $conn->query($sql);
         <?php endif; ?>
     </table>
     <h2> </h2>
-    <button type="button" onclick="goBack()">Go Back</button>
 </body>
 </html>

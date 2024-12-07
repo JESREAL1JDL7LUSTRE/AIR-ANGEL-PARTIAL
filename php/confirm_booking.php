@@ -1,41 +1,50 @@
 <?php
-ob_start();  // Start output buffering to ensure no output before header()
 session_start();
+include('db.php'); // Include your database connection
 
-$is_logged_in = isset($_SESSION['Account_Email']) && !empty($_SESSION['Account_Email']);
-$available_flights = $_SESSION['available_flights'];
-$flight_details = $_SESSION['flight_details'] ?? null;
+// Retrieve data from session
+$selectedFlight = $_SESSION['selected_flight'] ?? null;
+$numPassengers = $_SESSION['num_passengers'] ?? 0;
+$selectedAddons = $_SESSION['selected_addons'] ?? [];
+$paymentMethod = $_SESSION['payment_method'] ?? null;
 
-// Process form submissions
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!isset($_POST['selected_flight']) && (!isset($_POST['selected_departure_flight']) || !isset($_POST['selected_return_flight']))) {
-        echo "<p>No flight selected. Please go back and select a flight.</p>";
-        exit();
-    }
+// Generate booking date
+$bookingDate = date('Y-m-d');
 
-    if (isset($_POST['selected_flight'])) {
-        foreach ($available_flights as $flight) {
-            if ($flight['Available_Flights_Number_ID'] == $_POST['selected_flight']) {
-                $_SESSION['flight_details'] = $flight;
-                $flight_details = $flight;
-                break;
-            }
-        }
+// Calculate total price
+$totalPrice = 0;
+$flightPrice = 0;
+
+if ($selectedFlight) {
+    $flightPrice = $selectedFlight['Amount'] * $numPassengers;
+    $totalPrice += $flightPrice;
+}
+
+foreach ($selectedAddons as $addon) {
+    $totalPrice += $addon['Price'];
+}
+
+// Insert reservation into the Reservation table
+$reservationID = $_SESSION['reservation_id'] ?? null;
+
+if (!$reservationID) {
+    $reservationQuery = "INSERT INTO Reservation (Booking_date) VALUES ('$bookingDate')";
+    if (mysqli_query($conn, $reservationQuery)) {
+        $reservationID = mysqli_insert_id($conn); // Fetch the newly created reservation ID
+        $_SESSION['reservation_id'] = $reservationID; // Save it in session
     } else {
-        $_SESSION['flight_details'] = [
-            'departure' => null,
-            'return' => null
-        ];
-        foreach ($available_flights as $flight) {
-            if ($flight['Available_Flights_Number_ID'] == $_POST['selected_departure_flight']) {
-                $_SESSION['flight_details']['departure'] = $flight;
-            }
-            if ($flight['Available_Flights_Number_ID'] == $_POST['selected_return_flight']) {
-                $_SESSION['flight_details']['return'] = $flight;
-            }
-        }
-        $flight_details = $_SESSION['flight_details'];
+        die("Database error: " . mysqli_error($conn));
     }
+}
+
+// Insert payment into Payment table, including Payment_Method_Name
+$paymentID = null;
+$paymentQuery = "INSERT INTO Payment (Payment_Amount, Payment_Date, Payment_Method_Name) 
+                 VALUES ('$totalPrice', '$bookingDate', '$paymentMethod')";
+if (mysqli_query($conn, $paymentQuery)) {
+    $paymentID = mysqli_insert_id($conn);
+} else {
+    die("Database error (Payment): " . mysqli_error($conn));
 }
 ?>
 
@@ -44,101 +53,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flight Booking</title>
-    <script>
-        function toggleCashPay() {
-            document.getElementById('cash_payment').style.display = 'block';
-            document.getElementById('ecash_payment').style.display = 'none';
-            document.getElementById('card_payment').style.display = 'none';
-        }
-
-        function toggleEcashPay() {
-            document.getElementById('ecash_payment').style.display = 'block';
-            document.getElementById('cash_payment').style.display = 'none';
-            document.getElementById('card_payment').style.display = 'none';
-        }
-
-        function toggleCardPay() {
-            document.getElementById('card_payment').style.display = 'block';
-            document.getElementById('cash_payment').style.display = 'none';
-            document.getElementById('ecash_payment').style.display = 'none';
-        }
-    </script>
+    <title>Booking Confirmation</title>
+    <style>
+        table { width: 50%; border-collapse: collapse; margin: 20px 0; }
+        table, th, td { border: 1px solid black; text-align: left; padding: 8px; }
+    </style>
 </head>
 <body>
-    <h1>Flight Booking System</h1>
-    <ul>
-    <?php if (!$is_logged_in): ?>
-        <li><a href="signin.php">Sign In</a></li>
-        <li><a href="signup.php">Sign Up</a></li>
-    <?php else: ?>
-        <li><a href="logout.php">Logout</a></li> <!-- Show Logout if logged in -->
-        <li><a href="account.php">Account</a></li>
-    <?php endif; ?>
-    </ul>
+<h1>Booking Confirmation</h1>
 
-    <?php if (!$flight_details): ?>
-        <h2>Select Your Flight</h2>
-        <form method="POST">
-            <h3>Departure Flights</h3>
-            <table border="1">
-                <tr>
-                    <th>Flight Number</th>
-                    <th>Origin</th>
-                    <th>Destination</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Amount</th>
-                    <th>Select</th>
-                </tr>
-                <?php foreach ($available_flights as $flight): ?>
-                    <?php if ($flight['Origin'] === $_SESSION['origin'] && $flight['Destination'] === $_SESSION['destination']): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($flight['Available_Flights_Number_ID']); ?></td>
-                            <td><?php echo htmlspecialchars($flight['Origin']); ?></td>
-                            <td><?php echo htmlspecialchars($flight['Destination']); ?></td>
-                            <td><?php echo htmlspecialchars($flight['Departure_Date']); ?></td>
-                            <td><?php echo htmlspecialchars($flight['Departure_Time']); ?></td>
-                            <td><?php echo htmlspecialchars($flight['Amount']); ?></td>
-                            <td><input type="radio" name="selected_flight" value="<?php echo $flight['Available_Flights_Number_ID']; ?>"></td>
-                        </tr>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            </table>
-            <button type="submit">Confirm Flight</button>
-        </form>
-    <?php else: ?>
-        <h2>Flight Details</h2>
-        <ul>
-            <li>Flight Number: <?php echo htmlspecialchars($flight_details['Available_Flights_Number_ID'] ?? ''); ?></li>
-            <li>Origin: <?php echo htmlspecialchars($flight_details['Origin']); ?></li>
-            <li>Destination: <?php echo htmlspecialchars($flight_details['Destination']); ?></li>
-            <li>Date: <?php echo htmlspecialchars($flight_details['Departure_Date']); ?></li>
-        </ul>
+<h2>Flight Information</h2>
+<?php if ($selectedFlight): ?>
+    <p><strong>Flight Number:</strong> <?php echo htmlspecialchars($selectedFlight['Flight_Number'] ?? 'N/A'); ?></p>
+    <p><strong>Departure Date:</strong> <?php echo htmlspecialchars($selectedFlight['Departure_Date'] ?? 'N/A'); ?></p>
+    <p><strong>Origin:</strong> <?php echo htmlspecialchars($selectedFlight['Origin'] ?? 'N/A'); ?></p>
+    <p><strong>Destination:</strong> <?php echo htmlspecialchars($selectedFlight['Destination'] ?? 'N/A'); ?></p>
+    <p><strong>Amount:</strong> $<?php echo number_format($selectedFlight['Amount'], 2); ?> per passenger</p>
+<?php else: ?>
+    <p>No flight selected.</p>
+<?php endif; ?>
 
-        <h2>Choose Payment Method</h2>
-        <form method="POST">
-            <label><input type="radio" name="payment_method" value="Cash" onclick="toggleCashPay()"> Cash</label><br>
-            <label><input type="radio" name="payment_method" value="ECash" onclick="toggleEcashPay()"> ECash</label><br>
-            <label><input type="radio" name="payment_method" value="Card" onclick="toggleCardPay()"> Card</label><br>
+<h2>Selected Add-ons</h2>
+<?php if (!empty($selectedAddons)): ?>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+        </tr>
+        <?php foreach ($selectedAddons as $addon): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($addon['Name']); ?></td>
+                <td>$<?php echo number_format($addon['Price'], 2); ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php else: ?>
+    <p>No add-ons selected.</p>
+<?php endif; ?>
 
-            <div id="cash_payment" style="display: none;">
-                <h3>Pay at a branch</h3>
-                <p>Take the flight details and pay at a branch. Your reference ID is: 12345.</p>
-            </div>
-            <div id="ecash_payment" style="display: none;">
-                <h3>Here is the account number:0963874825383</h3>
+<h2>Total Price</h2>
+<p><strong>Flight Price (for <?php echo $numPassengers; ?> passengers):</strong> $<?php echo number_format($flightPrice, 2); ?></p>
+<?php if ($totalPrice > $flightPrice): ?>
+    <p><strong>Add-ons:</strong> $<?php echo number_format($totalPrice - $flightPrice, 2); ?></p>
+<?php endif; ?>
+<p><strong>Total:</strong> $<?php echo number_format($totalPrice, 2); ?> USD</p>
 
-            </div>
-            <div id="card_payment" style="display: none;">
-                <h3>Enter Card Details</h3>
-                <label>Card Number: <input type="text" name="card_number"></label><br>
-                <label>Expiry Date: <input type="month" name="expiry_date"></label><br>
-                <label>CVV: <input type="text" name="cvv"></label>
-            </div>
+<h2>Payment Information</h2>
+<p><strong>Payment Method:</strong> <?php echo htmlspecialchars($paymentMethod); ?></p>
+<p><strong>Payment ID:</strong> <?php echo htmlspecialchars($paymentID); ?></p>
 
-            <button type="submit">Submit Payment</button>
-        </form>
-    <?php endif; ?>
+<h2>Reservation Details</h2>
+<p><strong>Reservation ID:</strong> <?php echo htmlspecialchars($reservationID); ?></p>
+<p><strong>Booking Date:</strong> <?php echo htmlspecialchars($bookingDate); ?></p>
+
 </body>
 </html>

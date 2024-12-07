@@ -92,13 +92,13 @@ $result = $conn->query($sql);
         </div>
         <nav>
             <ul>
+                <li><a href="admin.php">Home</a></li>
                 <li><a href="logout.php">Logout</a></li>
             </ul>
         </nav>
     </header>
 
     <h1>Welcome Admin!</h1>
-    <a href="admin.php">Home</a>
     <button onclick="toggleAdminForm()">Add Employee</button>
 
     <!-- Add Employee Form -->
