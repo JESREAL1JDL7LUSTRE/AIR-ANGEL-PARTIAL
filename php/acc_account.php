@@ -22,7 +22,7 @@ $user_result = $stmt->get_result();
 
 // Fetch booked flights and passenger details
 $sql_booked_flights = "
-SELECT 
+SELECT DISTINCT
     rta.Reservation_to_Account_ID AS Booking_ID,
     r.Reservation_ID,
     r.Payment_ID_FK AS Payment_ID,
@@ -47,7 +47,8 @@ SELECT
     pass.Passenger_Emgergency_Contact_No
 FROM reservation_to_account rta
 INNER JOIN reservation r ON rta.Reservation_ID_FK = r.Reservation_ID
-INNER JOIN available_flights af ON af.Available_Flights_Number_ID = af.Available_Flights_Number_ID
+INNER JOIN flight_to_reservation_to_passenger frp ON frp.Flight_to_Reservation_ID_FK = r.Reservation_ID
+INNER JOIN available_flights af ON af.Available_Flights_Number_ID = frp.Available_Flights_Number_ID_FK
 LEFT JOIN payment p ON r.Payment_ID_FK = p.Payment_ID
 LEFT JOIN reservation_to_passenger rtp ON r.Reservation_ID = rtp.Reservation_ID_FK
 LEFT JOIN passenger pass ON rtp.Passenger_ID_FK = pass.Passenger_ID
@@ -164,7 +165,7 @@ if (isset($_GET['delete'])) {
         <th>Passenger Nationality</th>
         <th>Passenger Email</th>
         <th>Passenger Phone</th>
-        <th>Emergency Contact</th>
+        <th>Reservation_ID</th>
         <th>Flight Number</th>
         <th>Departure Date</th>
         <th>Arrival Date</th>
@@ -187,7 +188,7 @@ if (isset($_GET['delete'])) {
                 <td><?php echo htmlspecialchars($row['Passenger_Nationality']); ?></td>
                 <td><?php echo htmlspecialchars($row['Passenger_Email']); ?></td>
                 <td><?php echo htmlspecialchars($row['Passenger_PhoneNumber']); ?></td>
-                <td><?php echo htmlspecialchars($row['Passenger_Emgergency_Contact_No']); ?></td>
+                <td><?php echo htmlspecialchars($row['Reservation_ID']); ?></td>
                 <td><?php echo htmlspecialchars($row['Flight_Number']); ?></td>
                 <td><?php echo htmlspecialchars($row['Departure_Date']); ?></td>
                 <td><?php echo htmlspecialchars($row['Arrival_Date']); ?></td>
