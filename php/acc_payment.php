@@ -86,6 +86,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
         $reservation_id = $stmt->insert_id; // Get the generated Reservation_ID
 
+        // Insert into flight_to_reservation_to_passenger table
+        $stmt = $conn->prepare("
+            INSERT INTO flight_to_reservation_to_passenger (Flight_to_Reservation_ID_FK, Available_Flights_Number_ID_FK) 
+            VALUES (?, ?)
+        ");
+
+        // Insert flight details into flight_to_reservation_to_passenger for each passenger
+        foreach ($passenger_ids as $passenger_id) {
+            $stmt->bind_param("ii", $reservation_id, $selectedFlight['Available_Flights_Number_ID']);
+            $stmt->execute();
+        }
+
         // Insert into Reservation_to_Account table to link reservation and account
         $stmt = $conn->prepare("
             INSERT INTO Reservation_to_Account (Reservation_ID_FK, Account_ID_FK) 
@@ -117,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 
 
 <!DOCTYPE html>

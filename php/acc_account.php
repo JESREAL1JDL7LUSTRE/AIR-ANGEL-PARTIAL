@@ -58,12 +58,34 @@ $stmt->bind_param("s", $user_email);
 $stmt->execute();
 $user_result = $stmt->get_result();
 
-// Fetch user's booked flights
-$sql_booked_flights = "SELECT * FROM Flight_to_Reservation_to_Passenger WHERE FRP_Number_ID = ?";
-$stmt = $conn->prepare($sql_booked_flights);
-$stmt->bind_param("s", $user_email);
-$stmt->execute();
-$flights_result = $stmt->get_result();
+// Fetch booked flights for the logged-in user
+$sql_booked_flights = "
+SELECT 
+    rta.Reservation_to_Account_ID AS Booking_ID,
+    r.Reservation_ID,
+    r.Payment_ID_FK AS Payment_ID,
+    af.Flight_Number,
+    af.Departure_Date,
+    af.Arrival_Date,
+    af.Origin,
+    af.Destination,
+    af.Departure_Time,
+    af.Arrival_Time,
+    af.Amount,
+    p.Payment_Amount,
+    p.Payment_Date,
+    p.Payment_Method_Name
+FROM reservation_to_account rta
+INNER JOIN reservation r ON rta.Reservation_ID_FK = r.Reservation_ID
+INNER JOIN available_flights af ON af.Available_Flights_Number_ID = af.Available_Flights_Number_ID
+LEFT JOIN payment p ON r.Payment_ID_FK = p.Payment_ID
+WHERE rta.Account_ID_FK = (SELECT Account_ID FROM Account WHERE Account_Email = ?)";
+
+// Prepare the query to fetch booked flights
+$stmt_flights = $conn->prepare($sql_booked_flights);
+$stmt_flights->bind_param("s", $user_email);
+$stmt_flights->execute();
+$flights_result = $stmt_flights->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -84,7 +106,8 @@ $flights_result = $stmt->get_result();
     </ul>
 
     <h2>Welcome User!</h2>
-
+    
+    <!-- User Information Form -->
     <h3>User Information</h3>
     <form method="POST">
         <table border="1">
@@ -147,13 +170,17 @@ $flights_result = $stmt->get_result();
             <th>Departure Time</th>
             <th>Arrival Time</th>
             <th>Amount</th>
+            <th>Payment ID</th>
+            <th>Payment Method</th>
+            <th>Reservation ID</th>
+            <th>Payment Date</th>
         </tr>
 
         <?php if ($flights_result && $flights_result->num_rows > 0): ?>
             <?php while ($row = $flights_result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($row['FRP_Number_ID']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Flights_Number']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Booking_ID']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Flight_Number']); ?></td>
                     <td><?php echo htmlspecialchars($row['Departure_Date']); ?></td>
                     <td><?php echo htmlspecialchars($row['Arrival_Date']); ?></td>
                     <td><?php echo htmlspecialchars($row['Origin']); ?></td>
@@ -161,11 +188,15 @@ $flights_result = $stmt->get_result();
                     <td><?php echo htmlspecialchars($row['Departure_Time']); ?></td>
                     <td><?php echo htmlspecialchars($row['Arrival_Time']); ?></td>
                     <td><?php echo htmlspecialchars($row['Amount']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Payment_ID']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Payment_Method_Name']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Reservation_ID']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Payment_Date']); ?></td>
                 </tr>
             <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="9">No booked flights found.</td>
+                <td colspan="13">No booked flights found.</td>
             </tr>
         <?php endif; ?>
     </table>
