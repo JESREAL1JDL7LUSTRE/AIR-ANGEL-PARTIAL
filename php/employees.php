@@ -64,10 +64,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Fetch all employees for display
-$sql = "SELECT * FROM Employees";
-$result = $conn->query($sql);
+// Search functionality
+$searchQuery = '';
+if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
+    $search = '%' . $conn->real_escape_string(trim($_GET['search'])) . '%';
+    $searchQuery = "WHERE Employee_First_Name LIKE '$search' OR 
+                           Employee_Last_Name LIKE '$search' OR 
+                           Employee_Email LIKE '$search' OR 
+                           Department LIKE '$search'";
+}
 
+$sql = "SELECT * FROM Employees $searchQuery";
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -92,13 +100,13 @@ $result = $conn->query($sql);
         </div>
         <nav>
             <ul>
+                <li><a href="admin.php">Home</a></li>
                 <li><a href="logout.php">Logout</a></li>
             </ul>
         </nav>
     </header>
 
     <h1>Welcome Admin!</h1>
-    <a href="admin.php">Home</a>
     <button onclick="toggleAdminForm()">Add Employee</button>
 
     <!-- Add Employee Form -->
@@ -123,6 +131,14 @@ $result = $conn->query($sql);
     </div>
 
     <h2>All Employees</h2>
+
+    <!-- Search Bar -->
+    <form method="GET" action="">
+        <input type="text" name="search" placeholder="Search employees by name, email, or department" 
+               value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+        <button type="submit">Search</button>
+    </form>
+
     <table border="1">
         <tr>
             <th>ID</th>

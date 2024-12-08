@@ -49,10 +49,6 @@ $sql_create_tables = [
         Saved_Detail_Birthday DATE NOT NULL,
         Saved_Detail_Phone_Number VARCHAR(11) NOT NULL
     )",
-    "CREATE TABLE IF NOT EXISTS Payment_Method (
-        Payment_Method_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
-        Payment_Method_Name VARCHAR(20) NOT NULL
-    )",
     "CREATE TABLE IF NOT EXISTS Account_to_Passenger (
         Account_to_Passenger_ID INT(10) AUTO_INCREMENT PRIMARY KEY
     )",
@@ -65,7 +61,8 @@ $sql_create_tables = [
     "CREATE TABLE IF NOT EXISTS Payment (
         Payment_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
         Payment_Amount DECIMAL(10,2) NOT NULL,
-        Payment_Date DATE NOT NULL
+        Payment_Date DATE NOT NULL,
+        Payment_Method_Name VARCHAR(20) NOT NULL
     )",
     "CREATE TABLE IF NOT EXISTS Passenger (
         Passenger_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
@@ -81,7 +78,6 @@ $sql_create_tables = [
     "CREATE TABLE IF NOT EXISTS Reservation (
         Reservation_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
         Booking_date DATE NOT NULL
-
     )",
     "CREATE TABLE IF NOT EXISTS Baggage (
         Baggage_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
@@ -126,7 +122,7 @@ $sql_create_tables = [
         Employee_Address VARCHAR(50) NOT NULL,
         Employee_PhoneNumber VARCHAR(11) NOT NULL,
         Employee_Emergency_Contact_No VARCHAR(11) NOT NULL,
-        Employee_Salary DECIMAL(50) NOT NULL,
+        Employee_Salary DECIMAL(50,2) NOT NULL,
         Employee_Health_Insurance VARCHAR(50) NOT NULL,
         Employee_Email VARCHAR(50) NOT NULL
         
@@ -134,8 +130,7 @@ $sql_create_tables = [
     "CREATE TABLE IF NOT EXISTS Seat_Selector (
         Seat_Selector_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
         Seat_Selector_Number VARCHAR(10) NOT NULL,
-        Price DECIMAL(10,2) NOT NULL,
-        Seat_Type VARCHAR(20) NOT NULL
+        Price DECIMAL(10,2) NOT NULL
     )",
     "CREATE TABLE IF NOT EXISTS Food (
         Food_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
@@ -196,11 +191,6 @@ $sql_add_foreign_keys = [
     "ALTER TABLE Saved_Detail_in_Account ADD INDEX (Saved_Detail_ID_FK)",
     "ALTER TABLE Saved_Detail_in_Account ADD FOREIGN KEY (Account_ID_FK) REFERENCES Account(Account_ID)",
     "ALTER TABLE Saved_Detail_in_Account ADD FOREIGN KEY (Saved_Detail_ID_FK) REFERENCES Saved_Detail(Saved_Detail_ID)",
-
-    // Payment Table
-    "ALTER TABLE Payment ADD COLUMN Payment_Method_ID_FK INT(10)",
-    "ALTER TABLE Payment ADD INDEX (Payment_Method_ID_FK)",
-    "ALTER TABLE Payment ADD FOREIGN KEY (Payment_Method_ID_FK) REFERENCES Payment_Method(Payment_Method_ID)",
 
     // Reservation Table
     "ALTER TABLE Reservation ADD COLUMN Payment_ID_FK INT(10)",

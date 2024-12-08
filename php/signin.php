@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (password_verify($Password, $user['Password'])) {
                     $_SESSION['Account_Email'] = $user['Account_Email'];
                     $_SESSION['Account_ID'] = $user['Account_ID'];
-                    header('Location: user_dashboard.php'); // Redirect to user dashboard
+                    header('Location: acc_dashboard.php'); // Redirect to user dashboard
                     exit;
                 } else {
                     $error = "Invalid email or password.";
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Sign In</title>
     <script>
         function goBack() {
-            window.location.href = 'index.php';
+            window.history.back();
         }
 
         // Function to toggle password visibility
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         <nav>
             <ul>
-                <li><a href="index.php">Home</a></li>
+                <li><a href="noacc_dashboard.php">Home</a></li>
                 <li><a href="about.php">About</a></li>
                 <li><a href="contact.php">Contact</a></li>
             </ul>

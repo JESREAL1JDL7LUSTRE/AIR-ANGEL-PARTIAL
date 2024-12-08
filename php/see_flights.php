@@ -9,32 +9,82 @@ if (!isset($_SESSION['Is_Admin']) || $_SESSION['Is_Admin'] !== 1) {
     exit;
 }
 
+// Handle flight updates
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_SESSION['Account_Email'])) {
+        // Handle update logic here (as in your code)
+    }
+}
 
-// Fetch all users from the database
-$sql = "SELECT Available_Flights_Number_ID, Departure_Date, Arrival_Date, Origin, Destination, Departure_Time, Arrival_Time, Amount FROM Available_Flights";
-$result = $conn->query($sql);
+// Handle flight deletion
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete') {
+    // Handle delete logic here (as in your code)
+}
+
+// Fetch flights with optional search functionality
+$search_query = "";
+if (isset($_GET['search'])) {
+    $search_query = $_GET['search'];
+}
+
+$sql = "
+    SELECT 
+        Available_Flights_Number_ID, 
+        Flight_Number, 
+        Departure_Date, 
+        Arrival_Date, 
+        Origin, 
+        Destination, 
+        Departure_Time, 
+        Arrival_Time, 
+        Amount 
+    FROM Available_Flights
+    WHERE 
+        Flight_Number LIKE ? OR 
+        Departure_Date LIKE ? OR 
+        Arrival_Date LIKE ? OR 
+        Origin LIKE ? OR 
+        Destination LIKE ?
+";
+
+$stmt = $conn->prepare($sql);
+$search_term = '%' . $search_query . '%';
+$stmt->bind_param('sssss', $search_term, $search_term, $search_term, $search_term, $search_term);
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <a href="logout.php">Logout</a> <!-- Show Logout if logged in -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <script>
-        function goBack() {
-            window.location.href = 'admin.php';
-        }
-    </script>
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="admin.php">Home</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        </ul>
+    </nav>
     <h1>Welcome Admin!</h1>
-            <a href="admin.php">Home</a>
-    <h2>All Users</h2>
+    <h2>All Available Flights</h2>
+
+    <!-- Search Bar -->
+    <form method="GET" action="">
+        <input 
+            type="text" 
+            name="search" 
+            placeholder="Search by Flight Number, Origin, Destination..." 
+            value="<?php echo htmlspecialchars($search_query); ?>">
+        <button type="submit">Search</button>
+    </form>
+
     <table border="1">
         <tr>
             <th>Available_Flights_Number_ID</th>
+            <th>Flight_Number</th>
             <th>Departure_Date</th>
             <th>Arrival_Date</th>
             <th>Origin</th>
@@ -42,28 +92,52 @@ $result = $conn->query($sql);
             <th>Departure_Time</th>
             <th>Arrival_Time</th>
             <th>Amount</th>
+            <th>Actions</th>
         </tr>
 
         <?php if ($result && $result->num_rows > 0): ?>
             <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($row['Available_Flights_Number_ID']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Departure_Date']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Arrival_Date']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Origin']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Destination']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Departure_Time']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Arrival_Time']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Amount']); ?></td>
+                    <form method="POST" action="">
+                        <td><?php echo htmlspecialchars($row['Available_Flights_Number_ID']); ?></td>
+                        <td><input type="text" name="Flight_Number" value="<?php echo htmlspecialchars($row['Flight_Number']); ?>" required class="view-only" readonly></td>
+                        <td><input type="date" name="Departure_Date" value="<?php echo htmlspecialchars($row['Departure_Date']); ?>" required class="view-only" readonly></td>
+                        <td><input type="date" name="Arrival_Date" value="<?php echo htmlspecialchars($row['Arrival_Date']); ?>" class="view-only" readonly></td>
+                        <td><input type="text" name="Origin" value="<?php echo htmlspecialchars($row['Origin']); ?>" required class="view-only" readonly></td>
+                        <td><input type="text" name="Destination" value="<?php echo htmlspecialchars($row['Destination']); ?>" class="view-only" readonly></td>
+                        <td><input type="time" name="Departure_Time" value="<?php echo htmlspecialchars($row['Departure_Time']); ?>" required class="view-only" readonly></td>
+                        <td><input type="time" name="Arrival_Time" value="<?php echo htmlspecialchars($row['Arrival_Time']); ?>" class="view-only" readonly></td>
+                        <td><input type="text" name="Amount" value="<?php echo htmlspecialchars($row['Amount']); ?>" class="view-only" readonly></td>
+                        <td>
+                            <input type="hidden" name="Available_Flights_Number_ID" value="<?php echo $row['Available_Flights_Number_ID']; ?>">
+                            <button type="button" class="editButton">Edit</button>
+                            <button type="submit" class="saveButton" style="display: none;">Save</button>
+                            <button type="submit" name="action" value="delete" onclick="return confirm('Are you sure you want to delete this flight?')">Delete</button>
+                        </td>
+                    </form>
                 </tr>
             <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="6">No users found.</td>
+                <td colspan="10">No flights found.</td>
             </tr>
         <?php endif; ?>
     </table>
-    <h2> </h2>
-    <button type="button" onclick="goBack()">Go Back</button>
+
+    <script>
+        const editButtons = document.querySelectorAll('.editButton');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const inputs = row.querySelectorAll('.view-only');
+                inputs.forEach(input => {
+                    input.removeAttribute('readonly');
+                    input.classList.add('editable');
+                });
+                row.querySelector('.saveButton').style.display = 'inline-block';
+                this.style.display = 'none';
+            });
+        });
+    </script>
 </body>
 </html>

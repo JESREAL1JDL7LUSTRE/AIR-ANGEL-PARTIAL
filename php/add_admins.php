@@ -47,9 +47,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Fetch all users for display
-$sql = "SELECT * FROM Account WHERE Is_Admin = 1";
+// Search functionality
+$searchQuery = '';
+if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
+    $search = '%' . $conn->real_escape_string(trim($_GET['search'])) . '%';
+    // Use 'AND' to combine the existing WHERE clause with the search condition
+    $searchQuery = " AND (Account_First_Name LIKE '$search' OR 
+                          Account_Last_Name LIKE '$search' OR 
+                          Account_Email LIKE '$search')";
+}
+
+// Fetch all users for display with optional search query
+$sql = "SELECT * FROM Account WHERE Is_Admin = 1"; // Default query for admin accounts
+if (!empty($searchQuery)) {
+    $sql .= $searchQuery; // Append search query if search term exists
+}
+
 $result = $conn->query($sql);
+
+// Handle deletion
+if (isset($_GET['delete'])) {
+    $accountIdToDelete = $_GET['delete'];
+    // Delete the user from the database
+    $deleteSql = "DELETE FROM Account WHERE Account_ID = ?";
+    $deleteStmt = $conn->prepare($deleteSql);
+    $deleteStmt->bind_param("i", $accountIdToDelete);
+    if ($deleteStmt->execute()) {
+        echo "User deleted successfully!";
+        header("Location: add_admins.php"); // Redirect after deletion
+        exit();
+    } else {
+        echo "Error deleting user: " . $deleteStmt->error;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -57,12 +87,8 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
+    <title>Admin Dashboard</title>
     <script>
-        function goBack() {
-            window.location.href = 'index.php';
-        }
-
         function togglePassword() {
             var password = document.getElementById("password");
             var confirmPassword = document.getElementById("confirmPassword");
@@ -89,6 +115,7 @@ $result = $conn->query($sql);
             }
         }
     </script>
+
     <link rel="stylesheet" href="/ANGEL/styles/signup.css">
 </head>
 <body>
@@ -98,73 +125,88 @@ $result = $conn->query($sql);
         </div>
         <nav>
             <ul>
+                <li><a href="admin.php">Home</a></li>
                 <li><a href="logout.php">Logout</a></li>
             </ul>
         </nav>
     </header>
  
-        <h1>Welcome Admin!</h1>
-        <a href="admin.php">Home</a>
-        <nav><button type="button" onclick="toggleAdminForm()">Add Admin</button></nav>
+    <h1>Welcome Admin!</h1>
+        
+    <nav><button type="button" onclick="toggleAdminForm()">Add Admin</button></nav>
 
-        <!-- Admin Signup Form (Initially Hidden) -->
-        <div id="adminSignupForm" style="display:none;">
-            <h2>Create an Admin Account</h2>
-            <form method="POST">
-                <label for="firstName">First Name:</label><br>
-                <input type="text" id="firstName" name="First_Name" required><br>
+    <!-- Admin Signup Form (Initially Hidden) -->
+    <div id="adminSignupForm" style="display:none;">
+        <h2>Create an Admin Account</h2>
+        <form method="POST">
+            <label for="firstName">First Name:</label><br>
+            <input type="text" id="firstName" name="First_Name" required><br>
 
-                <label for="lastName">Last Name:</label><br>
-                <input type="text" id="lastName" name="Last_Name" required><br>
+            <label for="lastName">Last Name:</label><br>
+            <input type="text" id="lastName" name="Last_Name" required><br>
 
-                <label for="username">Username:</label><br>
-                <input type="text" id="username" name="Username" required><br>
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="Username" required><br>
 
-                <label for="phoneNumber">Phone Number:</label><br>
-                <input type="text" id="phoneNumber" name="Phone_Number" required><br>
+            <label for="phoneNumber">Phone Number:</label><br>
+            <input type="text" id="phoneNumber" name="Phone_Number" required><br>
 
-                <label for="email">Email:</label><br>
-                <input type="email" id="email" name="Email" required><br>
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="Email" required><br>
 
-                <label for="password">Password:</label><br>
-                <input type="password" id="password" name="Password" required><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="Password" required><br>
 
-                <label for="confirmPassword">Confirm Password:</label><br>
-                <input type="password" id="confirmPassword" name="Confirm_Password" required><br>
+            <label for="confirmPassword">Confirm Password:</label><br>
+            <input type="password" id="confirmPassword" name="Confirm_Password" required><br>
 
-                <button type="button" id="togglePasswordBtn" onclick="togglePassword()">Show Password</button><br><br>
+            <button type="button" id="togglePasswordBtn" onclick="togglePassword()">Show Password</button><br><br>
 
-                <button type="submit">Add Admin</button>
-            </form>
-        </div>
+            <button type="submit">Add Admin</button>
+        </form>
+    </div>
 
-        <h2>All Users</h2>
-        <table border="1">
-            <tr>
-                <th>ID</th>
-                <th>Last Name</th>
-                <th>First Name</th>
-                <th>Email</th>
-                <th>Phone Number</th>
-                <th>Username</th>
-            </tr>
+    <h2>All Users</h2>
 
-            <?php if ($result && $result->num_rows > 0): ?>
-                <?php while ($row = $result->fetch_assoc()): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($row['Account_ID']); ?></td>
-                        <td><?php echo htmlspecialchars($row['Account_Last_Name']); ?></td>
-                        <td><?php echo htmlspecialchars($row['Account_First_Name']); ?></td>
-                        <td><?php echo htmlspecialchars($row['Account_Email']); ?></td>
-                        <td><?php echo htmlspecialchars($row['Account_PhoneNumber']); ?></td>
-                        <td><?php echo htmlspecialchars($row['Username']); ?></td>
-                    </tr>
-                <?php endwhile; ?>
-            <?php else: ?>
+    <!-- Search Bar -->
+    <form method="GET" action="">
+        <input type="text" name="search" placeholder="Search by name or email" 
+               value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Users Table -->
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Username</th>
+            <th>Action</th>
+        </tr>
+
+        <?php if ($result && $result->num_rows > 0): ?>
+            <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td colspan="6">No users found.</td>
+                    <td><?php echo htmlspecialchars($row['Account_ID']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Account_Last_Name']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Account_First_Name']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Account_Email']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Account_PhoneNumber']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Username']); ?></td>
+                    <td>
+                        <!-- Delete Button -->
+                        <a href="?delete=<?php echo $row['Account_ID']; ?>" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                    </td>
                 </tr>
-            <?php endif; ?>
-        </table>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="7">No users found.</td>
+            </tr>
+        <?php endif; ?>
+    </table>
 </body>
 </html>

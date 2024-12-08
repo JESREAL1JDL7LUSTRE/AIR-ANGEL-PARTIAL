@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         <nav>
             <ul>
-                <li><a href="index.php">Home</a></li>
+                <li><a href="noacc_dashboard.php">Home</a></li>
                 <li><a href="about.php">About</a></li>
                 <li><a href="contact.php">Contact</a></li>
             </ul>
