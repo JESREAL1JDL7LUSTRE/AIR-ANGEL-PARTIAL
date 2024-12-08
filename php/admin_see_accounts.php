@@ -9,6 +9,24 @@ if (!isset($_SESSION['Is_Admin']) || $_SESSION['Is_Admin'] !== 1) {
     exit;
 }
 
+// Check if delete request is made
+if (isset($_POST['delete'])) {
+    $account_id = $_POST['Account_ID'];
+    
+    // Prepare the delete query
+    $deleteSql = "DELETE FROM Account WHERE Account_ID = ?";
+    $stmt = $conn->prepare($deleteSql);
+    $stmt->bind_param("i", $account_id);
+    
+    // Execute the delete query
+    if ($stmt->execute()) {
+        header("Location: admin_see_accounts.php"); // Redirect to refresh the page after deletion
+        exit();
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+}
+
 // Search functionality
 $searchQuery = '';
 if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
@@ -57,6 +75,7 @@ $result = $conn->query($sql);
             <th>Email</th>
             <th>Phone Number</th>
             <th>Username</th>
+            <th>Actions</th>
         </tr>
 
         <?php if ($result && $result->num_rows > 0): ?>
@@ -68,11 +87,18 @@ $result = $conn->query($sql);
                     <td><?php echo htmlspecialchars($row['Account_Email']); ?></td>
                     <td><?php echo htmlspecialchars($row['Account_PhoneNumber']); ?></td>
                     <td><?php echo htmlspecialchars($row['Username']); ?></td>
+                    <td>
+                        <!-- Delete Form -->
+                        <form method="POST" action="">
+                            <input type="hidden" name="Account_ID" value="<?php echo htmlspecialchars($row['Account_ID']); ?>">
+                            <button type="submit" name="delete" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+                        </form>
+                    </td>
                 </tr>
             <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="6">No users found.</td>
+                <td colspan="7">No users found.</td>
             </tr>
         <?php endif; ?>
     </table>

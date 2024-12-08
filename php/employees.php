@@ -3,64 +3,85 @@ ob_start(); // Start output buffering
 session_start();
 include 'db.php'; // Include database connection
 
-// Check if the form is submitted
+// Check if the form is submitted to add an employee
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $Employee_Email = trim($_POST['Email']);
-    $Department = trim($_POST['Department']);
-    $Employee_First_Name = trim($_POST['First_Name']);
-    $Employee_Last_Name = trim($_POST['Last_Name']);
-    $Employee_Middle_Name = trim($_POST['Middle_Name']);
-    $Employee_Birthday = trim($_POST['Birthday']);
-    $Employee_Nationality = trim($_POST['Nationality']);
-    $Employee_Sex = trim($_POST['Sex']);
-    $Employee_Address = trim($_POST['Address']);
-    $Employee_Salary = trim($_POST['Salary']);
-    $Employee_Health_Insurance = trim($_POST['Health_Insurance']);
-    $Employee_PhoneNumber = trim($_POST['Phone_Number']);
-    $Employee_Emergency_Contact_No = trim($_POST['Emergency_Contact_No']);
+    // Adding new employee
+    if (isset($_POST['add_employee'])) {
+        $Employee_Email = trim($_POST['Email']);
+        $Department = trim($_POST['Department']);
+        $Employee_First_Name = trim($_POST['First_Name']);
+        $Employee_Last_Name = trim($_POST['Last_Name']);
+        $Employee_Middle_Name = trim($_POST['Middle_Name']);
+        $Employee_Birthday = trim($_POST['Birthday']);
+        $Employee_Nationality = trim($_POST['Nationality']);
+        $Employee_Sex = trim($_POST['Sex']);
+        $Employee_Address = trim($_POST['Address']);
+        $Employee_Salary = trim($_POST['Salary']);
+        $Employee_Health_Insurance = trim($_POST['Health_Insurance']);
+        $Employee_PhoneNumber = trim($_POST['Phone_Number']);
+        $Employee_Emergency_Contact_No = trim($_POST['Emergency_Contact_No']);
 
-    // Validate phone numbers
-    if (!is_numeric($Employee_PhoneNumber) || strlen($Employee_PhoneNumber) > 11) {
-        echo "Phone Number must be numeric and not exceed 11 digits.";
-        exit();
+        // Validate phone numbers
+        if (!is_numeric($Employee_PhoneNumber) || strlen($Employee_PhoneNumber) > 11) {
+            echo "Phone Number must be numeric and not exceed 11 digits.";
+            exit();
+        }
+        if (!is_numeric($Employee_Emergency_Contact_No) || strlen($Employee_Emergency_Contact_No) > 11) {
+            echo "Emergency Contact Number must be numeric and not exceed 11 digits.";
+            exit();
+        }
+
+        // Prepare SQL to insert a new employee into the database
+        $sql = "INSERT INTO Employees 
+            (Employee_Email, Department, Employee_Last_Name, Employee_First_Name, Employee_Middle_Name, Employee_Birthday, Employee_Nationality, Employee_Sex, Employee_Address, Employee_PhoneNumber, Employee_Emergency_Contact_No, Employee_Salary, Employee_Health_Insurance) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $stmt = $conn->prepare($sql);
+
+        // Bind the parameters to the query
+        $stmt->bind_param(
+            "ssssssssssdss",
+            $Employee_Email,
+            $Department,
+            $Employee_Last_Name,
+            $Employee_First_Name,
+            $Employee_Middle_Name,
+            $Employee_Birthday,
+            $Employee_Nationality,
+            $Employee_Sex,
+            $Employee_Address,
+            $Employee_PhoneNumber,
+            $Employee_Emergency_Contact_No,
+            $Employee_Salary,
+            $Employee_Health_Insurance
+        );
+
+        // Execute the statement
+        if ($stmt->execute()) {
+            echo "Employee added successfully!";
+            header("Location: employees.php"); // Redirect to admin page
+            exit();
+        } else {
+            echo "Error: " . $stmt->error;
+        }
     }
-    if (!is_numeric($Employee_Emergency_Contact_No) || strlen($Employee_Emergency_Contact_No) > 11) {
-        echo "Emergency Contact Number must be numeric and not exceed 11 digits.";
-        exit();
-    }
 
-    // Prepare SQL to insert a new employee into the database
-    $sql = "INSERT INTO Employees 
-        (Employee_Email, Department, Employee_Last_Name, Employee_First_Name, Employee_Middle_Name, Employee_Birthday, Employee_Nationality, Employee_Sex, Employee_Address, Employee_PhoneNumber, Employee_Emergency_Contact_No, Employee_Salary, Employee_Health_Insurance) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // Deleting an employee
+    if (isset($_POST['delete_employee'])) {
+        $Employee_ID = $_POST['Employee_ID'];
 
-    $stmt = $conn->prepare($sql);
+        // Prepare the SQL query to delete the employee
+        $deleteSql = "DELETE FROM Employees WHERE Employee_ID = ?";
+        $stmt = $conn->prepare($deleteSql);
+        $stmt->bind_param("i", $Employee_ID);
 
-    // Bind the parameters to the query
-    $stmt->bind_param(
-        "ssssssssssdss",
-        $Employee_Email,
-        $Department,
-        $Employee_Last_Name,
-        $Employee_First_Name,
-        $Employee_Middle_Name,
-        $Employee_Birthday,
-        $Employee_Nationality,
-        $Employee_Sex,
-        $Employee_Address,
-        $Employee_PhoneNumber,
-        $Employee_Emergency_Contact_No,
-        $Employee_Salary,
-        $Employee_Health_Insurance
-    );
-
-    // Execute the statement
-    if ($stmt->execute()) {
-        echo "Employee added successfully!";
-        header("Location: employees.php"); // Redirect to admin page
-        exit();
-    } else {
-        echo "Error: " . $stmt->error;
+        if ($stmt->execute()) {
+            echo "Employee deleted successfully!";
+            header("Location: employees.php"); // Redirect to refresh the page
+            exit();
+        } else {
+            echo "Error: " . $stmt->error;
+        }
     }
 }
 
@@ -126,7 +147,7 @@ $result = $conn->query($sql);
             <input type="text" name="Phone_Number" placeholder="Phone Number" maxlength="11" required>
             <input type="text" name="Emergency_Contact_No" placeholder="Emergency Contact Number" maxlength="11" required>
             <input type="text" name="Department" placeholder="Department" required>
-            <button type="submit">Add</button>
+            <button type="submit" name="add_employee">Add</button>
         </form>
     </div>
 
@@ -154,6 +175,7 @@ $result = $conn->query($sql);
             <th>Health Insurance</th>
             <th>Phone Number</th>
             <th>Emergency Contact No</th>
+            <th>Action</th>
         </tr>
         <?php if ($result->num_rows > 0): ?>
             <?php while ($row = $result->fetch_assoc()): ?>
@@ -171,11 +193,18 @@ $result = $conn->query($sql);
                     <td><?php echo htmlspecialchars($row['Employee_Health_Insurance']); ?></td>
                     <td><?php echo htmlspecialchars($row['Employee_PhoneNumber']); ?></td>
                     <td><?php echo htmlspecialchars($row['Employee_Emergency_Contact_No']); ?></td>
+                    <td>
+                        <!-- Delete Form -->
+                        <form method="POST" action="">
+                            <input type="hidden" name="Employee_ID" value="<?php echo htmlspecialchars($row['Employee_ID']); ?>">
+                            <button type="submit" name="delete_employee" onclick="return confirm('Are you sure you want to delete this employee?');">Delete</button>
+                        </form>
+                    </td>
                 </tr>
             <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="13">No employees found.</td>
+                <td colspan="14">No employees found.</td>
             </tr>
         <?php endif; ?>
     </table>
