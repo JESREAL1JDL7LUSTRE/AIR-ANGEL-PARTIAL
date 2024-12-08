@@ -1,5 +1,5 @@
 <?php
-ob_start();  // Start output buffering to ensure no output before header()
+ob_start();
 session_start();
 include('db.php'); // Include your database connection
 
@@ -13,44 +13,6 @@ if (!isset($_SESSION['Account_Email'])) {
 // Get logged-in user email
 $user_email = $_SESSION['Account_Email'];
 
-// Handle form submission to update user info
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_SESSION['Account_Email'])) {
-        // Get the updated data from the form
-        $first_name = $_POST['Account_First_Name'];
-        $last_name = $_POST['Account_Last_Name'];
-        $middle_name = $_POST['Account_Middle_Name'];
-        $email = $_POST['Account_Email'];
-        $phone_number = $_POST['Account_PhoneNumber'];
-        $username = $_POST['Username'];
-        $birthday = $_POST['Account_Birthday'];
-        $sex = $_POST['Account_Sex'];
-        $account_id = $_POST['Account_ID']; // Ensure Account_ID is passed for the update
-
-        // Prepare the SQL query to update the account info
-        $sql_update = "UPDATE Account 
-                        SET Account_First_Name = ?, 
-                            Account_Last_Name = ?, 
-                            Account_Email = ?, 
-                            Account_PhoneNumber = ?, 
-                            Username = ?, 
-                            Account_Middle_Name = ?, 
-                            Account_Birthday = ?, 
-                            Account_Sex = ? 
-                        WHERE Account_ID = ?";
-
-        $stmt = $conn->prepare($sql_update);
-        $stmt->bind_param("ssssssssi", $first_name, $last_name, $email, $phone_number, $username, $middle_name, $birthday, $sex, $account_id);
-
-        // Execute the update query
-        if ($stmt->execute()) {
-            echo "<script>alert('Account updated successfully!');</script>";
-        } else {
-            echo "<script>alert('Error updating account!');</script>";
-        }
-    }
-}
-
 // Fetch user account information from the database
 $sql_user_info = "SELECT * FROM Account WHERE Account_Email = ?";
 $stmt = $conn->prepare($sql_user_info);
@@ -58,7 +20,7 @@ $stmt->bind_param("s", $user_email);
 $stmt->execute();
 $user_result = $stmt->get_result();
 
-// Fetch booked flights for the logged-in user
+// Fetch booked flights and passenger details
 $sql_booked_flights = "
 SELECT 
     rta.Reservation_to_Account_ID AS Booking_ID,
@@ -74,18 +36,54 @@ SELECT
     af.Amount,
     p.Payment_Amount,
     p.Payment_Date,
-    p.Payment_Method_Name
+    p.Payment_Method_Name,
+    pass.Passenger_Last_Name,
+    pass.Passenger_First_Name,
+    pass.Passenger_Middle_Name,
+    pass.Passenger_Birthday,
+    pass.Passenger_Nationality,
+    pass.Passenger_Email,
+    pass.Passenger_PhoneNumber,
+    pass.Passenger_Emgergency_Contact_No
 FROM reservation_to_account rta
 INNER JOIN reservation r ON rta.Reservation_ID_FK = r.Reservation_ID
 INNER JOIN available_flights af ON af.Available_Flights_Number_ID = af.Available_Flights_Number_ID
 LEFT JOIN payment p ON r.Payment_ID_FK = p.Payment_ID
+LEFT JOIN reservation_to_passenger rtp ON r.Reservation_ID = rtp.Reservation_ID_FK
+LEFT JOIN passenger pass ON rtp.Passenger_ID_FK = pass.Passenger_ID
 WHERE rta.Account_ID_FK = (SELECT Account_ID FROM Account WHERE Account_Email = ?)";
 
-// Prepare the query to fetch booked flights
 $stmt_flights = $conn->prepare($sql_booked_flights);
 $stmt_flights->bind_param("s", $user_email);
 $stmt_flights->execute();
 $flights_result = $stmt_flights->get_result();
+
+// Check if a delete request has been made
+if (isset($_GET['delete'])) {
+    $delete_reservation_id = $_GET['delete'];
+
+    // Delete the record from reservation_to_passenger (if applicable)
+    $sql_delete_passenger = "DELETE FROM reservation_to_passenger WHERE Reservation_ID_FK IN (SELECT Reservation_ID_FK FROM reservation_to_account WHERE Reservation_to_Account_ID = ?)";
+    $stmt_delete_passenger = $conn->prepare($sql_delete_passenger);
+    $stmt_delete_passenger->bind_param("i", $delete_reservation_id);
+    $stmt_delete_passenger->execute();
+
+    // Delete the record from reservation_to_account
+    $sql_delete_account = "DELETE FROM reservation_to_account WHERE Reservation_to_Account_ID = ?";
+    $stmt_delete_account = $conn->prepare($sql_delete_account);
+    $stmt_delete_account->bind_param("i", $delete_reservation_id);
+    
+    if ($stmt_delete_account->execute()) {
+        echo "Booking deleted successfully.";
+        // Redirect to avoid resubmission of the form
+        header("Location: acc_account.php");
+        exit();
+    } else {
+        echo "Error deleting record: " . $conn->error;
+    }
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -159,47 +157,66 @@ $flights_result = $stmt_flights->get_result();
     </form>
 
     <h4>Booked Flights</h4>
-    <table border="1">
-        <tr>
-            <th>Booking ID</th>
-            <th>Flight Number</th>
-            <th>Departure Date</th>
-            <th>Arrival Date</th>
-            <th>Origin</th>
-            <th>Destination</th>
-            <th>Departure Time</th>
-            <th>Arrival Time</th>
-            <th>Amount</th>
-            <th>Payment ID</th>
-            <th>Payment Method</th>
-            <th>Reservation ID</th>
-            <th>Payment Date</th>
-        </tr>
+<table border="1">
+    <tr>
+        <th>Booking ID</th>
+        <th>Passenger Name</th>
+        <th>Passenger Nationality</th>
+        <th>Passenger Email</th>
+        <th>Passenger Phone</th>
+        <th>Emergency Contact</th>
+        <th>Flight Number</th>
+        <th>Departure Date</th>
+        <th>Arrival Date</th>
+        <th>Origin</th>
+        <th>Destination</th>
+        <th>Departure Time</th>
+        <th>Arrival Time</th>
+        <th>Amount</th>
+        <th>Payment ID</th>
+        <th>Payment Date</th>
+        <th>Payment Method</th>
+        <th>Action</th>
+    </tr>
 
-        <?php if ($flights_result && $flights_result->num_rows > 0): ?>
-            <?php while ($row = $flights_result->fetch_assoc()): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($row['Booking_ID']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Flight_Number']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Departure_Date']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Arrival_Date']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Origin']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Destination']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Departure_Time']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Arrival_Time']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Amount']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Payment_ID']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Payment_Method_Name']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Reservation_ID']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Payment_Date']); ?></td>
-                </tr>
-            <?php endwhile; ?>
-        <?php else: ?>
+    <?php if ($flights_result && $flights_result->num_rows > 0): ?>
+        <?php while ($row = $flights_result->fetch_assoc()): ?>
             <tr>
-                <td colspan="13">No booked flights found.</td>
+                <td><?php echo htmlspecialchars($row['Booking_ID']); ?></td>
+                <td><?php echo htmlspecialchars($row['Passenger_First_Name'] . ' ' . $row['Passenger_Last_Name']); ?></td>
+                <td><?php echo htmlspecialchars($row['Passenger_Nationality']); ?></td>
+                <td><?php echo htmlspecialchars($row['Passenger_Email']); ?></td>
+                <td><?php echo htmlspecialchars($row['Passenger_PhoneNumber']); ?></td>
+                <td><?php echo htmlspecialchars($row['Passenger_Emgergency_Contact_No']); ?></td>
+                <td><?php echo htmlspecialchars($row['Flight_Number']); ?></td>
+                <td><?php echo htmlspecialchars($row['Departure_Date']); ?></td>
+                <td><?php echo htmlspecialchars($row['Arrival_Date']); ?></td>
+                <td><?php echo htmlspecialchars($row['Origin']); ?></td>
+                <td><?php echo htmlspecialchars($row['Destination']); ?></td>
+                <td><?php echo htmlspecialchars($row['Departure_Time']); ?></td>
+                <td><?php echo htmlspecialchars($row['Arrival_Time']); ?></td>
+                <td><?php echo htmlspecialchars($row['Amount']); ?></td>
+                <td><?php echo htmlspecialchars($row['Payment_ID']); ?></td>
+                <td><?php echo htmlspecialchars($row['Payment_Date']); ?></td>
+                <td><?php echo htmlspecialchars($row['Payment_Method_Name']); ?></td>
+                <td>
+                    <!-- Delete button with confirmation -->
+                    <a href="?delete=<?php echo $row['Booking_ID']; ?>" onclick="return confirm('Are you sure you want to delete this booking?');">
+                        <button type="button">Delete</button>
+                    </a>
+                </td>
+
+
+
             </tr>
-        <?php endif; ?>
-    </table>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <tr>
+            <td colspan="18">No booked flights found.</td>
+        </tr>
+    <?php endif; ?>
+</table>
+
 
     <script>
         document.getElementById('editButton').addEventListener('click', function() {
