@@ -3,13 +3,6 @@ ob_start();  // Start output buffering to ensure no output before header()
 session_start();  // Start the session to access session data
 include('db.php'); // Include your database connection
 
-// Ensure the user is logged in
-$is_logged_in = isset($_SESSION['Account_Email']) && !empty($_SESSION['Account_Email']);
-if (!isset($_SESSION['Account_Email'])) {
-    header("Location: signin.php");  // Redirect to sign-in page if not logged in
-    exit;
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Get values from the form and sanitize them
     $departure_date = $_POST['depart_date'];
@@ -46,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['flight_type'] = $flight_type;
 
         // Redirect to choose_flight.php after successful submission
-        header("Location: acc_choose_flight.php");
+        header("Location: noacc_choose_flight.php");
         exit();  // Ensure no further code is executed after redirection
     } else {
         // If no flights are found, display a message
@@ -111,14 +104,13 @@ if ($result->num_rows > 0) {
             </div>
             <nav>
                 <ul>
-                        <li><a href="logout.php">Logout</a></li>
-                        <li><a href="acc_account.php">Account</a></li>
-                        <li><a href="acc_dashboard.php">Home</a></li>
+                <li><a href="signin.php">Sign In</a></li>
+                <li><a href="signup.php">Sign Up</a></li>
+                <li><a href="noacc_dashboard.php">Home</a></li>
                 </ul>
             </nav>
         </div>
     </header>
-
 
     <main>
         <section class="booking-form-section">

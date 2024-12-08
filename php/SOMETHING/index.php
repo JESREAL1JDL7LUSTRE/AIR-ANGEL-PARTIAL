@@ -1,14 +1,11 @@
 <?php
 ob_start();  // Start output buffering to ensure no output before header()
 session_start();  // Start the session to access session data
-include('db.php'); // Include your database connection
+include 'db.php';  // Include the database connection
 
-// Ensure the user is logged in
+// Check if the user is logged in
 $is_logged_in = isset($_SESSION['Account_Email']) && !empty($_SESSION['Account_Email']);
-if (!isset($_SESSION['Account_Email'])) {
-    header("Location: signin.php");  // Redirect to sign-in page if not logged in
-    exit;
-}
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Get values from the form and sanitize them
@@ -46,26 +43,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['flight_type'] = $flight_type;
 
         // Redirect to choose_flight.php after successful submission
-        header("Location: acc_choose_flight.php");
+        header("Location: choose_flight.php");
         exit();  // Ensure no further code is executed after redirection
     } else {
         // If no flights are found, display a message
         echo "<p>No flights found matching your criteria.</p>";
     }
 }
-// Check if a search term is provided
-$search_term = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
+// Fetch all available flights from the database (no search criteria)
+$sql = "SELECT * FROM Available_Flights";
 
-// Modify the SQL query to filter based on the search term
-$sql = "SELECT * FROM Available_Flights WHERE 
-        Flight_Number LIKE ? OR 
-        Origin LIKE ? OR 
-        Destination LIKE ? OR 
-        Departure_Date LIKE ?";
-
-// Prepare and execute the query with the search term
+// Prepare and execute the query
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ssss", $search_term, $search_term, $search_term, $search_term);
 $stmt->execute();
 
 // Get the result of the query
@@ -73,12 +62,12 @@ $result = $stmt->get_result();
 $all_flights = [];
 
 if ($result->num_rows > 0) {
-    // Store all matching flights in an array
+    // Store all available flights in an array
     while ($row = $result->fetch_assoc()) {
         $all_flights[] = $row;
     }
 } else {
-    $all_flights = [];  // If no flights match, initialize as empty array
+    $all_flights = [];  // If no flights found, initialize as empty array
 }
 ?>
 
@@ -111,9 +100,13 @@ if ($result->num_rows > 0) {
             </div>
             <nav>
                 <ul>
+                    <?php if (!$is_logged_in): ?>
+                        <li><a href="signin.php">Sign In</a></li>
+                        <li><a href="signup.php">Sign Up</a></li>
+                    <?php else: ?>
                         <li><a href="logout.php">Logout</a></li>
-                        <li><a href="acc_account.php">Account</a></li>
-                        <li><a href="acc_dashboard.php">Home</a></li>
+                        <li><a href="account.php">Account</a></li>
+                    <?php endif; ?>
                 </ul>
             </nav>
         </div>
@@ -159,49 +152,40 @@ if ($result->num_rows > 0) {
 
         <!-- Display All Available Flights -->
         <section class="available-flights-section">
-    <h2>All Available Flights</h2>
-
-    <!-- Search Bar -->
-    <form method="GET" action="">
-        <label for="search">Search Flights:</label>
-        <input type="text" id="search" name="search" placeholder="Search by flight number, origin, destination..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-        <button type="submit">Search</button>
-    </form>
-
-    <?php if (count($all_flights) > 0): ?>
-        <table>
-            <thead>
-                <tr>
-                    <th>Flight Number</th>
-                    <th>Departure Date</th>
-                    <th>Arrival Date</th>
-                    <th>Origin</th>
-                    <th>Destination</th>
-                    <th>Departure Time</th>
-                    <th>Arrival Time</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($all_flights as $flight): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($flight['Flight_Number']); ?></td>
-                        <td><?php echo htmlspecialchars($flight['Departure_Date']); ?></td>
-                        <td><?php echo htmlspecialchars($flight['Arrival_Date']); ?></td>
-                        <td><?php echo htmlspecialchars($flight['Origin']); ?></td>
-                        <td><?php echo htmlspecialchars($flight['Destination']); ?></td>
-                        <td><?php echo htmlspecialchars($flight['Departure_Time']); ?></td>
-                        <td><?php echo htmlspecialchars($flight['Arrival_Time']); ?></td>
-                        <td><?php echo "$" . htmlspecialchars($flight['Amount']); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php else: ?>
-        <p>No flights match your search criteria.</p>
-    <?php endif; ?>
-</section>
-
+            <h2>All Available Flights</h2>
+            <?php if (count($all_flights) > 0): ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Flight Number</th>
+                            <th>Departure Date</th>
+                            <th>Arrival Date</th>
+                            <th>Origin</th>
+                            <th>Destination</th>
+                            <th>Departure Time</th>
+                            <th>Arrival Time</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($all_flights as $flight): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($flight['Flight_Number']); ?></td>
+                                <td><?php echo htmlspecialchars($flight['Departure_Date']); ?></td>
+                                <td><?php echo htmlspecialchars($flight['Arrival_Date']); ?></td>
+                                <td><?php echo htmlspecialchars($flight['Origin']); ?></td>
+                                <td><?php echo htmlspecialchars($flight['Destination']); ?></td>
+                                <td><?php echo htmlspecialchars($flight['Departure_Time']); ?></td>
+                                <td><?php echo htmlspecialchars($flight['Arrival_Time']); ?></td>
+                                <td><?php echo "$" . htmlspecialchars($flight['Amount']); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p>No flights available at the moment.</p>
+            <?php endif; ?>
+        </section>
     </main>
 </body>
 </html>

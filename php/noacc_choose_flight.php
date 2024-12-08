@@ -3,16 +3,10 @@ ob_start();  // Start output buffering to ensure no output before header()
 session_start();  // Start the session to access session data
 include('db.php'); // Include your database connection
 
-// Ensure the user is logged in
-if (!isset($_SESSION['Account_Email']) || empty($_SESSION['Account_Email'])) {
-    header("Location: signin.php");  // Redirect to sign-in page if not logged in
-    exit;
-}
-
 // Redirect to search if required session data is missing
 if (!isset($_SESSION['available_flights']) || empty($_SESSION['available_flights']) ||
     !isset($_SESSION['origin']) || !isset($_SESSION['destination'])) {
-    header("Location: acc_dashboard.php"); // Redirect to flight search page
+    header("Location: noacc_dashboard.php"); // Redirect to flight search page
     exit();
 }
 
@@ -25,7 +19,7 @@ $available_flights = $_SESSION['available_flights'];
 // Handle flight selection form submission
 if (isset($_POST['selected_flight'])) {
     $_SESSION['selected_flight_id'] = $_POST['selected_flight'];  // Store flight ID in session
-    header("Location: acc_passenger_info.php");  // Redirect to passengerinfo.php
+    header("Location: noacc_passenger_info.php");  // Redirect to passengerinfo.php
     exit;
 }
 
@@ -56,22 +50,23 @@ if (isset($_POST['selected_flight'])) {
 </head>
 <body>
 <header>
-    <div class="header-container">
-        <h1 class="site-title">AirAngel - Airline Reservation</h1>
-    </div>
-    <nav>
-        <ul>
-            <li><a href="logout.php">Logout</a></li>
-            <li><a href="acc_account.php">Account</a></li>
-            <li><a href="acc_dashboard.php">Home</a></li>
-        </ul>
-    </nav>
-</header>
+        <div class="header-container">
+                <h1 class="site-title">AirAngel - Airline Reservation</h1>
+            </div>
+            <nav>
+                <ul>
+                <li><a href="signin.php">Sign In</a></li>
+                <li><a href="signup.php">Sign Up</a></li>
+                <li><a href="noacc_dashboard.php">Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
 <div style="margin: 0 auto; width: 80%; padding: 20px; font-family: Arial, sans-serif;">
     <h1>Select Your Flight</h1>
 
-    <form method="POST" action="acc_choose_flight.php" onsubmit="return validateSelection();">
+    <form method="POST" action="noacc_choose_flight.php" onsubmit="return validateSelection();">
         <?php if ($flight_type == 'Round Trip'): ?>
             <h2>Departure Flight</h2>
             <table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">

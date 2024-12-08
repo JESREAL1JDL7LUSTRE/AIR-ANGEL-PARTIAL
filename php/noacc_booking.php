@@ -2,13 +2,6 @@
 session_start();
 include('db.php'); // Include your database connection
 
-// Ensure the user is logged in
-$is_logged_in = isset($_SESSION['Account_Email']) && !empty($_SESSION['Account_Email']);
-if (!isset($_SESSION['Account_Email'])) {
-    header("Location: signin.php");  // Redirect to sign-in page if not logged in
-    exit;
-}
-
 // Assuming that Reservation_ID and Payment_ID are stored in session or can be retrieved from URL
 $reservationID = $_SESSION['reservation_id'] ?? null; // Get reservation ID from session
 $paymentID = $_SESSION['payment_id'] ?? null; // Get payment ID from session
@@ -78,9 +71,9 @@ foreach ($selectedAddons as $addon) {
             </div>
             <nav>
                 <ul>
-                        <li><a href="logout.php">Logout</a></li>
-                        <li><a href="acc_account.php">Account</a></li>
-                        <li><a href="acc_dashboard.php">Home</a></li>
+                <li><a href="signin.php">Sign In</a></li>
+                <li><a href="signup.php">Sign Up</a></li>
+                <li><a href="noacc_dashboard.php">Home</a></li>
                 </ul>
             </nav>
         </div>
@@ -134,5 +127,5 @@ foreach ($selectedAddons as $addon) {
 <p><strong>Booking Date:</strong> <?php echo htmlspecialchars($reservation['Booking_date'] ?? 'N/A'); ?></p>
 
 </body>
-<button type="button" onclick="window.location.href='acc_eticket.php'">Print E-ticket</button>
+<button type="button" onclick="window.location.href='noacc_eticket.php'">Print E-ticket</button>
 </html>

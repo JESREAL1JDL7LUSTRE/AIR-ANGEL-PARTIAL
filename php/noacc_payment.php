@@ -29,18 +29,6 @@ $numPassengers = $_SESSION['num_passengers'] ?? 0;
 $selectedAddons = $_SESSION['selected_addons'] ?? [];
 $passenger_ids = $_SESSION['passenger_ids'] ?? []; // Array of Passenger IDs
 
-// Ensure the user is logged in and get account ID
-if (!isset($_SESSION['Account_Email'])) {
-    header("Location: signin.php");
-    exit;
-}
-
-// Fetch the user's Account_ID from the session
-$account_id = $_SESSION['Account_ID'] ?? null;
-if (!$account_id) {
-    die("Error: Account not found.");
-}
-
 // Calculate total price
 $totalPrice = 0;
 $flightPrice = 0;
@@ -86,14 +74,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
         $reservation_id = $stmt->insert_id; // Get the generated Reservation_ID
 
-        // Insert into Reservation_to_Account table to link reservation and account
-        $stmt = $conn->prepare("
-            INSERT INTO Reservation_to_Account (Reservation_ID_FK, Account_ID_FK) 
-            VALUES (?, ?)
-        ");
-        $stmt->bind_param("ii", $reservation_id, $account_id);
-        $stmt->execute();
-
         // Insert passengers into Reservation_to_Passenger table
         $stmt = $conn->prepare("
             INSERT INTO Reservation_to_Passenger (Passenger_ID_FK, Reservation_ID_FK) 
@@ -108,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Store reservation ID in session and redirect to confirmation page
         $_SESSION['reservation_id'] = $reservation_id;
-        header("Location: acc_booking.php"); // Redirect to booking confirmation page
+        header("Location: noacc_booking.php"); // Redirect to booking confirmation page
         exit;
 
     } catch (Exception $e) {
@@ -156,9 +136,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <nav>
                 <ul>
-                        <li><a href="logout.php">Logout</a></li>
-                        <li><a href="acc_account.php">Account</a></li>
-                        <li><a href="acc_dashboard.php">Home</a></li>
+                <li><a href="signin.php">Sign In</a></li>
+                <li><a href="signup.php">Sign Up</a></li>
+                <li><a href="noacc_dashboard.php">Home</a></li>
                 </ul>
             </nav>
         </div>

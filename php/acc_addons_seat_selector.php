@@ -46,6 +46,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     </style>
 </head>
 <body>
+<header>
+        <div class="header-container">
+                <h1 class="site-title">AirAngel - Airline Reservation</h1>
+            </div>
+            <nav>
+                <ul>
+                        <li><a href="logout.php">Logout</a></li>
+                        <li><a href="acc_account.php">Account</a></li>
+                        <li><a href="acc_dashboard.php">Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
 <h1>Select Seat Selector Add-ons</h1>
 

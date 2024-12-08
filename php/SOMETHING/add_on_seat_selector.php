@@ -2,8 +2,8 @@
 session_start();
 include 'db.php'; // Include the database connection
 
-// Fetch food items from the database
-$sql = "SELECT Food_ID, Food_Name, Price FROM Food";
+// Fetch seat selector items from the database
+$sql = "SELECT Seat_Selector_ID, Seat_Selector_Number, Price FROM Seat_Selector";
 $result = $conn->query($sql);
 
 $selectedAddons = isset($_SESSION['selected_addons']) ? $_SESSION['selected_addons'] : [];
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
         'ID' => $_POST['addon_id'],
         'Name' => $_POST['addon_name'],
         'Price' => $_POST['addon_price'],
-        'Type' => 'Food' // Set the add-on type as Food
+        'Type' => 'SeatSelector' // Set the add-on type as SeatSelector
     ];
 
     // Append the selected add-on to session array
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Food Add-ons</title>
+    <title>Select Seat Selector Add-ons</title>
     <style>
         table {
             width: 100%;
@@ -46,41 +46,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     </style>
 </head>
 <body>
-<header>
-        <div class="header-container">
-                <h1 class="site-title">AirAngel - Airline Reservation</h1>
-            </div>
-            <nav>
-                <ul>
-                        <li><a href="logout.php">Logout</a></li>
-                        <li><a href="acc_account.php">Account</a></li>
-                        <li><a href="acc_dashboard.php">Home</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
 
-<h1>Select Food Add-ons</h1>
+<h1>Select Seat Selector Add-ons</h1>
 
 <?php if ($result && $result->num_rows > 0): ?>
     <table>
         <tr>
             <th>ID</th>
-            <th>Food Name</th>
+            <th>Seat Selector Number</th>
             <th>Price</th>
             <th>Action</th>
         </tr>
         <?php while ($row = $result->fetch_assoc()): ?>
             <tr>
-                <td><?php echo htmlspecialchars($row['Food_ID']); ?></td>
-                <td><?php echo htmlspecialchars($row['Food_Name']); ?></td>
+                <td><?php echo htmlspecialchars($row['Seat_Selector_ID']); ?></td>
+                <td><?php echo htmlspecialchars($row['Seat_Selector_Number']); ?></td>
                 <td><?php echo htmlspecialchars($row['Price']); ?></td>
                 <td>
-                <form method="POST" action="acc_addons.php">
-                    <input type="hidden" name="addon_id" value="<?php echo $row['Food_ID']; ?>">
-                    <input type="hidden" name="addon_name" value="<?php echo $row['Food_Name']; ?>">
+                <form method="POST" action="add_on.php">
+                    <input type="hidden" name="addon_id" value="<?php echo $row['Seat_Selector_ID']; ?>">
+                    <input type="hidden" name="addon_name" value="<?php echo $row['Seat_Selector_Number']; ?>">
                     <input type="hidden" name="addon_price" value="<?php echo $row['Price']; ?>">
-                    <input type="hidden" name="addon_type" value="Food">
+                    <input type="hidden" name="addon_type" value="SeatSelector">
                     <button type="submit" name="add_to_cart">Add to Cart</button>
                 </form>
 
@@ -89,11 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
         <?php endwhile; ?>
     </table>
 <?php else: ?>
-    <p>No food available.</p>
+    <p>No seat selectors available.</p>
 <?php endif; ?>
 
 <br>
-<button onclick="window.location.href='acc_addons.php'">View All Add-ons</button>
+<button onclick="window.location.href='add_on.php'">View All Add-ons</button>
 
 </body>
 </html>

@@ -5,12 +5,6 @@ include('db.php'); // Include your database connection
 // Include Composer autoloader to load TCPDF
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Ensure the user is logged in
-if (!isset($_SESSION['Account_Email']) || empty($_SESSION['Account_Email'])) {
-    header("Location: signin.php");  // Redirect to sign-in page if not logged in
-    exit;
-}
-
 // Retrieve necessary data from session
 $selectedFlight = $_SESSION['selected_flight'] ?? null;
 $numPassengers = $_SESSION['num_passengers'] ?? 1;
@@ -155,9 +149,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <nav>
                 <ul>
-                        <li><a href="logout.php">Logout</a></li>
-                        <li><a href="acc_account.php">Account</a></li>
-                        <li><a href="acc_dashboard.php">Home</a></li>
+                <li><a href="signin.php">Sign In</a></li>
+                <li><a href="signup.php">Sign Up</a></li>
+                <li><a href="noacc_dashboard.php">Home</a></li>
                 </ul>
             </nav>
         </div>

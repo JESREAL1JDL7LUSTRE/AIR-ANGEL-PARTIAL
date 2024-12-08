@@ -11,12 +11,6 @@ if (!isset($_SESSION['selected_flight_id'])) {
 
 $selectedFlightID = $_SESSION['selected_flight_id'];  // Now safely get the flight ID
 
-// Ensure the user is logged in
-if (!isset($_SESSION['Account_Email']) || empty($_SESSION['Account_Email'])) {
-    header("Location: signin.php");  // Redirect to sign-in page if not logged in
-    exit;
-}
-
 // Initialize variables
 $form_error = false;
 $error_message = "";
@@ -109,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Redirect to the next page if no errors
         if (!$form_error) {
-            header("Location: acc_addons.php");
+            header("Location: noacc_addons.php");
             exit();
         }
     }
@@ -130,17 +124,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
 <header>
-    <div class="header-container">
-        <h1 class="site-title">AirAngel - Airline Reservation</h1>
-        <nav>
-            <ul>
-                <li><a href="logout.php">Logout</a></li>
-                <li><a href="acc_account.php">Account</a></li>
-                <li><a href="acc_dashboard.php">Home</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
+        <div class="header-container">
+                <h1 class="site-title">AirAngel - Airline Reservation</h1>
+            </div>
+            <nav>
+                <ul>
+                <li><a href="signin.php">Sign In</a></li>
+                <li><a href="signup.php">Sign Up</a></li>
+                <li><a href="noacc_dashboard.php">Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 <main>
     <section>
         <h2>How Many Passengers</h2>

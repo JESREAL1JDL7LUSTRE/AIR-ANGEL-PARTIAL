@@ -30,13 +30,6 @@ if (isset($_SESSION['passengers']) && !empty($_SESSION['passengers'])) {
     die("No passenger data found. Please go back and enter passenger information.");
 }
 
-// Ensure the user is logged in
-$is_logged_in = isset($_SESSION['Account_Email']) && !empty($_SESSION['Account_Email']);
-if (!isset($_SESSION['Account_Email'])) {
-    header("Location: signin.php");  // Redirect to sign-in page if not logged in
-    exit;
-}
-
 // Initialize selected_addons if it's not set
 if (!isset($_SESSION['selected_addons'])) {
     $_SESSION['selected_addons'] = [];
@@ -98,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['proceed_to_payment'])
     $_SESSION['selected_addons_for_confirmation'] = $selectedAddonsForConfirmation;
 
     // Redirect to payment.php with the session data
-    header("Location: acc_payment.php");
+    header("Location: noacc_payment.php");
     exit();
 }
 ?>
@@ -136,9 +129,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['proceed_to_payment'])
             </div>
             <nav>
                 <ul>
-                        <li><a href="logout.php">Logout</a></li>
-                        <li><a href="acc_account.php">Account</a></li>
-                        <li><a href="acc_dashboard.php">Home</a></li>
+                <li><a href="signin.php">Sign In</a></li>
+                <li><a href="signup.php">Sign Up</a></li>
+                <li><a href="noacc_dashboard.php">Home</a></li>
                 </ul>
             </nav>
         </div>
@@ -172,9 +165,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['proceed_to_payment'])
 <?php endif; ?>
 
 <br>
-<button onclick="window.location.href='acc_addons_baggage.php'">Add Baggage</button>
-<button onclick="window.location.href='acc_addons_food.php'">Add Food</button>
-<button onclick="window.location.href='acc_addons_seat_selector.php'">Add Seat</button>
+<button onclick="window.location.href='noacc_addons_baggage.php'">Add Baggage</button>
+<button onclick="window.location.href='noacc_addons_food.php'">Add Food</button>
+<button onclick="window.location.href='noacc_addons_seat_selector.php'">Add Seat</button>
 
 <br><br>
 <!-- This button will now take the user to payment.php with add-ons info in the session -->

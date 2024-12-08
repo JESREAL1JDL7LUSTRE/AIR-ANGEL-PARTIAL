@@ -31,19 +31,6 @@ $selectedAddons = isset($_SESSION['selected_addons']) ? $_SESSION['selected_addo
     </style>
 </head>
 <body>
-<header>
-        <div class="header-container">
-                <h1 class="site-title">AirAngel - Airline Reservation</h1>
-            </div>
-            <nav>
-                <ul>
-                        <li><a href="logout.php">Logout</a></li>
-                        <li><a href="acc_account.php">Account</a></li>
-                        <li><a href="acc_dashboard.php">Home</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
 
 <h1>Select Baggage Add-ons</h1>
 
@@ -61,7 +48,7 @@ $selectedAddons = isset($_SESSION['selected_addons']) ? $_SESSION['selected_addo
                 <td><?php echo htmlspecialchars($row['Baggage_Weight']); ?></td>
                 <td><?php echo htmlspecialchars($row['Price']); ?></td>
                 <td>
-                <form method="POST" action="acc_addons.php">
+                <form method="POST" action="add_on.php">
                     <input type="hidden" name="addon_id" value="<?php echo $row['Baggage_ID']; ?>">
                     <input type="hidden" name="addon_name" value="<?php echo $row['Baggage_Weight']; ?>">
                     <input type="hidden" name="addon_price" value="<?php echo $row['Price']; ?>">
@@ -78,7 +65,7 @@ $selectedAddons = isset($_SESSION['selected_addons']) ? $_SESSION['selected_addo
 <?php endif; ?>
 
 <br>
-<button onclick="window.location.href='acc_addons.php'">View All Add-ons</button>
+<button onclick="window.location.href='add_on.php'">View All Add-ons</button>
 
 </body>
 </html>

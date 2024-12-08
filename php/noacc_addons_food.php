@@ -52,9 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
             </div>
             <nav>
                 <ul>
-                        <li><a href="logout.php">Logout</a></li>
-                        <li><a href="acc_account.php">Account</a></li>
-                        <li><a href="acc_dashboard.php">Home</a></li>
+                <li><a href="signin.php">Sign In</a></li>
+                <li><a href="signup.php">Sign Up</a></li>
+                <li><a href="noacc_dashboard.php">Home</a></li>
                 </ul>
             </nav>
         </div>
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
                 <td><?php echo htmlspecialchars($row['Food_Name']); ?></td>
                 <td><?php echo htmlspecialchars($row['Price']); ?></td>
                 <td>
-                <form method="POST" action="acc_addons.php">
+                <form method="POST" action="noacc_addons.php">
                     <input type="hidden" name="addon_id" value="<?php echo $row['Food_ID']; ?>">
                     <input type="hidden" name="addon_name" value="<?php echo $row['Food_Name']; ?>">
                     <input type="hidden" name="addon_price" value="<?php echo $row['Price']; ?>">
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
 <?php endif; ?>
 
 <br>
-<button onclick="window.location.href='acc_addons.php'">View All Add-ons</button>
+<button onclick="window.location.href='noacc_addons.php'">View All Add-ons</button>
 
 </body>
 </html>

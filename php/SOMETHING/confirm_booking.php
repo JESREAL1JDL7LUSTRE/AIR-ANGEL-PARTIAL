@@ -2,41 +2,7 @@
 session_start();
 include('db.php'); // Include your database connection
 
-// Ensure the user is logged in
-$is_logged_in = isset($_SESSION['Account_Email']) && !empty($_SESSION['Account_Email']);
-if (!isset($_SESSION['Account_Email'])) {
-    header("Location: signin.php");  // Redirect to sign-in page if not logged in
-    exit;
-}
-
-// Assuming that Reservation_ID and Payment_ID are stored in session or can be retrieved from URL
-$reservationID = $_SESSION['reservation_id'] ?? null; // Get reservation ID from session
-$paymentID = $_SESSION['payment_id'] ?? null; // Get payment ID from session
-
-// Retrieve reservation and payment data from the database
-$reservationQuery = "SELECT * FROM Reservation WHERE Reservation_ID = ?";
-$paymentQuery = "SELECT * FROM Payment WHERE Payment_ID = ?";
-
-// Prepare and execute the queries
-$reservationStmt = $conn->prepare($reservationQuery);
-$reservationStmt->bind_param("i", $reservationID);
-$reservationStmt->execute();
-$reservationResult = $reservationStmt->get_result();
-$reservation = $reservationResult->fetch_assoc();
-
-$paymentStmt = $conn->prepare($paymentQuery);
-$paymentStmt->bind_param("i", $paymentID);
-$paymentStmt->execute();
-$paymentResult = $paymentStmt->get_result();
-$payment = $paymentResult->fetch_assoc();
-
-// If no data found for the reservation or payment
-if (!$reservation || !$payment) {
-    echo "Error: Reservation or payment information not found.";
-    exit;
-}
-
-// Flight and passenger details can be fetched from the session as before
+// Retrieve data from session
 $selectedFlight = $_SESSION['selected_flight'] ?? null;
 $numPassengers = $_SESSION['num_passengers'] ?? 0;
 $selectedAddons = $_SESSION['selected_addons'] ?? [];
@@ -58,6 +24,28 @@ foreach ($selectedAddons as $addon) {
     $totalPrice += $addon['Price'];
 }
 
+// Insert reservation into the Reservation table
+$reservationID = $_SESSION['reservation_id'] ?? null;
+
+if (!$reservationID) {
+    $reservationQuery = "INSERT INTO Reservation (Booking_date) VALUES ('$bookingDate')";
+    if (mysqli_query($conn, $reservationQuery)) {
+        $reservationID = mysqli_insert_id($conn); // Fetch the newly created reservation ID
+        $_SESSION['reservation_id'] = $reservationID; // Save it in session
+    } else {
+        die("Database error: " . mysqli_error($conn));
+    }
+}
+
+// Insert payment into Payment table, including Payment_Method_Name
+$paymentID = null;
+$paymentQuery = "INSERT INTO Payment (Payment_Amount, Payment_Date, Payment_Method_Name) 
+                 VALUES ('$totalPrice', '$bookingDate', '$paymentMethod')";
+if (mysqli_query($conn, $paymentQuery)) {
+    $paymentID = mysqli_insert_id($conn);
+} else {
+    die("Database error (Payment): " . mysqli_error($conn));
+}
 ?>
 
 <!DOCTYPE html>
@@ -72,19 +60,6 @@ foreach ($selectedAddons as $addon) {
     </style>
 </head>
 <body>
-<header>
-        <div class="header-container">
-                <h1 class="site-title">AirAngel - Airline Reservation</h1>
-            </div>
-            <nav>
-                <ul>
-                        <li><a href="logout.php">Logout</a></li>
-                        <li><a href="acc_account.php">Account</a></li>
-                        <li><a href="acc_dashboard.php">Home</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
 <h1>Booking Confirmation</h1>
 
 <h2>Flight Information</h2>
@@ -124,15 +99,12 @@ foreach ($selectedAddons as $addon) {
 <p><strong>Total:</strong> $<?php echo number_format($totalPrice, 2); ?> USD</p>
 
 <h2>Payment Information</h2>
-<p><strong>Payment Method:</strong> <?php echo htmlspecialchars($payment['Payment_Method_Name'] ?? 'N/A'); ?></p>
-<p><strong>Payment ID:</strong> <?php echo htmlspecialchars($payment['Payment_ID'] ?? 'N/A'); ?></p>
-<p><strong>Amount:</strong> $<?php echo number_format($payment['Payment_Amount'], 2); ?></p>
-<p><strong>Payment Date:</strong> <?php echo htmlspecialchars($payment['Payment_Date'] ?? 'N/A'); ?></p>
+<p><strong>Payment Method:</strong> <?php echo htmlspecialchars($paymentMethod); ?></p>
+<p><strong>Payment ID:</strong> <?php echo htmlspecialchars($paymentID); ?></p>
 
 <h2>Reservation Details</h2>
-<p><strong>Reservation ID:</strong> <?php echo htmlspecialchars($reservation['Reservation_ID'] ?? 'N/A'); ?></p>
-<p><strong>Booking Date:</strong> <?php echo htmlspecialchars($reservation['Booking_date'] ?? 'N/A'); ?></p>
+<p><strong>Reservation ID:</strong> <?php echo htmlspecialchars($reservationID); ?></p>
+<p><strong>Booking Date:</strong> <?php echo htmlspecialchars($bookingDate); ?></p>
 
 </body>
-<button type="button" onclick="window.location.href='acc_eticket.php'">Print E-ticket</button>
 </html>
