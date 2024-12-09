@@ -1,340 +1,124 @@
-/* General Resets */
-* {
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'Source Serif Pro', serif;
-}
-
-/* Base settings for html and body */
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    color: #333;
-    line-height: 1.6;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
-}
-
-/* Ensure each section takes full viewport height */
-.section {
-    width: 100%;
-    height: 100vh; /* Full height of the viewport */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.section-1 {
-    background: url('/AIR-ANGEL-PARTIAL/assets/images/indexBG.png'); /* Ensure the path is correct */
-    background-size: cover;
-    background-position: center 0;
-    background-attachment: fixed; /* Keep the background fixed */
-    background-repeat: no-repeat;
-    height: 100vh;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-
-    /* Smooth animation when updated */
-    transition: background-position 0.1s linear;
-}
-
-.section button {
-    font-family: 'Poppins', sans-serif;
-    padding: 8px 20px;
-    font-size: 20px;
     text-align: center;
-    background-color: rgb(0, 189, 28);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Header styling */
+h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin: 20px 0;
+}
+
+/* Links styling */
+a {
+    text-decoration: none;
+    color: #fff;
+    background-color: #4CAF50;
+    padding: 12px 20px;
+    margin: 10px;
     border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    display: inline-block;
+    width: 200px; /* Consistent width */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+a:hover {
+    color: white;
+    background-color: #45a049;
+    transform: scale(0.98); /* Slightly shrink the button */
+}
+
+/* Form styling */
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Input field styling */
+input[type="text"], input[type="date"], button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* Button styling */
+button {
+    background-color: #4CAF50;
     color: white;
     border: none;
-    margin: 0 auto;
-    display: block;
-    transition: transform 0.6s ease, box-shadow 0.6s ease;
-}
-
-.section button:hover {
-    transform: scale(1.1); /* Combine translate and scale */
     cursor: pointer;
-    background-color: rgb(0, 113, 17)
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.header {
-    display: flex;
-    justify-content: center;
-    opacity: 0.8; /* 80% opacity */
-    position: absolute; /* Ensure the header stays at the top */
-    width: 100%; /* Full width */
-    top: 0; /* Align to the top */
-    z-index: 1000; /* Ensure it stays above other elements */
-    display: flex;
-    align-items: center;
-    padding: 10px;
+button:hover {
+    background-color: #45a049;
+    transform: scale(0.98);
 }
 
-.logo-container {
-    position: absolute;
+/* Radio button styling */
+input[type="radio"] {
+    margin: 0 10px 0 0;
+}
+
+label {
+    font-size: 1rem;
+    color: #333;
+}
+
+/* Styling for hidden return date input */
+#return_date_container {
+    display: none;
+}
+
+/* Links container */
+ul {
+    list-style-type: none;
     padding: 0;
-    top: 20%;
-    left: 2%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#logo-img {
-    height: 60px;
-    width: 60px;
-    margin: 10px;
-}
-
-#logo-text {
-    font-size: 50px;
-    color: white;
-    font-family: 'Oleo Script', cursive;
-    text-shadow: 
-        -1px -1px 0 #000,  
-        1px -1px 0 #000,
-        -1px  2px 0 #000,
-        1px  2px 0 #000;
-}
-
-.navbar {
-    display: flex;
     margin-top: 20px;
-    justify-content: center;
-    align-items: center;
-    padding: 0px 5px;
-    background-color: rgba(0, 0, 0, 0.8);
-    border-radius: 100px;
-    overflow: hidden; /* Prevent overflow of the pseudo-elements */
 }
 
-.navbar ul {
-    list-style-type: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+ul li {
+    display: inline-block;
+    margin: 0 15px;
 }
 
-.navbar ul li {
-    margin: 5px 10px;
-}
-
-.navbar ul li a {
+/* Styling for when user is logged in */
+ul li a {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
     text-decoration: none;
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    opacity: 0.7;
-    margin: 0px 2px;
-    padding: 3px 20px;
-    border-radius: 100px;
-    font-family: 'Poppins', sans-serif;
-    position: relative; /* Required for pseudo-element positioning */
-    overflow: hidden; /* Contain the hover effect within the link */
-    transition: color 0.3s ease; /* Smooth text color transition */
-    z-index: 2;
+    transition: background-color 0.3s ease;
 }
 
-.navbar ul li a::after {
-    content: "";
-    position: absolute;
-    border-radius: 100px;
-    bottom: 0;
-    left: 0;
+ul li a:hover {
+    background-color: #45a049;
+}
+
+/* Container for the page content */
+.container {
     width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 1);
-    transform: translateY(120%); /* Start from below */
-    transition: transform 0.3s ease-in-out; /* Smooth animation */
-    z-index: -1; /* Ensure it stays behind the text */
-}
-
-.navbar ul li a:hover {
-    color: black;
-    opacity: 1;
-    z-index: 2;
-}
-
-.navbar ul li a:hover::after {
-    transform: translateY(0); /* Fill from bottom to top */
-    z-index: -1;
-}
-
-.auth-nav {
-    position: absolute;
-    top: 20%;
-    right: 2%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 100px;
-    overflow: hidden; /* Prevent overflow of the pseudo-elements */
-}
-
-.auth-nav ul {
-    list-style-type: none;
-    display: flex;
-}
-
-.auth-nav ul li a {
-    text-decoration: none;
-    margin: 0;;
-    font-size: 20px;
-    font-weight: bold;
-    color: black;
-    padding: 3px 10px;
-    font-family: 'Poppins', sans-serif;
-    position: relative; /* Required for pseudo-element positioning */
-    overflow: hidden; /* Contain the hover effect within the link */
-    transition: color 0.3s ease; /* Smooth text color transition */
-    z-index: 1;
-}
-
-.auth-nav ul li a::after {
-    content: "";
-    position: absolute;
-    border-radius: 100px;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(5, 212, 36);
-    transform: translateY(130%); /* Start from below */
-    transition: transform 0.3s ease-in-out; /* Smooth animation */
-    z-index: -1; /* Ensure it stays behind the text */
-}
-
-.auth-nav ul li a:hover {
-    color: white;
-}
-
-.auth-nav ul li a:hover::after {
-    transform: translateY(0); /* Fill from bottom to top */
-}
-
-.center-text-container {
+    padding: 20px;
     text-align: center;
-    margin-bottom: 130px;
-    text-shadow: 
-    -1px -1px 0 #000,  
-    1px -1px 0 #000,
-    -1px  2px 0 #000,
-    1px  2px 0 #000;
 }
-
-.center-text-container h1 {
-    font-size: 56px;
-    color: white;
-    font-weight: bold;
-}
-
-.center-text-container h3{
-    font-size: 40px;
-    color: rgba(254, 189, 99, 1.0);
-    font-weight: bold;
-}
-
-.booking-form-section {
-    font-family: 'Poppins', sans-serif;
-    font-style: normal;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background-color: white;
-    padding: 5px 20px;
-    border-radius: 8px;
-    position: absolute;
-    top: 75%;
-    left: 50%;
-    height: max-content;
-    width: auto;
-    transform: translate(-50%, -50%); /* Center the element initially */
-    z-index: 10;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-
-    /* Smooth transition for transform and shadow */
-    transition: transform 0.6s ease, box-shadow 0.6s ease;
-
-    /* Center scaling animation origin */
-    transform-origin: center;
-}
-
-.booking-form-section:hover {
-    /* Scale from the center and keep translate intact */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-    transform: translate(-50%, -50%) scale(1.05); /* Combine translate and scale */
-}
-
-
-.booking-form-section h2 {
-    text-align: center;
-    font-size: 20px;
-    color: #333;
-    margin: 0;
-}
-
-fieldset {
-    border: 2px dotted gray;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-
-legend {
-    text-align: center;
-    font-size: 15px;
-    color: #333;
-    margin: 0;
-}
-
-.radio-group {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 5px;
-    width: auto;
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.option {
-    align-items: center;
-}
-
-.radio-group input[type="radio"] + label {
-    cursor: pointer;
-}
-
-.option #one_way, #round_trip {
-    margin-right: 5px;
-}
-
-.location {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 5px;
-}
-
-.date {
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    margin: 5px;
-}
-
-#search-button {
-    padding: 1px 10px;
-    font-size: 14px;
-}
-
