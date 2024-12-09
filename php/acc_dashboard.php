@@ -144,7 +144,7 @@ if ($result->num_rows > 0) {
 
                 <!-- Departure Time -->
                 <label for="depart_date">Departure Date:</label>
-                <input type="date" id="depart_date" name="depart_date" required>
+                <input type="date" id="depart_date" name="depart_date">
 
                 <!-- Return Date (Visible only for Round Trip) -->
                 <div id="return_date_container" class="return-date-container">

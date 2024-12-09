@@ -21,6 +21,8 @@ $origin = $_SESSION['origin'];
 $destination = $_SESSION['destination'];
 $flight_type = $_SESSION['flight_type'] ?? 'One Way';  // Default to One Way
 $available_flights = $_SESSION['available_flights'];
+$returndestination = $_SESSION['origin'];
+$returnorigin = $_SESSION['destination'];
 
 // Handle flight selection form submission
 if (isset($_POST['selected_flight'])) {
@@ -95,7 +97,7 @@ if (isset($_POST['selected_flight'])) {
                             <td><?= htmlspecialchars($flight['Departure_Time']) ?></td>
                             <td><?= htmlspecialchars($flight['Arrival_Time']) ?></td>
                             <td><?= htmlspecialchars($flight['Amount']) ?></td>
-                            <td><input type="radio" name="selected_flight" value="<?= $flight['Available_Flights_Number_ID'] ?>"></td>
+                            <td><input type="radio" name="selected_flight1" value="<?= $flight['Available_Flights_Number_ID'] ?>"></td>
                         </tr>
                     <?php endif; endforeach; ?>
             </table>
@@ -113,7 +115,7 @@ if (isset($_POST['selected_flight'])) {
                     <th>Select</th>
                 </tr>
                 <?php foreach ($available_flights as $flight):
-                    if ($flight['Origin'] == $destination && $flight['Destination'] == $origin): ?>
+                    if ($flight['Origin'] == $returndestination && $flight['Destination'] == $returnorigin): ?>
                         <tr>
                             <td><?= htmlspecialchars($flight['Flight_Number']) ?></td>
                             <td><?= htmlspecialchars($flight['Departure_Date']) ?></td>
@@ -122,7 +124,7 @@ if (isset($_POST['selected_flight'])) {
                             <td><?= htmlspecialchars($flight['Departure_Time']) ?></td>
                             <td><?= htmlspecialchars($flight['Arrival_Time']) ?></td>
                             <td><?= htmlspecialchars($flight['Amount']) ?></td>
-                            <td><input type="radio" name="selected_flight" value="<?= $flight['Available_Flights_Number_ID'] ?>"></td>
+                            <td><input type="radio" name="selected_flight2" value="<?= $flight['Available_Flights_Number_ID'] ?>"></td>
                         </tr>
                     <?php endif; endforeach; ?>
             </table>
