@@ -10,49 +10,54 @@ if (!isset($_SESSION['Account_Email'])) {
     exit;
 }
 
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get values from the form and sanitize them
+    // Get values from the form
     $departure_date = $_POST['depart_date'];
     $origin = $_POST['from'];
     $destination = $_POST['to'];
     $flight_type = $_POST['flight_type'];
-    
-    // Since there's no return date column, we use the departure date as the return date
-    $return_date = $_POST['return_date'] ?? $departure_date;  // Handle undefined return date
+    $return_date = $_POST['return_date'] ?? $departure_date;
 
-    // Query the Available_Flights table based on user input
-    $sql = "SELECT * FROM Available_Flights WHERE Departure_Date = ? AND Origin = ? AND Destination = ?";
+    if ($flight_type == "Round Trip") {
+        // Debugging: Display query and parameters
+        echo "Searching for round trip flights...<br>";
+        $sql = "SELECT * FROM Available_Flights 
+                WHERE (Departure_Date = ? AND Origin = ? AND Destination = ?) 
+                OR (Departure_Date = ? AND Origin = ? AND Destination = ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssss", $departure_date, $origin, $destination, $return_date, $destination, $origin);
+        echo "SQL: " . $sql . "<br>";
+        echo "Params: " . $departure_date . " " . $origin . " " . $destination . " " . $return_date . "<br>";
+    } else {
+        echo "Searching for one-way flights...<br>";
+        $sql = "SELECT * FROM Available_Flights WHERE Departure_Date = ? AND Origin = ? AND Destination = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sss", $departure_date, $origin, $destination);
+    }
     
-    // Prepare the statement
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sss", $departure_date, $origin, $destination);
     $stmt->execute();
-    
-    // Get the result of the query
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
-        // If flights are found, store them in the session for use in the choose_flight.php page
         $_SESSION['available_flights'] = [];
         while ($row = $result->fetch_assoc()) {
-            $_SESSION['available_flights'][] = $row;  // Store each available flight in the session
+            $_SESSION['available_flights'][] = $row;
         }
-        
-        // Set session variables for origin, destination, and flight type
+
         $_SESSION['origin'] = $origin;
         $_SESSION['destination'] = $destination;
         $_SESSION['departure_date'] = $departure_date;
         $_SESSION['return_date'] = $return_date;
         $_SESSION['flight_type'] = $flight_type;
 
-        // Redirect to choose_flight.php after successful submission
         header("Location: acc_choose_flight.php");
-        exit();  // Ensure no further code is executed after redirection
+        exit();
     } else {
-        // If no flights are found, display a message
         echo "<p>No flights found matching your criteria.</p>";
     }
 }
+
 // Check if a search term is provided
 $search_term = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
 
@@ -95,11 +100,11 @@ if ($result->num_rows > 0) {
             const roundTrip = document.getElementById('round_trip');
             const returnDateField = document.getElementById('return_date_container');
             if (roundTrip.checked) {
-                returnDateField.classList.add('show'); // Add the class to animate and show
+                returnDateField.style.display = 'block'; // Show return date field for round trip
             } else {
-                returnDateField.classList.remove('show'); // Remove the class to hide
+                returnDateField.style.display = 'none'; // Hide return date field for one way
             }
-        }
+}
     </script>
 </head>
 <body>

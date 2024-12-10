@@ -24,12 +24,18 @@ $available_flights = $_SESSION['available_flights'];
 $returndestination = $_SESSION['origin'];
 $returnorigin = $_SESSION['destination'];
 
-
 // Handle flight selection form submission
-if (isset($_POST['selected_flight'])) {
-    $_SESSION['selected_flight_id'] = $_POST['selected_flight'];  // Store flight ID in session
-    header("Location: acc_passenger_info.php");  // Redirect to passengerinfo.php
-    exit;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_flight'])) {
+    $selectedFlight = $_POST['selected_flight']; // Capture flight ID from form
+    // You need to fetch the full flight data (assuming available_flights is an array of flight details)
+    foreach ($available_flights as $flight) {
+        if ($flight['Available_Flights_Number_ID'] == $selectedFlight) {
+            $_SESSION['selected_flight'] = $flight;  // Store full flight details in session
+            break;
+        }
+    }
+    header("Location: acc_passenger_info.php");  // Redirect to passenger info page
+    exit();
 }
 
 ?>
@@ -43,11 +49,20 @@ if (isset($_POST['selected_flight'])) {
     <script>
         // Client-side validation for flight selection
         function validateSelection() {
-            const selectedFlights = document.querySelectorAll('input[type="radio"]:checked');
-            if (selectedFlights.length === 0) {
-                alert('Please select at least one flight.');
+            const flightType = "<?= htmlspecialchars($flight_type) ?>"; // Dynamically include PHP variable
+            const departureFlight = document.querySelector('input[name="selected_departure_flight"]:checked');
+            const returnFlight = document.querySelector('input[name="selected_return_flight"]:checked');
+
+            if (!departureFlight) {
+                alert('Please select a departure flight.');
                 return false;
             }
+
+            if (flightType === 'Round Trip' && !returnFlight) {
+                alert('Please select a return flight.');
+                return false;
+            }
+
             return true;
         }
 
@@ -74,7 +89,7 @@ if (isset($_POST['selected_flight'])) {
 <div style="margin: 0 auto; width: 80%; padding: 20px; font-family: Arial, sans-serif;">
     <h1>Select Your Flight</h1>
 
-    <form method="POST" onsubmit="return validateSelection();">
+    <form method="POST" action="acc_choose_flight.php" onsubmit="return validateSelection();">
         <?php if ($flight_type == 'Round Trip'): ?>
             <h2>Departure Flight</h2>
             <table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
@@ -88,8 +103,9 @@ if (isset($_POST['selected_flight'])) {
                     <th>Amount</th>
                     <th>Select</th>
                 </tr>
-                <?php foreach ($available_flights as $flight):
-                    if ($flight['Origin'] == $origin && $flight['Destination'] == $destination): ?>
+                <?php 
+                foreach ($available_flights as $flight):
+                    if ($flight['Origin'] === $origin && $flight['Destination'] === $destination): ?>
                         <tr>
                             <td><?= htmlspecialchars($flight['Flight_Number']) ?></td>
                             <td><?= htmlspecialchars($flight['Departure_Date']) ?></td>
@@ -98,9 +114,13 @@ if (isset($_POST['selected_flight'])) {
                             <td><?= htmlspecialchars($flight['Departure_Time']) ?></td>
                             <td><?= htmlspecialchars($flight['Arrival_Time']) ?></td>
                             <td><?= htmlspecialchars($flight['Amount']) ?></td>
-                            <td><input type="radio" name="selected_flight1" value="<?= $flight['Available_Flights_Number_ID'] ?>"></td>
+                            <td>
+                                <input type="radio" name="selected_departure_flight" 
+                                    value="<?= htmlspecialchars($flight['Available_Flights_Number_ID']) ?>">
+                            </td>
                         </tr>
-                    <?php endif; endforeach; ?>
+                    <?php endif;
+                endforeach; ?>
             </table>
 
             <h2>Return Flight</h2>
@@ -115,8 +135,9 @@ if (isset($_POST['selected_flight'])) {
                     <th>Amount</th>
                     <th>Select</th>
                 </tr>
-                <?php foreach ($available_flights as $flight):
-                    if ($flight['Origin'] == $returndestination && $flight['Destination'] == $returnorigin): ?>
+                <?php 
+                if (!empty($_SESSION['return_flights'])) {
+                    foreach ($_SESSION['return_flights'] as $flight): ?>
                         <tr>
                             <td><?= htmlspecialchars($flight['Flight_Number']) ?></td>
                             <td><?= htmlspecialchars($flight['Departure_Date']) ?></td>
@@ -125,9 +146,16 @@ if (isset($_POST['selected_flight'])) {
                             <td><?= htmlspecialchars($flight['Departure_Time']) ?></td>
                             <td><?= htmlspecialchars($flight['Arrival_Time']) ?></td>
                             <td><?= htmlspecialchars($flight['Amount']) ?></td>
-                            <td><input type="radio" name="selected_flight2" value="<?= $flight['Available_Flights_Number_ID'] ?>"></td>
+                            <td>
+                                <input type="radio" name="selected_return_flight" 
+                                    value="<?= htmlspecialchars($flight['Available_Flights_Number_ID']) ?>">
+                            </td>
                         </tr>
-                    <?php endif; endforeach; ?>
+                    <?php endforeach;
+                } else {
+                    echo "<tr><td colspan='8'>No return flights available for the selected criteria.</td></tr>";
+                }
+                ?>
             </table>
         <?php else: ?>
             <h2>Available Flights</h2>
@@ -143,7 +171,7 @@ if (isset($_POST['selected_flight'])) {
                     <th>Select</th>
                 </tr>
                 <?php foreach ($available_flights as $flight):
-                    if ($flight['Origin'] == $origin && $flight['Destination'] == $destination): ?>
+                    if ($flight['Origin'] === $origin && $flight['Destination'] === $destination): ?>
                         <tr>
                             <td><?= htmlspecialchars($flight['Flight_Number']) ?></td>
                             <td><?= htmlspecialchars($flight['Departure_Date']) ?></td>
@@ -152,11 +180,16 @@ if (isset($_POST['selected_flight'])) {
                             <td><?= htmlspecialchars($flight['Departure_Time']) ?></td>
                             <td><?= htmlspecialchars($flight['Arrival_Time']) ?></td>
                             <td><?= htmlspecialchars($flight['Amount']) ?></td>
-                            <td><input type="radio" name="selected_flight" value="<?= $flight['Available_Flights_Number_ID'] ?>"></td>
+                            <td>
+                                <input type="radio" name="selected_departure_flight" 
+                                    value="<?= htmlspecialchars($flight['Available_Flights_Number_ID']) ?>">
+                            </td>
                         </tr>
-                    <?php endif; endforeach; ?>
+                    <?php endif;
+                endforeach; ?>
             </table>
         <?php endif; ?>
+
 
         <div style="margin-top: 20px;">
             <button type="button" onclick="goBack()">Go Back</button>
