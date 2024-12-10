@@ -11,7 +11,8 @@ if (!isset($_SESSION['Account_Email']) || empty($_SESSION['Account_Email'])) {
 }
 
 // Retrieve session data
-$selectedFlight = $_SESSION['selected_flight'] ?? null;
+$selectedFlight = $_SESSION['selected_flight'] ?? null; // Departure flight
+$selectedReturnFlight = $_SESSION['selected_return_flight'] ?? null; // Return flight
 $numPassengers = $_SESSION['num_passengers'] ?? 1;
 $passengers = $_SESSION['passengers'] ?? [];
 $reservationID = $_SESSION['reservation_id'] ?? 'N/A';
@@ -19,12 +20,12 @@ $selectedAddonsForConfirmation = $_SESSION['selected_addons_for_confirmation'] ?
 
 $airlineName = "AIR ANGEL";
 
-// Check for missing flight information
+// Ensure departure flight information is available
 if (!$selectedFlight) {
-    die("Error: No flight information found.");
+    die("Error: No departure flight information found.");
 }
 
-// Extract flight details
+// Extract departure flight details
 $flightNumber = $selectedFlight['Flight_Number'] ?? 'N/A';
 $origin = $selectedFlight['Origin'] ?? 'N/A';
 $destination = $selectedFlight['Destination'] ?? 'N/A';
@@ -32,19 +33,28 @@ $departureTime = $selectedFlight['Departure_Time'] ?? 'N/A';
 $arrivalTime = $selectedFlight['Arrival_Time'] ?? 'N/A';
 $flightPrice = $selectedFlight['Amount'] ?? 0;
 
+// Ensure return flight details are available (if applicable)
+$returnFlightNumber = $selectedReturnFlight['Flight_Number'] ?? 'N/A';
+$returnOrigin = $selectedReturnFlight['Origin'] ?? 'N/A';
+$returnDestination = $selectedReturnFlight['Destination'] ?? 'N/A';
+$returnDepartureTime = $selectedReturnFlight['Departure_Time'] ?? 'N/A';
+$returnArrivalTime = $selectedReturnFlight['Arrival_Time'] ?? 'N/A';
+$returnFlightPrice = $selectedReturnFlight['Amount'] ?? 0;
+
 // Initialize total to 0
 $total = 0;
 
 // Calculate total amount (flight + add-ons)
 $totalAmount = ($flightPrice * $numPassengers); // Flight cost for all passengers
+$totalAmountReturn = ($returnFlightPrice * $numPassengers); // Return flight cost
 
 foreach ($selectedAddonsForConfirmation as $addon) {
     $addonPrice = $addon['Price'] ?? 0;
     $total += $addonPrice; // Add each add-on's price
 }
 
-$totalAmount += $total; 
-
+$totalAmount += $total; // Add addons cost for the departure flight
+$totalAmountReturn += $total; // Add addons cost for the return flight
 
 // Prepare passenger names
 $passengerNames = [];
@@ -61,72 +71,128 @@ if (isset($_SESSION['passengers']) && is_array($_SESSION['passengers'])) {
     exit;
 }
 
-// If the form is submitted to download the ticket
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $pdf = new TCPDF();
-    $pdf->AddPage();
+// If the form is submitted for the departure flight ticket
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_departure_ticket'])) {
+    // Generate Departure Ticket
+    $pdfDeparture = new TCPDF();
+    $pdfDeparture->AddPage();
+    $pdfDeparture->SetFont('helvetica', 'B', 16);
+    $pdfDeparture->Cell(0, 10, "$airlineName - E-Ticket (Departure)", 0, 1, 'C');
 
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->Cell(0, 10, "$airlineName - E-Ticket", 0, 1, 'C');
+    // Flight Information (Departure)
+    $pdfDeparture->SetFont('helvetica', '', 12);
+    $pdfDeparture->Ln(10);
+    $pdfDeparture->Cell(0, 10, "Flight Number: $flightNumber", 0, 1);
+    $pdfDeparture->Cell(0, 10, "Origin: $origin", 0, 1);
+    $pdfDeparture->Cell(0, 10, "Destination: $destination", 0, 1);
+    $pdfDeparture->Cell(0, 10, "Departure Time: $departureTime", 0, 1);
+    $pdfDeparture->Cell(0, 10, "Arrival Time: $arrivalTime", 0, 1);
+    $pdfDeparture->Cell(0, 10, "Amount: $flightPrice per passenger", 0, 1);
 
-    // Flight Information
-    $pdf->SetFont('helvetica', '', 12);
-    $pdf->Ln(10);
-    $pdf->Cell(0, 10, "Flight Number: $flightNumber", 0, 1);
-    $pdf->Cell(0, 10, "Origin: $origin", 0, 1);
-    $pdf->Cell(0, 10, "Destination: $destination", 0, 1);
-    $pdf->Cell(0, 10, "Departure Time: $departureTime", 0, 1);
-    $pdf->Cell(0, 10, "Arrival Time: $arrivalTime", 0, 1);
-    $pdf->Cell(0, 10, "Amount: $flightPrice per passenger", 0, 1);
-
-    // Add-ons
+    // Add-ons (if any)
     if (!empty($selectedAddonsForConfirmation)) {
-        $pdf->Ln(10);
-        $pdf->Cell(0, 10, "Add-ons:", 0, 1);
+        $pdfDeparture->Ln(10);
         foreach ($selectedAddonsForConfirmation as $addon) {
             $addonName = $addon['Name'] ?? 'N/A';
             $addonPrice = $addon['Price'] ?? 0;
-            $pdf->Cell(0, 10, "$addonName - \$" . number_format($addonPrice, 2), 0, 1);
+            $pdfDeparture->Cell(0, 10, "$addonName - \$" . number_format($addonPrice, 2), 0, 1);
         }
     }
 
     // Passenger Information
-    $pdf->Ln(10);
-    $pdf->Cell(0, 10, "Passenger(s):", 0, 1);
+    $pdfDeparture->Ln(10);
     foreach ($passengerNames as $index => $name) {
-        $pdf->Cell(0, 10, ($index + 1) . ". $name", 0, 1);
+        $pdfDeparture->Cell(0, 10, ($index + 1) . ". $name", 0, 1);
     }
 
     // Total Amount
-    $pdf->Ln(10);
-    $pdf->Cell(0, 10, "Total Amount: \$" . number_format($totalAmount, 2), 0, 1);
+    $pdfDeparture->Ln(10);
+    $pdfDeparture->Cell(0, 10, "Total Amount: \$" . number_format($totalAmount, 2), 0, 1);
 
-    // Save and download PDF
+    // Save and download Departure Ticket PDF
     $ticketDir = $_SERVER['DOCUMENT_ROOT'] . '/ANGEL/etickets/';
     if (!is_dir($ticketDir)) {
         mkdir($ticketDir, 0777, true);
     }
     
-    $ticketFile = $ticketDir . "eticket_$reservationID.pdf";
-    $pdf->Output($ticketFile, 'F');
+    $ticketFileDeparture = $ticketDir . "eticket_departure_$reservationID.pdf";
+    $pdfDeparture->Output($ticketFileDeparture, 'F');
 
+    // Serve the Departure PDF file to the user
     header('Content-Type: application/pdf');
-    header('Content-Disposition: attachment; filename="' . basename($ticketFile) . '"');
-    header('Content-Length: ' . filesize($ticketFile));
-    readfile($ticketFile);
+    header('Content-Disposition: attachment; filename="' . basename($ticketFileDeparture) . '"');
+    header('Content-Length: ' . filesize($ticketFileDeparture));
+    readfile($ticketFileDeparture);
 
-    unlink($ticketFile);
+    unlink($ticketFileDeparture);  // Remove the temporary file after download
+    exit;
+}
+
+// If the form is submitted for the return flight ticket
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_return_ticket'])) {
+    // Generate Return Ticket
+    $pdfReturn = new TCPDF();
+    $pdfReturn->AddPage();
+    $pdfReturn->SetFont('helvetica', 'B', 16);
+    $pdfReturn->Cell(0, 10, "$airlineName - E-Ticket (Return)", 0, 1, 'C');
+
+    // Flight Information (Return)
+    $pdfReturn->SetFont('helvetica', '', 12);
+    $pdfReturn->Ln(10);
+    $pdfReturn->Cell(0, 10, "Flight Number: $returnFlightNumber", 0, 1);
+    $pdfReturn->Cell(0, 10, "Origin: $returnOrigin", 0, 1);
+    $pdfReturn->Cell(0, 10, "Destination: $returnDestination", 0, 1);
+    $pdfReturn->Cell(0, 10, "Departure Time: $returnDepartureTime", 0, 1);
+    $pdfReturn->Cell(0, 10, "Arrival Time: $returnArrivalTime", 0, 1);
+    $pdfReturn->Cell(0, 10, "Amount: $returnFlightPrice per passenger", 0, 1);
+
+    // Add-ons (if any)
+    if (!empty($selectedAddonsForConfirmation)) {
+        $pdfReturn->Ln(10);
+        foreach ($selectedAddonsForConfirmation as $addon) {
+            $addonName = $addon['Name'] ?? 'N/A';
+            $addonPrice = $addon['Price'] ?? 0;
+            $pdfReturn->Cell(0, 10, "$addonName - \$" . number_format($addonPrice, 2), 0, 1);
+        }
+    }
+
+    // Passenger Information
+    $pdfReturn->Ln(10);
+    foreach ($passengerNames as $index => $name) {
+        $pdfReturn->Cell(0, 10, ($index + 1) . ". $name", 0, 1);
+    }
+
+    // Total Amount
+    $pdfReturn->Ln(10);
+    $pdfReturn->Cell(0, 10, "Total Amount: \$" . number_format($totalAmountReturn, 2), 0, 1);
+
+    // Save and download Return Ticket PDF
+    $ticketDir = $_SERVER['DOCUMENT_ROOT'] . '/ANGEL/etickets/';
+    if (!is_dir($ticketDir)) {
+        mkdir($ticketDir, 0777, true);
+    }
+    
+    $ticketFileReturn = $ticketDir . "eticket_return_$reservationID.pdf";
+    $pdfReturn->Output($ticketFileReturn, 'F');
+
+    // Serve the Return PDF file to the user
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: attachment; filename="' . basename($ticketFileReturn) . '"');
+    header('Content-Length: ' . filesize($ticketFileReturn));
+    readfile($ticketFileReturn);
+
+    unlink($ticketFileReturn);  // Remove the temporary file after download
     exit;
 }
 ?>
 
-<!-- HTML Code for Displaying Ticket -->
+<!-- HTML Code for Displaying Tickets -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Ticket</title>
+    <title>Flight E-Tickets</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -174,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="eticket">
     <div class="eticket-header">
         <h1><?php echo $airlineName; ?></h1>
-        <p><strong>E-Ticket</strong></p>
+        <p><strong>Departure E-Ticket</strong></p>
     </div>
 
     <div class="eticket-details">
@@ -205,13 +271,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <div class="eticket-details">
-    <p><strong>Total Amount:</strong> $<?php echo number_format($totalAmount, 2); ?></p>
+        <p><strong>Total Amount:</strong> $<?php echo number_format($totalAmount, 2); ?></p>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <form method="post" action="">
+            <button type="submit" name="generate_departure_ticket">Print E-Ticket</button>
+        </form>
+    </div>
 </div>
 
-<div style="text-align: center; margin-top: 20px;">
-    <form method="post" action="">
-        <button type="submit">Print Ticket</button>
-    </form>
+<!-- Return Flight -->
+<div class="eticket">
+    <div class="eticket-header">
+        <h1><?php echo $airlineName; ?></h1>
+        <p><strong>Return E-Ticket</strong></p>
+    </div>
+
+    <div class="eticket-details">
+        <p><strong>Flight Number:</strong> <?php echo htmlspecialchars($returnFlightNumber); ?></p>
+        <p><strong>Origin:</strong> <?php echo htmlspecialchars($returnOrigin); ?></p>
+        <p><strong>Destination:</strong> <?php echo htmlspecialchars($returnDestination); ?></p>
+        <p><strong>Departure Time:</strong> <?php echo htmlspecialchars($returnDepartureTime); ?></p>
+        <p><strong>Arrival Time:</strong> <?php echo htmlspecialchars($returnArrivalTime); ?></p>
+        <p><strong>Amount:</strong> $<?php echo number_format($selectedReturnFlight['Amount'], 2); ?> per passenger</p>
+    </div>
+
+    <div class="eticket-details">
+        <h3>Passenger(s)</h3>
+        <?php foreach ($passengerNames as $index => $name): ?>
+            <p><?php echo htmlspecialchars($index + 1 . ". " . $name); ?></p>
+        <?php endforeach; ?>
+    </div>
+
+    <div class="eticket-details">
+        <h3>Add-ons</h3>
+        <?php if (!empty($selectedAddonsForConfirmation)): ?>
+            <?php foreach ($selectedAddonsForConfirmation as $addon): ?>
+                <p><?php echo htmlspecialchars($addon['Name']) . " - $" . htmlspecialchars($addon['Price']); ?></p>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No add-ons selected.</p>
+        <?php endif; ?>
+    </div>
+
+    <div class="eticket-details">
+        <p><strong>Total Amount:</strong> $<?php echo number_format($totalAmountReturn, 2); ?></p>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <form method="post" action="">
+            <button type="submit" name="generate_return_ticket">Print E-Ticket</button>
+        </form>
+    </div>
 </div>
 </body>
 </html>
