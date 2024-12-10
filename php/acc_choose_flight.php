@@ -1,6 +1,6 @@
 <?php
-ob_start();  // Start output buffering to ensure no output before header()
-session_start();  // Start the session to access session data
+ob_start();  // Start output buffering
+session_start();  // Start the session
 include('db.php'); // Include your database connection
 
 // Ensure the user is logged in
@@ -9,7 +9,7 @@ if (!isset($_SESSION['Account_Email']) || empty($_SESSION['Account_Email'])) {
     exit;
 }
 
-// Redirect to search if required session data is missing
+// Check if required session variables are set
 if (!isset($_SESSION['available_flights']) || empty($_SESSION['available_flights']) ||
     !isset($_SESSION['origin']) || !isset($_SESSION['destination'])) {
     header("Location: acc_dashboard.php"); // Redirect to flight search page
@@ -23,12 +23,9 @@ $flight_type = $_SESSION['flight_type'] ?? 'One Way';  // Default to One Way
 $available_flights = $_SESSION['available_flights'];
 $return_date = $_SESSION['return_date'] ?? ''; // Ensure return_date is set
 
-// Handle return flights based on the selected departure flight
-$_SESSION['return_flights'] = array();  // Clear previous return flights if any
-
-// Only filter return flights for round trip, not for one way
+// Handle return flights for round trip
+$_SESSION['return_flights'] = [];  // Clear previous return flights if any
 if ($flight_type === 'Round Trip') {
-    // Look for return flights based on the selected departure flight's destination and origin
     foreach ($available_flights as $flight) {
         if ($flight['Origin'] === $destination && $flight['Destination'] === $origin) {
             if (empty($return_date) || $flight['Departure_Date'] === $return_date) {
@@ -38,20 +35,18 @@ if ($flight_type === 'Round Trip') {
     }
 }
 
-// Handle flight selection form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_flight'])) {
-    $selectedFlight = $_POST['selected_flight']; // Capture flight ID from form
-    // You need to fetch the full flight data (assuming available_flights is an array of flight details)
-    foreach ($available_flights as $flight) {
-        if ($flight['Available_Flights_Number_ID'] == $selectedFlight) {
-            $_SESSION['selected_flight'] = $flight;  // Store full flight details in session
-            break;
-        }
-    }
-    header("Location: acc_passenger_info.php");  // Redirect to passenger info page
-    exit();
-}
+// Handle flight selection
+if (isset($_POST['selected_departure_flight'])) {
+    // Store the selected flight ID in session
+    $_SESSION['selected_flight_id'] = $_POST['selected_departure_flight'];
 
+    // Redirect to the passenger details page
+    header("Location: acc_passenger_info.php");
+    exit;
+} else {
+    // Handle the case where no flight was selected
+    echo "No flight selected. Please choose a flight.";
+}
 ?>
 
 <!DOCTYPE html>
@@ -130,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_flight'])) {
                             <td><?= htmlspecialchars($flight['Amount']) ?></td>
                             <td>
                                 <input type="radio" name="selected_departure_flight" 
-                                    value="<?= htmlspecialchars($flight['Available_Flights_Number_ID']) ?>">
+                                    value="<?= htmlspecialchars($flight['Available_Flights_Number_ID']) ?>" required>
                             </td>
                         </tr>
                     <?php endif;
@@ -162,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_flight'])) {
                             <td><?= htmlspecialchars($flight['Amount']) ?></td>
                             <td>
                                 <input type="radio" name="selected_return_flight" 
-                                    value="<?= htmlspecialchars($flight['Available_Flights_Number_ID']) ?>">
+                                    value="<?= htmlspecialchars($flight['Available_Flights_Number_ID']) ?>" required>
                             </td>
                         </tr>
                     <?php endforeach;
@@ -196,14 +191,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_flight'])) {
                             <td><?= htmlspecialchars($flight['Amount']) ?></td>
                             <td>
                                 <input type="radio" name="selected_departure_flight" 
-                                    value="<?= htmlspecialchars($flight['Available_Flights_Number_ID']) ?>">
+                                    value="<?= htmlspecialchars($flight['Available_Flights_Number_ID']) ?>" required>
                             </td>
                         </tr>
                     <?php endif;
                 endforeach; ?>
             </table>
         <?php endif; ?>
-
 
         <div style="margin-top: 20px;">
             <button type="button" onclick="goBack()">Go Back</button>

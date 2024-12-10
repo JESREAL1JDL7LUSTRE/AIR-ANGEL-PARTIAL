@@ -64,21 +64,31 @@ if (!$account_id) {
     die("Error: Account not found.");
 }
 
-// Calculate total price
+// Initialize total price
 $totalPrice = 0;
-$flightPrice = 0;
+$departureFlightPrice = 0;
+$returnFlightPrice = 0;
+$addonTotal = 0;
 
-
+// Add departure flight price (if selected)
 if ($selectedFlight) {
-    $flightPrice = $selectedFlight['Amount'] * $numPassengers;
-    $totalPrice += $flightPrice;
-    
+    $departureFlightPrice = $selectedFlight['Amount'] * $numPassengers;  // Multiply by number of passengers
+    $totalPrice += $departureFlightPrice; // Add departure flight price to total
 }
 
+// Add return flight price (if selected)
+if ($selectedReturnFlight) {
+    $returnFlightPrice = $selectedReturnFlight['Amount'] * $numPassengers;  // Multiply by number of passengers
+    $totalPrice += $returnFlightPrice;  // Add return flight price to total
+}
+
+// Add selected add-ons to the total price
 foreach ($selectedAddons as $addon) {
-    $totalPrice += $addon['Price'];
+    $addonTotal += $addon['Price'];  // Add the price of each selected addon
 }
 
+// Add the total add-on cost to the overall total
+$totalPrice += $addonTotal;
 
 
 // Handle payment submission
@@ -278,8 +288,20 @@ foreach ($selectedAddonsForConfirmation as $addon) {
         <p>Destination: <?php echo htmlspecialchars($selectedFlight['Destination'] ?? 'N/A'); ?></p>
         <p>Amount: $<?php echo number_format($selectedFlight['Amount'], 2); ?> per passenger</p>
     <?php else: ?>
-        <p>No flight selected.</p>
+        <p>No departure flight selected.</p>
     <?php endif; ?>
+
+    <?php if ($selectedReturnFlight): ?>
+        <h3>Return Flight Information</h3>
+        <p>Flight Number: <?php echo htmlspecialchars($selectedReturnFlight['Flight_Number'] ?? 'N/A'); ?></p>
+        <p>Return Date: <?php echo htmlspecialchars($selectedReturnFlight['Departure_Date'] ?? 'N/A'); ?></p>
+        <p>Origin: <?php echo htmlspecialchars($selectedReturnFlight['Origin'] ?? 'N/A'); ?></p>
+        <p>Destination: <?php echo htmlspecialchars($selectedReturnFlight['Destination'] ?? 'N/A'); ?></p>
+        <p>Amount: $<?php echo number_format($selectedReturnFlight['Amount'], 2); ?> per passenger</p>
+    <?php else: ?>
+        <p>No return flight selected.</p>
+    <?php endif; ?>
+
 
     <h2>Selected Add-ons</h2>
     <?php if (!empty($selectedAddons)): ?>
@@ -299,12 +321,19 @@ foreach ($selectedAddonsForConfirmation as $addon) {
         <p>No add-ons selected.</p>
     <?php endif; ?>
 
-    <h2>Total Price</h2>
-    <p>Flight Price (for <?php echo $numPassengers; ?> passengers): $<?php echo number_format($flightPrice, 2); ?></p>
-    <?php if ($totalPrice > $flightPrice): ?>
-        <p>Add-ons: $<?php echo number_format($totalPrice - $flightPrice, 2); ?></p>
+    <h2>Total Price Breakdown</h2>
+    <p>Departure Flight Price (for <?php echo $numPassengers; ?> passengers): $<?php echo number_format($departureFlightPrice, 2); ?></p>
+
+    <?php if ($returnFlightPrice > 0): ?>
+        <p>Return Flight Price (for <?php echo $numPassengers; ?> passengers): $<?php echo number_format($returnFlightPrice, 2); ?></p>
     <?php endif; ?>
+
+    <?php if ($addonTotal > 0): ?>
+        <p>Add-ons: $<?php echo number_format($addonTotal, 2); ?></p>
+    <?php endif; ?>
+
     <h3>Total: $<?php echo number_format($totalPrice, 2); ?> USD</h3>
+
 
     <h2>Payment Methods</h2>
     <form method="POST">
