@@ -47,12 +47,12 @@ $selectedAddons = $_SESSION['selected_addons'];
 
 // Handle delete action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_addon'])) {
-    if (isset($_POST['unique_id']) && !empty($_POST['unique_id'])) {
-        $uniqueIdToDelete = $_POST['unique_id'];
+    if (isset($_POST['ID']) && !empty($_POST['ID'])) {
+        $uniqueIdToDelete = $_POST['ID'];
 
         // Delete the specific add-on by unique ID
         foreach ($selectedAddons as $key => $addon) {
-            if (isset($addon['unique_id']) && $addon['unique_id'] === $uniqueIdToDelete) {
+            if (isset($addon['ID']) && $addon['ID'] === $uniqueIdToDelete) {
                 unset($selectedAddons[$key]);
                 break;
             }
@@ -60,47 +60,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_addon'])) {
 
         // Reindex the array after deletion and save it back to the session
         $_SESSION['selected_addons'] = array_values($selectedAddons);
-    } else {
-        echo "<p>Error: Unique ID is missing!</p>";
     }
 }
 
 // Handle add-to-cart action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
-    // Add selected add-on to session with a unique ID
+    // Initialize or retrieve the selected add-ons array from the session
+    $selectedAddons = $_SESSION['selected_addons'] ?? [];
+
+    // Add selected add-on to session with its actual ID and other details
     $addon = [
-        'unique_id' => uniqid('addon_', true), // Generate a unique ID for each add-on
-        'ID' => $_POST['addon_id'],
-        'Name' => $_POST['addon_name'],
-        'Price' => $_POST['addon_price'],
-        'Type' => $_POST['addon_type']
+        'ID' => $_POST['addon_id'],            // Add-on ID from the form (actual ID, not unique ID)
+        'Name' => $_POST['addon_name'],        // Add-on Name from the form
+        'Price' => $_POST['addon_price'],      // Add-on Price from the form
+        'Type' => $_POST['addon_type']         // Add-on Type from the form
     ];
 
-    // Append the selected add-on to session array
+    // Append the selected add-on to the session array
     $selectedAddons[] = $addon;
 
-    // Save the selected add-ons back to session
+    // Save the updated selected add-ons to the session
     $_SESSION['selected_addons'] = $selectedAddons;
 }
 
 // Handle proceeding to payment
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['proceed_to_payment'])) {
-    // Only store the names of all add-ons for the payment confirmation page
+    // Retrieve the selected add-ons from the session
+    $selectedAddons = $_SESSION['selected_addons'] ?? [];
+
+    // Only store the names, prices, and IDs of add-ons for the payment confirmation page
     $selectedAddonsForConfirmation = [];
     foreach ($selectedAddons as $addon) {
         $selectedAddonsForConfirmation[] = [
             'Name' => $addon['Name'],
-            'Price' => $addon['Price']
+            'Price' => $addon['Price'],
+            'Type' => $addon['Type'],  // Store Type if needed for future use
+            'ID' => $addon['ID']       // Store the actual add-on ID (not the unique ID)
         ];
     }
 
-    // Save the selected add-ons' names for confirmation in session
+    // Save the selected add-ons' names and IDs for confirmation in session
     $_SESSION['selected_addons_for_confirmation'] = $selectedAddonsForConfirmation;
 
     // Redirect to payment.php with the session data
     header("Location: acc_payment.php");
     exit();
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -160,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['proceed_to_payment'])
                 <td><?php echo htmlspecialchars($addon['Type']); ?></td>
                 <td>
                     <form method="POST" style="display:inline;">
-                        <input type="hidden" name="unique_id" value="<?php echo htmlspecialchars($addon['unique_id']); ?>">
+                        <input type="hidden" name="ID" value="<?php echo htmlspecialchars($addon['ID']); ?>">
                         <button type="submit" name="delete_addon">Delete</button>
                     </form>
                 </td>

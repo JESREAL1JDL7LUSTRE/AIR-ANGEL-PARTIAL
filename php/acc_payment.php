@@ -8,6 +8,8 @@ if (!isset($_SESSION['selected_flight_id'])) {
     exit;
 }
 
+$selectedAddonsForConfirmation = $_SESSION['selected_addons_for_confirmation'] ?? [];
+
 $selectedFlightID = $_SESSION['selected_flight_id'];
 $selected_return_flight_id = $_SESSION['selected_return_flight_id'] ?? null;  // Handle return flight, if exists
 
@@ -139,15 +141,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             INSERT INTO flight_to_reservation_to_passenger (Flight_to_Reservation_ID_FK, Available_Flights_Number_ID_FK) 
             VALUES (?, ?)
         ");
+        $frp_number_ids = []; // Store generated FRP_Number_IDs
         foreach ($reservation_to_passenger_ids as $reservation_to_passenger_id) {
             $stmt->bind_param("ii", $reservation_to_passenger_id, $selectedFlight['Available_Flights_Number_ID']);
             if (!$stmt->execute()) {
                 error_log("Error inserting Flight_to_Reservation_to_Passenger (departure): " . $stmt->error);
                 throw new Exception("Failed to insert flight-to-reservation record for departure.");
             }
+            $frp_number_ids[] = $stmt->insert_id; // Store generated FRP_Number_ID
         }
 
-        // Insert into flight_to_reservation_to_passenger table for return flight (if exists)
+        // Insert into flight_to_reservation_to_passenger table for return flight (if applicable)
         if ($selectedReturnFlight) {
             foreach ($reservation_to_passenger_ids as $reservation_to_passenger_id) {
                 $stmt->bind_param("ii", $reservation_to_passenger_id, $selectedReturnFlight['Available_Flights_Number_ID']);
@@ -155,8 +159,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     error_log("Error inserting Flight_to_Reservation_to_Passenger (return): " . $stmt->error);
                     throw new Exception("Failed to insert flight-to-reservation record for return.");
                 }
+                $frp_number_ids[] = $stmt->insert_id; // Store generated FRP_Number_ID
             }
         }
+
+// Fetch the add-ons selected for confirmation
+$selectedAddonsForConfirmation = $_SESSION['selected_addons_for_confirmation'] ?? [];
+
+// Insert add-ons into Add_on table
+$stmt = $conn->prepare("
+    INSERT INTO add_on (FRP_Number_ID_FK, Seat_Selector_ID_FK, Food_ID_FK, Baggage_ID_FK) 
+    VALUES (?, ?, ?, ?)
+");
+
+foreach ($selectedAddonsForConfirmation as $addon) {
+    // Ensure the addon data is valid (check if the IDs are not null)
+    $seat_selector_id = null;
+    $food_id = null;
+    $baggage_id = null;
+
+    // Assign Seat_Selector_ID_FK, Food_ID_FK, Baggage_ID_FK based on addon type
+    if ($addon['Type'] === 'SeatSelector') {
+        $seat_selector_id = $addon['ID'];  // Assign SeatSelector ID
+    } elseif ($addon['Type'] === 'Food') {
+        $food_id = $addon['ID'];  // Assign Food ID
+    } elseif ($addon['Type'] === 'Baggage') {
+        $baggage_id = $addon['ID'];  // Assign Baggage ID
+    }
+
+    // For each generated FRP_Number_ID, insert the add-on
+    foreach ($frp_number_ids as $frp_number_id) {
+        $stmt->bind_param("iiii", $frp_number_id, $seat_selector_id, $food_id, $baggage_id);
+        if (!$stmt->execute()) {
+            error_log("Error inserting Add_on: " . $stmt->error);
+            throw new Exception("Failed to insert add-on record.");
+        }
+    }
+}
 
         // Insert into Reservation_to_Account table
         $stmt = $conn->prepare("

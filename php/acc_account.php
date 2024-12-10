@@ -12,7 +12,9 @@ if (!isset($_SESSION['Account_Email'])) {
 
 // Handle form submission to update user info
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_SESSION['Account_Email'])) {
+    // Check if the "Save" button was pressed
+    if (isset($_POST['save'])) {
+        if (isset($_SESSION['Account_Email'])) {
         // Get the updated data from the form
         $first_name = $_POST['Account_First_Name'];
         $last_name = $_POST['Account_Last_Name'];
@@ -47,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
-
+}
 // Get logged-in user email
 $user_email = $_SESSION['Account_Email'];
 
@@ -96,6 +98,185 @@ $stmt_flights = $conn->prepare($sql_booked_flights);
 $stmt_flights->bind_param("s", $user_email);
 $stmt_flights->execute();
 $flights_result = $stmt_flights->get_result();
+
+if (isset($_POST['print_ticket'])) {
+
+    require_once __DIR__ . '/../vendor/autoload.php';
+
+    // If the form is submitted to download the ticket
+    $sql_account_print_eticket = "
+    SELECT DISTINCT
+        rta.Reservation_to_Account_ID AS Booking_ID,
+        r.Reservation_ID,
+        r.Payment_ID_FK AS Payment_ID,
+        af.Flight_Number,
+        af.Departure_Date,
+        af.Arrival_Date,
+        af.Origin,
+        af.Destination,
+        af.Departure_Time,
+        af.Arrival_Time,
+        af.Amount AS Flight_Amount,
+        p.Payment_Amount,
+        p.Payment_Date,
+        p.Payment_Method_Name,
+        pass.Passenger_Last_Name,
+        pass.Passenger_First_Name,
+        pass.Passenger_Middle_Name
+    FROM reservation_to_account rta
+    INNER JOIN reservation r ON rta.Reservation_ID_FK = r.Reservation_ID
+    INNER JOIN flight_to_reservation_to_passenger frp ON frp.Flight_to_Reservation_ID_FK = r.Reservation_ID
+    INNER JOIN available_flights af ON af.Available_Flights_Number_ID = frp.Available_Flights_Number_ID_FK
+    LEFT JOIN payment p ON r.Payment_ID_FK = p.Payment_ID
+    LEFT JOIN reservation_to_passenger rtp ON r.Reservation_ID = rtp.Reservation_ID_FK
+    LEFT JOIN passenger pass ON rtp.Passenger_ID_FK = pass.Passenger_ID
+    WHERE rta.Account_ID_FK = (SELECT Account_ID FROM Account WHERE Account_Email = ?)
+    ";
+
+    $stmt = $conn->prepare($sql_account_print_eticket);
+    $stmt->execute([$_SESSION['Account_Email']]);
+    $ticketDetails = [];
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $ticketDetails[] = $row;
+    }
+
+    // Check if ticketDetails is empty before proceeding
+    if (empty($ticketDetails)) {
+        die("No ticket details found.");
+    }
+
+    // Initialize total amount
+    $totalAmount = 0;
+    $flightAmount = $ticketDetails[0]['Flight_Amount']; // The amount for the flight (assuming it's the same for all passengers)
+
+    // Fetch add-ons separately for each passenger
+    $addons = [];
+    foreach ($ticketDetails as $ticket) {
+        $sql_addons = "
+        SELECT
+            add_on.Seat_Selector_ID_FK,
+            add_on.Food_ID_FK,
+            add_on.Baggage_ID_FK,
+            ss.Seat_Selector_Number AS Seat_Selector_Name,
+            ss.Price AS Seat_Selector_Price,
+            f.Food_Name AS Food_Name,
+            f.Price AS Food_Price,
+            b.Baggage_Weight AS Baggage_Name,
+            b.Price AS Baggage_Price
+        FROM add_on
+        LEFT JOIN seat_selector ss ON ss.Seat_Selector_ID = add_on.Seat_Selector_ID_FK
+        LEFT JOIN food f ON f.Food_ID = add_on.Food_ID_FK
+        LEFT JOIN baggage b ON b.Baggage_ID = add_on.Baggage_ID_FK
+        WHERE add_on.FRP_Number_ID_FK = ?
+        ";
+
+        // Prepare the query for each reservation's FRP_Number_ID
+        $stmt_addons = $conn->prepare($sql_addons);
+        $stmt_addons->execute([$ticket['Booking_ID']]);
+        $addonDetails = $stmt_addons->get_result()->fetch_all(MYSQLI_ASSOC);
+        
+        // Add each passenger's add-ons to the addons array
+        $addons[$ticket['Booking_ID']] = $addonDetails;
+    }
+
+    // Calculate total amount, add-ons, and passengers
+    $totalAmount = 0;
+    $flightAmount = $ticketDetails[0]['Flight_Amount'];
+    $passengerNames = [];
+    $addonPrices = [];
+
+    foreach ($ticketDetails as $ticket) {
+        // Passenger name
+        $passengerNames[] = $ticket['Passenger_First_Name'] . ' ' . $ticket['Passenger_Last_Name'];
+        
+        // Get add-ons for this passenger
+        $passengerAddons = isset($addons[$ticket['Booking_ID']]) ? $addons[$ticket['Booking_ID']] : [];
+        
+        // Calculate total add-ons for this passenger
+        $totalAddons = 0;
+        foreach ($passengerAddons as $addon) {
+            // Check for non-null add-ons and print only valid ones
+            if ($addon['Seat_Selector_ID_FK'] !== null) {
+                $totalAddons += $addon['Seat_Selector_Price'];
+            }
+            if ($addon['Food_ID_FK'] !== null) {
+                $totalAddons += $addon['Food_Price'];
+            }
+            if ($addon['Baggage_ID_FK'] !== null) {
+                $totalAddons += $addon['Baggage_Price'];
+            }
+        }
+        
+        $addonPrices[] = $totalAddons;
+        $totalAmount += $flightAmount + $totalAddons;
+    }
+
+    // Generate PDF
+    $pdf = new TCPDF();
+    $pdf->AddPage();
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->Cell(0, 10, "Air Angel - E-Ticket", 0, 1, 'C');
+
+    // Flight Information
+    $pdf->SetFont('helvetica', '', 12);
+    $pdf->Ln(10);
+    $pdf->Cell(0, 10, "Flight Number: " . $ticketDetails[0]['Flight_Number'], 0, 1);
+    $pdf->Cell(0, 10, "Origin: " . $ticketDetails[0]['Origin'], 0, 1);
+    $pdf->Cell(0, 10, "Destination: " . $ticketDetails[0]['Destination'], 0, 1);
+    $pdf->Cell(0, 10, "Departure Time: " . $ticketDetails[0]['Departure_Time'], 0, 1);
+    $pdf->Cell(0, 10, "Arrival Time: " . $ticketDetails[0]['Arrival_Time'], 0, 1);
+    $pdf->Cell(0, 10, "Amount: \$" . number_format($flightAmount, 2) . " per passenger", 0, 1);
+
+    // Add-ons
+    $pdf->Ln(10);
+    $pdf->Cell(0, 10, "Add-ons:", 0, 1);
+    foreach ($addons as $bookingID => $addonDetails) {
+        foreach ($addonDetails as $addon) {
+            // Print seat add-on if it exists
+            if ($addon['Seat_Selector_ID_FK'] !== null) {
+                $pdf->Cell(0, 10, "" . $addon['Seat_Selector_Name'] . " - \$" . number_format($addon['Seat_Selector_Price'], 2), 0, 1);
+            }
+            // Print food add-on if it exists
+            if ($addon['Food_ID_FK'] !== null) {
+                $pdf->Cell(0, 10, "" . $addon['Food_Name'] . " - \$" . number_format($addon['Food_Price'], 2), 0, 1);
+            }
+            // Print baggage add-on if it exists
+            if ($addon['Baggage_ID_FK'] !== null) {
+                $pdf->Cell(0, 10, "" . $addon['Baggage_Name'] . " - \$" . number_format($addon['Baggage_Price'], 2), 0, 1);
+            }
+        }
+    }
+
+    // Passenger Information
+    $pdf->Ln(10);
+    $pdf->Cell(0, 10, "Passenger(s):", 0, 1);
+    foreach ($passengerNames as $index => $name) {
+        $pdf->Cell(0, 10, ($index + 1) . ". $name", 0, 1);
+    }
+
+    // Total Amount
+    $pdf->Ln(10);
+    $pdf->Cell(0, 10, "Total Amount: \$" . number_format($totalAmount, 2), 0, 1);
+
+    // Save and download PDF
+    $ticketDir = $_SERVER['DOCUMENT_ROOT'] . '/ANGEL/etickets/';
+    if (!is_dir($ticketDir)) {
+        mkdir($ticketDir, 0777, true);
+    }
+
+    $ticketFile = $ticketDir . "eticket_" . $ticketDetails[0]['Reservation_ID'] . ".pdf";
+    $pdf->Output($ticketFile, 'F'); // Save PDF to server
+
+    // Send the file for download
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: attachment; filename="' . basename($ticketFile) . '"');
+    header('Content-Length: ' . filesize($ticketFile));
+    readfile($ticketFile);
+
+    unlink($ticketFile); // Delete the file after sending
+    exit;
+}
 
 // Check if a delete request has been made
 if (isset($_GET['delete'])) {
@@ -183,7 +364,7 @@ if (isset($_GET['delete'])) {
                         <td>
                             <input type="hidden" name="Account_ID" value="<?php echo $row['Account_ID']; ?>"> <!-- Pass Account_ID for update -->
                             <button type="button" id="editButton">Edit</button>
-                            <button type="submit" id="saveButton" style="display: none;">Save</button>
+                            <button type="submit" name="save" id="saveButton" style="display: none;">Save</button>
                         </td>
                     </tr>
                 <?php endwhile; ?>
@@ -200,7 +381,6 @@ if (isset($_GET['delete'])) {
     <tr>
         <th>Booking ID</th>
         <th>Passenger Name</th>
-        <th>Passenger Nationality</th>
         <th>Passenger Email</th>
         <th>Passenger Phone</th>
         <th>Reservation_ID</th>
@@ -209,13 +389,11 @@ if (isset($_GET['delete'])) {
         <th>Arrival Date</th>
         <th>Origin</th>
         <th>Destination</th>
-        <th>Departure Time</th>
-        <th>Arrival Time</th>
         <th>Amount</th>
         <th>Payment ID</th>
         <th>Payment Date</th>
         <th>Payment Method</th>
-        <th>Action</th>
+        <th>Actions</th>
     </tr>
 
     <?php if ($flights_result && $flights_result->num_rows > 0): ?>
@@ -223,7 +401,6 @@ if (isset($_GET['delete'])) {
             <tr>
                 <td><?php echo htmlspecialchars($row['Booking_ID']); ?></td>
                 <td><?php echo htmlspecialchars($row['Passenger_First_Name'] . ' ' . $row['Passenger_Last_Name']); ?></td>
-                <td><?php echo htmlspecialchars($row['Passenger_Nationality']); ?></td>
                 <td><?php echo htmlspecialchars($row['Passenger_Email']); ?></td>
                 <td><?php echo htmlspecialchars($row['Passenger_PhoneNumber']); ?></td>
                 <td><?php echo htmlspecialchars($row['Reservation_ID']); ?></td>
@@ -232,8 +409,6 @@ if (isset($_GET['delete'])) {
                 <td><?php echo htmlspecialchars($row['Arrival_Date']); ?></td>
                 <td><?php echo htmlspecialchars($row['Origin']); ?></td>
                 <td><?php echo htmlspecialchars($row['Destination']); ?></td>
-                <td><?php echo htmlspecialchars($row['Departure_Time']); ?></td>
-                <td><?php echo htmlspecialchars($row['Arrival_Time']); ?></td>
                 <td><?php echo htmlspecialchars($row['Amount']); ?></td>
                 <td><?php echo htmlspecialchars($row['Payment_ID']); ?></td>
                 <td><?php echo htmlspecialchars($row['Payment_Date']); ?></td>
@@ -243,8 +418,10 @@ if (isset($_GET['delete'])) {
                     <a href="?delete=<?php echo $row['Booking_ID']; ?>" onclick="return confirm('Are you sure you want to delete this booking?');">
                         <button type="button">Delete</button>
                     </a>
+                    <form method="POST">
+                    <button type="submit" name="print_ticket">Print Ticket</button>
+                    </form>
                 </td>
-
 
 
             </tr>

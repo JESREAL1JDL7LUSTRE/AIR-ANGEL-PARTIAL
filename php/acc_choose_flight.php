@@ -24,6 +24,7 @@ $available_flights = $_SESSION['available_flights'];
 $returndestination = $_SESSION['origin'];
 $returnorigin = $_SESSION['destination'];
 
+
 // Handle flight selection form submission
 if (isset($_POST['selected_flight'])) {
     $_SESSION['selected_flight_id'] = $_POST['selected_flight'];  // Store flight ID in session
@@ -73,7 +74,7 @@ if (isset($_POST['selected_flight'])) {
 <div style="margin: 0 auto; width: 80%; padding: 20px; font-family: Arial, sans-serif;">
     <h1>Select Your Flight</h1>
 
-    <form method="POST" action="acc_choose_flight.php" onsubmit="return validateSelection();">
+    <form method="POST" onsubmit="return validateSelection();">
         <?php if ($flight_type == 'Round Trip'): ?>
             <h2>Departure Flight</h2>
             <table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
