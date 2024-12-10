@@ -21,8 +21,22 @@ $origin = $_SESSION['origin'];
 $destination = $_SESSION['destination'];
 $flight_type = $_SESSION['flight_type'] ?? 'One Way';  // Default to One Way
 $available_flights = $_SESSION['available_flights'];
-$returndestination = $_SESSION['origin'];
-$returnorigin = $_SESSION['destination'];
+$return_date = $_SESSION['return_date'] ?? ''; // Ensure return_date is set
+
+// Handle return flights based on the selected departure flight
+$_SESSION['return_flights'] = array();  // Clear previous return flights if any
+
+// Only filter return flights for round trip, not for one way
+if ($flight_type === 'Round Trip') {
+    // Look for return flights based on the selected departure flight's destination and origin
+    foreach ($available_flights as $flight) {
+        if ($flight['Origin'] === $destination && $flight['Destination'] === $origin) {
+            if (empty($return_date) || $flight['Departure_Date'] === $return_date) {
+                $_SESSION['return_flights'][] = $flight;  // Add to return flights session
+            }
+        }
+    }
+}
 
 // Handle flight selection form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_flight'])) {
@@ -90,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_flight'])) {
     <h1>Select Your Flight</h1>
 
     <form method="POST" action="acc_choose_flight.php" onsubmit="return validateSelection();">
-        <?php if ($flight_type == 'Round Trip'): ?>
+        <?php if ($flight_type === 'Round Trip'): ?>
             <h2>Departure Flight</h2>
             <table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
                 <tr>
