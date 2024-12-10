@@ -100,8 +100,8 @@ $stmt_flights->execute();
 $flights_result = $stmt_flights->get_result();
 
 if (isset($_POST['print_ticket'])) {
+    $booking_id = $_POST['Booking_ID'];
 
-    require_once __DIR__ . '/../vendor/autoload.php';
 
     // If the form is submitted to download the ticket
     $sql_account_print_eticket = "
@@ -130,20 +130,16 @@ if (isset($_POST['print_ticket'])) {
     LEFT JOIN payment p ON r.Payment_ID_FK = p.Payment_ID
     LEFT JOIN reservation_to_passenger rtp ON r.Reservation_ID = rtp.Reservation_ID_FK
     LEFT JOIN passenger pass ON rtp.Passenger_ID_FK = pass.Passenger_ID
-    WHERE rta.Account_ID_FK = (SELECT Account_ID FROM Account WHERE Account_Email = ?)
-    ";
+    WHERE rta.Reservation_to_Account_ID = ?";
 
     $stmt = $conn->prepare($sql_account_print_eticket);
-    $stmt->execute([$_SESSION['Account_Email']]);
-    $ticketDetails = [];
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $ticketDetails[] = $row;
-    }
+    $stmt->bind_param("i", $booking_id);
+    $stmt->execute();
+    $ticketDetails = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-    // Check if ticketDetails is empty before proceeding
+    // If no ticket found
     if (empty($ticketDetails)) {
-        die("No ticket details found.");
+        die("Ticket details not found.");
     }
 
     // Initialize total amount
@@ -212,7 +208,13 @@ if (isset($_POST['print_ticket'])) {
         $totalAmount += $flightAmount + $totalAddons;
     }
 
-    // Generate PDF
+    // If no ticket found
+    if (empty($ticketDetails)) {
+        die("Ticket details not found.");
+    }
+
+    // Generate the PDF for the specific ticket
+    require_once __DIR__ . '/../vendor/autoload.php';
     $pdf = new TCPDF();
     $pdf->AddPage();
     $pdf->SetFont('helvetica', 'B', 16);
@@ -226,7 +228,7 @@ if (isset($_POST['print_ticket'])) {
     $pdf->Cell(0, 10, "Destination: " . $ticketDetails[0]['Destination'], 0, 1);
     $pdf->Cell(0, 10, "Departure Time: " . $ticketDetails[0]['Departure_Time'], 0, 1);
     $pdf->Cell(0, 10, "Arrival Time: " . $ticketDetails[0]['Arrival_Time'], 0, 1);
-    $pdf->Cell(0, 10, "Amount: \$" . number_format($flightAmount, 2) . " per passenger", 0, 1);
+    $pdf->Cell(0, 10, "Amount: \$" . number_format($ticketDetails[0]['Flight_Amount'], 2), 0, 1);
 
     // Add-ons
     $pdf->Ln(10);
@@ -255,28 +257,28 @@ if (isset($_POST['print_ticket'])) {
         $pdf->Cell(0, 10, ($index + 1) . ". $name", 0, 1);
     }
 
-    // Total Amount
-    $pdf->Ln(10);
-    $pdf->Cell(0, 10, "Total Amount: \$" . number_format($totalAmount, 2), 0, 1);
-
-    // Save and download PDF
-    $ticketDir = $_SERVER['DOCUMENT_ROOT'] . '/ANGEL/etickets/';
-    if (!is_dir($ticketDir)) {
-        mkdir($ticketDir, 0777, true);
-    }
-
-    $ticketFile = $ticketDir . "eticket_" . $ticketDetails[0]['Reservation_ID'] . ".pdf";
-    $pdf->Output($ticketFile, 'F'); // Save PDF to server
-
-    // Send the file for download
-    header('Content-Type: application/pdf');
-    header('Content-Disposition: attachment; filename="' . basename($ticketFile) . '"');
-    header('Content-Length: ' . filesize($ticketFile));
-    readfile($ticketFile);
-
-    unlink($ticketFile); // Delete the file after sending
-    exit;
-}
+     // Total Amount
+     $pdf->Ln(10);
+     $pdf->Cell(0, 10, "Total Amount: \$" . number_format($totalAmount, 2), 0, 1);
+ 
+     // Save and download PDF
+     $ticketDir = $_SERVER['DOCUMENT_ROOT'] . '/ANGEL/etickets/';
+     if (!is_dir($ticketDir)) {
+         mkdir($ticketDir, 0777, true);
+     }
+ 
+     $ticketFile = $ticketDir . "eticket_" . $ticketDetails[0]['Reservation_ID'] . ".pdf";
+     $pdf->Output($ticketFile, 'F'); // Save PDF to server
+ 
+     // Send the file for download
+     header('Content-Type: application/pdf');
+     header('Content-Disposition: attachment; filename="' . basename($ticketFile) . '"');
+     header('Content-Length: ' . filesize($ticketFile));
+     readfile($ticketFile);
+ 
+     unlink($ticketFile); // Delete the file after sending
+     exit;
+ }
 
 // Check if a delete request has been made
 if (isset($_GET['delete'])) {
@@ -419,7 +421,8 @@ if (isset($_GET['delete'])) {
                         <button type="button">Delete</button>
                     </a>
                     <form method="POST">
-                    <button type="submit" name="print_ticket">Print Ticket</button>
+                        <input type="hidden" name="Booking_ID" value="<?php echo $row['Booking_ID']; ?>">
+                        <button type="submit" name="print_ticket">Print Ticket</button>
                     </form>
                 </td>
 

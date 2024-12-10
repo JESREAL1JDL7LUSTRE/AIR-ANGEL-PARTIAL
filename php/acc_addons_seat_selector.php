@@ -6,22 +6,49 @@ include 'db.php'; // Include the database connection
 $sql = "SELECT Seat_Selector_ID, Seat_Selector_Number, Price FROM Seat_Selector";
 $result = $conn->query($sql);
 
+// Fetch seat selectors that are already in the 'add_on' table (i.e., already selected by the user)
+$query = "SELECT DISTINCT Seat_Selector_ID_FK FROM add_on WHERE Seat_Selector_ID_FK IS NOT NULL";
+$existingAddonsResult = $conn->query($query);
+$existingAddons = [];
+
+if ($existingAddonsResult->num_rows > 0) {
+    while ($row = $existingAddonsResult->fetch_assoc()) {
+        $existingAddons[] = $row['Seat_Selector_ID_FK'];
+    }
+}
+
 $selectedAddons = isset($_SESSION['selected_addons']) ? $_SESSION['selected_addons'] : [];
 
+// Only show seat selectors that are not already in the 'add_on' table
+$availableSeatSelectors = [];
+while ($row = $result->fetch_assoc()) {
+    if (!in_array($row['Seat_Selector_ID'], $existingAddons)) {
+        $availableSeatSelectors[] = $row; // Add the seat selector if it's not already in the add_on table
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
-    // Add selected add-on to session
-    $addon = [
-        'ID' => $_POST['addon_id'],
-        'Name' => $_POST['addon_name'],
-        'Price' => $_POST['addon_price'],
-        'Type' => 'SeatSelector' // Set the add-on type as SeatSelector
-    ];
+    $addon_id = $_POST['addon_id'];
 
-    // Append the selected add-on to session array
-    $selectedAddons[] = $addon;
+    // Add selected add-on to session if it's not already in the 'add_on' table
+    if (!in_array($addon_id, $existingAddons)) {
+        // Add selected add-on to session
+        $addon = [
+            'ID' => $addon_id,
+            'Name' => $_POST['addon_name'],
+            'Price' => $_POST['addon_price'],
+            'Type' => 'SeatSelector' // Set the add-on type as SeatSelector
+        ];
 
-    // Save the selected add-ons back to session
-    $_SESSION['selected_addons'] = $selectedAddons;
+        // Append the selected add-on to session array
+        $selectedAddons[] = $addon;
+
+        // Save the selected add-ons back to session
+        $_SESSION['selected_addons'] = $selectedAddons;
+
+    } else {
+        echo "This seat selector has already been selected.";
+    }
 }
 ?>
 
@@ -62,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
 
 <h1>Select Seat Selector Add-ons</h1>
 
-<?php if ($result && $result->num_rows > 0): ?>
+<?php if (count($availableSeatSelectors) > 0): ?>
     <table>
         <tr>
             <th>ID</th>
@@ -70,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
             <th>Price</th>
             <th>Action</th>
         </tr>
-        <?php while ($row = $result->fetch_assoc()): ?>
+        <?php foreach ($availableSeatSelectors as $row): ?>
             <tr>
                 <td><?php echo htmlspecialchars($row['Seat_Selector_ID']); ?></td>
                 <td><?php echo htmlspecialchars($row['Seat_Selector_Number']); ?></td>
@@ -83,10 +110,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
                     <input type="hidden" name="addon_type" value="SeatSelector">
                     <button type="submit" name="add_to_cart">Add to Cart</button>
                 </form>
-
                 </td>
             </tr>
-        <?php endwhile; ?>
+        <?php endforeach; ?>
     </table>
 <?php else: ?>
     <p>No seat selectors available.</p>
