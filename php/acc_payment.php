@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Fetch the add-ons selected for confirmation
 $selectedAddonsForConfirmation = $_SESSION['selected_addons_for_confirmation'] ?? [];
 
-// Insert add-ons into Add_on table
+// Prepare the statement
 $stmt = $conn->prepare("
     INSERT INTO add_on (FRP_Number_ID_FK, Seat_Selector_ID_FK, Food_ID_FK, Baggage_ID_FK) 
     VALUES (?, ?, ?, ?)
@@ -189,13 +189,16 @@ foreach ($selectedAddonsForConfirmation as $addon) {
     $baggage_id = null;
 
     // Assign Seat_Selector_ID_FK, Food_ID_FK, Baggage_ID_FK based on addon type
-    if ($addon['Type'] === 'SeatSelector') {
+    if ($addon['Type'] === 'Seat Selector') {  // Ensure this matches the exact type in your array
         $seat_selector_id = $addon['ID'];  // Assign SeatSelector ID
     } elseif ($addon['Type'] === 'Food') {
         $food_id = $addon['ID'];  // Assign Food ID
     } elseif ($addon['Type'] === 'Baggage') {
         $baggage_id = $addon['ID'];  // Assign Baggage ID
     }
+
+    // Log the addon data to verify before insert
+    error_log("Inserting Add_on: FRP_Number_ID_FK = $frp_number_id, Seat_Selector_ID_FK = $seat_selector_id, Food_ID_FK = $food_id, Baggage_ID_FK = $baggage_id");
 
     // For each generated FRP_Number_ID, insert the add-on
     foreach ($frp_number_ids as $frp_number_id) {
