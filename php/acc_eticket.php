@@ -130,6 +130,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_departure_ti
 
 // If the form is submitted for the return flight ticket
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_return_ticket'])) {
+    if (!$selectedReturnFlight) {
+        die("Error: No return flight information found for a round-trip.");
+    }
+
     // Generate Return Ticket
     $pdfReturn = new TCPDF();
     $pdfReturn->AddPage();
@@ -282,6 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_return_ticke
 </div>
 
 <!-- Return Flight -->
+<?php if ($selectedReturnFlight): ?>
 <div class="eticket">
     <div class="eticket-header">
         <h1><?php echo $airlineName; ?></h1>
@@ -325,5 +330,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_return_ticke
         </form>
     </div>
 </div>
+<?php endif; ?>
 </body>
 </html>

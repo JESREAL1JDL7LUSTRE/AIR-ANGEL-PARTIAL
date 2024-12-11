@@ -8,10 +8,11 @@ if (!isset($_SESSION['selected_flight_id'])) {
     exit;
 }
 
-$selectedAddonsForConfirmation = $_SESSION['selected_addons_for_confirmation'] ?? [];
-
 $selectedFlightID = $_SESSION['selected_flight_id'];
-$selected_return_flight_id = $_SESSION['selected_return_flight_id'] ?? null;  // Handle return flight, if exists
+$selected_return_flight_id = $_SESSION['selected_return_flight_id'] ?? null;
+
+// Determine if the trip is one-way or round-trip
+$tripType = $_SESSION['trip_type'] ?? 'one-way'; // Default to 'one-way' if not set
 
 // Fetch departure flight details
 $stmt = $conn->prepare("SELECT * FROM Available_Flights WHERE Available_Flights_Number_ID = ?");
@@ -28,9 +29,9 @@ if ($selectedFlight) {
     exit;
 }
 
-// Fetch return flight details if available
+// Fetch return flight details if applicable
 $selectedReturnFlight = null;
-if ($selected_return_flight_id) {
+if ($tripType === 'round-trip' && $selected_return_flight_id) {
     $stmt = $conn->prepare("SELECT * FROM Available_Flights WHERE Available_Flights_Number_ID = ?");
     $stmt->bind_param("i", $selected_return_flight_id);
     $stmt->execute();
@@ -44,6 +45,9 @@ if ($selected_return_flight_id) {
         echo "Error: Selected return flight not found in the database.";
         exit;
     }
+} else {
+    // Clear return flight session data for one-way trips
+    unset($_SESSION['selected_return_flight']);
 }
 
 // Fetch session data
@@ -294,17 +298,14 @@ foreach ($selectedAddonsForConfirmation as $addon) {
         <p>No departure flight selected.</p>
     <?php endif; ?>
 
-    <?php if ($selectedReturnFlight): ?>
+    <?php if ($tripType === 'round-trip' && $selectedReturnFlight): ?>
         <h3>Return Flight Information</h3>
         <p>Flight Number: <?php echo htmlspecialchars($selectedReturnFlight['Flight_Number'] ?? 'N/A'); ?></p>
         <p>Return Date: <?php echo htmlspecialchars($selectedReturnFlight['Departure_Date'] ?? 'N/A'); ?></p>
         <p>Origin: <?php echo htmlspecialchars($selectedReturnFlight['Origin'] ?? 'N/A'); ?></p>
         <p>Destination: <?php echo htmlspecialchars($selectedReturnFlight['Destination'] ?? 'N/A'); ?></p>
         <p>Amount: $<?php echo number_format($selectedReturnFlight['Amount'], 2); ?> per passenger</p>
-    <?php else: ?>
-        <p>No return flight selected.</p>
     <?php endif; ?>
-
 
     <h2>Selected Add-ons</h2>
     <?php if (!empty($selectedAddons)): ?>
