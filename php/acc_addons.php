@@ -48,11 +48,11 @@ $selectedAddons = $_SESSION['selected_addons'];
 // Handle delete action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_addon'])) {
     if (isset($_POST['ID']) && !empty($_POST['ID'])) {
-        $uniqueIdToDelete = $_POST['ID'];
+        $ToDelete = $_POST['ID'];
 
         // Delete the specific add-on by unique ID
         foreach ($selectedAddons as $key => $addon) {
-            if (isset($addon['ID']) && $addon['ID'] === $uniqueIdToDelete) {
+            if (isset($addon['ID']) && $addon['ID'] === $ToDelete) {
                 unset($selectedAddons[$key]);
                 break;
             }
