@@ -38,10 +38,19 @@ if (!$reservation || !$payment) {
 
 // Flight and passenger details can be fetched from the session as before
 $selectedFlight = $_SESSION['selected_flight'] ?? null;
-$selectedReturnFlight = $_SESSION['selected_return_flight'] ?? null; // Added return flight session
 $numPassengers = $_SESSION['num_passengers'] ?? 0;
 $selectedAddons = $_SESSION['selected_addons'] ?? [];
 $paymentMethod = $_SESSION['payment_method'] ?? null;
+
+$selectedReturnFlight = $_SESSION['return_flights'] ?? null;
+
+// Check if it's an array and extract the first element
+if (is_array($selectedReturnFlight) && isset($selectedReturnFlight[0])) {
+    $selectedReturnFlight = $selectedReturnFlight[0]; // Extract the first flight data
+} else {
+    $selectedReturnFlight = null; // No valid data available
+}
+
 
 // Generate booking date
 $bookingDate = date('Y-m-d');
@@ -109,13 +118,14 @@ $totalPrice += $addonTotal;
 <?php endif; ?>
 
 <?php if ($selectedReturnFlight): ?>
-    <h2>Return Flight Information</h2>
-    <p><strong>Flight Number:</strong> <?php echo htmlspecialchars($selectedReturnFlight['Flight_Number'] ?? 'N/A'); ?></p>
-    <p><strong>Return Date:</strong> <?php echo htmlspecialchars($selectedReturnFlight['Departure_Date'] ?? 'N/A'); ?></p>
-    <p><strong>Origin:</strong> <?php echo htmlspecialchars($selectedReturnFlight['Origin'] ?? 'N/A'); ?></p>
-    <p><strong>Destination:</strong> <?php echo htmlspecialchars($selectedReturnFlight['Destination'] ?? 'N/A'); ?></p>
-    <p><strong>Amount:</strong> $<?php echo number_format($selectedReturnFlight['Amount'], 2); ?> per passenger</p>
+    <h3>Return Flight Information</h3>
+    <p>Flight Number: <?php echo htmlspecialchars($selectedReturnFlight['Flight_Number'] ?? 'N/A'); ?></p>
+    <p>Return Date: <?php echo htmlspecialchars($selectedReturnFlight['Departure_Date'] ?? 'N/A'); ?></p>
+    <p>Origin: <?php echo htmlspecialchars($selectedReturnFlight['Origin'] ?? 'N/A'); ?></p>
+    <p>Destination: <?php echo htmlspecialchars($selectedReturnFlight['Destination'] ?? 'N/A'); ?></p>
+    <p>Amount: $<?php echo number_format($selectedReturnFlight['Amount'] ?? 0, 2); ?> per passenger</p>
 <?php endif; ?>
+
 
 <h2>Selected Add-ons</h2>
 <?php if (!empty($selectedAddons)): ?>

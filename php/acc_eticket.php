@@ -33,6 +33,16 @@ $departureTime = $selectedFlight['Departure_Time'] ?? 'N/A';
 $arrivalTime = $selectedFlight['Arrival_Time'] ?? 'N/A';
 $flightPrice = $selectedFlight['Amount'] ?? 0;
 
+// Retrieve the return flights data from the session
+$selectedReturnFlight = $_SESSION['return_flights'] ?? null;
+
+// Check if it's an array and extract the first element
+if (is_array($selectedReturnFlight) && isset($selectedReturnFlight[0])) {
+    $selectedReturnFlight = $selectedReturnFlight[0]; // Extract the first flight data
+} else {
+    $selectedReturnFlight = null; // No valid data available
+}
+
 // Ensure return flight details are available (if applicable)
 $returnFlightNumber = $selectedReturnFlight['Flight_Number'] ?? 'N/A';
 $returnOrigin = $selectedReturnFlight['Origin'] ?? 'N/A';
@@ -40,6 +50,7 @@ $returnDestination = $selectedReturnFlight['Destination'] ?? 'N/A';
 $returnDepartureTime = $selectedReturnFlight['Departure_Time'] ?? 'N/A';
 $returnArrivalTime = $selectedReturnFlight['Arrival_Time'] ?? 'N/A';
 $returnFlightPrice = $selectedReturnFlight['Amount'] ?? 0;
+
 
 // Initialize total to 0
 $total = 0;
@@ -129,11 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_departure_ti
 }
 
 // If the form is submitted for the return flight ticket
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_return_ticket'])) {
-    if (!$selectedReturnFlight) {
-        die("Error: No return flight information found for a round-trip.");
-    }
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_return_ticket']) && $selectedReturnFlight) {
     // Generate Return Ticket
     $pdfReturn = new TCPDF();
     $pdfReturn->AddPage();
@@ -187,7 +194,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_return_ticke
 
     unlink($ticketFileReturn);  // Remove the temporary file after download
     exit;
+} else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_return_ticket'])) {
+    // If no return flight is selected, inform the user
+    echo "No return flight available for a one-way trip.";
+    exit;
 }
+
 ?>
 
 <!-- HTML Code for Displaying Tickets -->
@@ -285,51 +297,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_return_ticke
     </div>
 </div>
 
-<!-- Return Flight -->
+
+<!-- Check if return flight is selected -->
 <?php if ($selectedReturnFlight): ?>
-<div class="eticket">
-    <div class="eticket-header">
-        <h1><?php echo $airlineName; ?></h1>
-        <p><strong>Return E-Ticket</strong></p>
-    </div>
+    <div class="eticket">
+        <div class="eticket-header">
+            <h1><?php echo $airlineName; ?></h1>
+            <p><strong>Return E-Ticket</strong></p>
+        </div>
 
-    <div class="eticket-details">
-        <p><strong>Flight Number:</strong> <?php echo htmlspecialchars($returnFlightNumber); ?></p>
-        <p><strong>Origin:</strong> <?php echo htmlspecialchars($returnOrigin); ?></p>
-        <p><strong>Destination:</strong> <?php echo htmlspecialchars($returnDestination); ?></p>
-        <p><strong>Departure Time:</strong> <?php echo htmlspecialchars($returnDepartureTime); ?></p>
-        <p><strong>Arrival Time:</strong> <?php echo htmlspecialchars($returnArrivalTime); ?></p>
-        <p><strong>Amount:</strong> $<?php echo number_format($selectedReturnFlight['Amount'], 2); ?> per passenger</p>
-    </div>
-
-    <div class="eticket-details">
-        <h3>Passenger(s)</h3>
-        <?php foreach ($passengerNames as $index => $name): ?>
-            <p><?php echo htmlspecialchars($index + 1 . ". " . $name); ?></p>
-        <?php endforeach; ?>
-    </div>
-
-    <div class="eticket-details">
-        <h3>Add-ons</h3>
-        <?php if (!empty($selectedAddonsForConfirmation)): ?>
-            <?php foreach ($selectedAddonsForConfirmation as $addon): ?>
-                <p><?php echo htmlspecialchars($addon['Name']) . " - $" . htmlspecialchars($addon['Price']); ?></p>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>No add-ons selected.</p>
-        <?php endif; ?>
-    </div>
-
-    <div class="eticket-details">
-        <p><strong>Total Amount:</strong> $<?php echo number_format($totalAmountReturn, 2); ?></p>
-    </div>
-
-    <div style="text-align: center; margin-top: 20px;">
-        <form method="post" action="">
-            <button type="submit" name="generate_return_ticket">Print E-Ticket</button>
-        </form>
-    </div>
-</div>
+        <?php if ($selectedReturnFlight): ?>
+    <h3>Return Flight Information</h3>
+    <p>Flight Number: <?php echo htmlspecialchars($selectedReturnFlight['Flight_Number'] ?? 'N/A'); ?></p>
+    <p>Return Date: <?php echo htmlspecialchars($selectedReturnFlight['Departure_Date'] ?? 'N/A'); ?></p>
+    <p>Origin: <?php echo htmlspecialchars($selectedReturnFlight['Origin'] ?? 'N/A'); ?></p>
+    <p>Destination: <?php echo htmlspecialchars($selectedReturnFlight['Destination'] ?? 'N/A'); ?></p>
+    <p>Amount: $<?php echo number_format($selectedReturnFlight['Amount'] ?? 0, 2); ?> per passenger</p>
 <?php endif; ?>
+
+
+        <div class="eticket-details">
+            <h3>Passenger(s)</h3>
+            <?php foreach ($passengerNames as $index => $name): ?>
+                <p><?php echo htmlspecialchars($index + 1 . ". " . $name); ?></p>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="eticket-details">
+            <h3>Add-ons</h3>
+            <?php if (!empty($selectedAddonsForConfirmation)): ?>
+                <?php foreach ($selectedAddonsForConfirmation as $addon): ?>
+                    <p><?php echo htmlspecialchars($addon['Name']) . " - $" . htmlspecialchars($addon['Price']); ?></p>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No add-ons selected.</p>
+            <?php endif; ?>
+        </div>
+
+        <div class="eticket-details">
+            <p><strong>Total Amount:</strong> $<?php echo number_format($totalAmountReturn, 2); ?></p>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <form method="post" action="">
+                <button type="submit" name="generate_return_ticket">Print E-Ticket</button>
+            </form>
+        </div>
+    </div>
+<?php endif; ?>
+</div>
 </body>
 </html>

@@ -8,11 +8,32 @@ if (!isset($_SESSION['selected_flight_id'])) {
     exit;
 }
 
+$selectedAddonsForConfirmation = $_SESSION['selected_addons_for_confirmation'] ?? [];
+
 $selectedFlightID = $_SESSION['selected_flight_id'];
+$selected_return_flight_id = $_SESSION['selected_return_flight_id'] ?? null;  // Handle return flight, if exists
+
+// Check if return flight ID exists in the session
 $selected_return_flight_id = $_SESSION['selected_return_flight_id'] ?? null;
 
-// Determine if the trip is one-way or round-trip
-$tripType = $_SESSION['trip_type'] ?? 'one-way'; // Default to 'one-way' if not set
+if ($selected_return_flight_id) {
+    // Fetch return flight details from the database
+    $stmt = $conn->prepare("SELECT * FROM Available_Flights WHERE Available_Flights_Number_ID = ?");
+    $stmt->bind_param("i", $selected_return_flight_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $selectedReturnFlight = $result->fetch_assoc();
+    
+    if ($selectedReturnFlight) {
+        // Store return flight details in session
+        $_SESSION['return_flights'] = $selectedReturnFlight;
+    } else {
+        echo "Error: Selected return flight not found in the database.";
+        exit;
+    }
+} else {
+    $selectedReturnFlight = null; // No return flight selected
+}
 
 // Fetch departure flight details
 $stmt = $conn->prepare("SELECT * FROM Available_Flights WHERE Available_Flights_Number_ID = ?");
@@ -29,33 +50,20 @@ if ($selectedFlight) {
     exit;
 }
 
-// Fetch return flight details if applicable
-$selectedReturnFlight = null;
-if ($tripType === 'round-trip' && $selected_return_flight_id) {
-    $stmt = $conn->prepare("SELECT * FROM Available_Flights WHERE Available_Flights_Number_ID = ?");
-    $stmt->bind_param("i", $selected_return_flight_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $selectedReturnFlight = $result->fetch_assoc();
-    
-    if ($selectedReturnFlight) {
-        // Store return flight details in session
-        $_SESSION['selected_return_flight'] = $selectedReturnFlight;
-    } else {
-        echo "Error: Selected return flight not found in the database.";
-        exit;
-    }
-} else {
-    // Clear return flight session data for one-way trips
-    unset($_SESSION['selected_return_flight']);
-}
-
 // Fetch session data
 $selectedFlight = $_SESSION['selected_flight'] ?? null;
-$selectedReturnFlight = $_SESSION['selected_return_flight'] ?? null;
 $numPassengers = $_SESSION['num_passengers'] ?? 0;
 $selectedAddons = $_SESSION['selected_addons'] ?? [];
 $passenger_ids = $_SESSION['passenger_ids'] ?? []; // Array of Passenger IDs
+
+$selectedReturnFlight = $_SESSION['return_flights'] ?? null;
+
+// Check if it's an array and extract the first element
+if (is_array($selectedReturnFlight) && isset($selectedReturnFlight[0])) {
+    $selectedReturnFlight = $selectedReturnFlight[0]; // Extract the first flight data
+} else {
+    $selectedReturnFlight = null; // No valid data available
+}
 
 // Ensure the user is logged in and get account ID
 if (!isset($_SESSION['Account_Email'])) {
@@ -180,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Fetch the add-ons selected for confirmation
 $selectedAddonsForConfirmation = $_SESSION['selected_addons_for_confirmation'] ?? [];
 
-// Prepare the statement
+// Insert add-ons into Add_on table
 $stmt = $conn->prepare("
     INSERT INTO add_on (FRP_Number_ID_FK, Seat_Selector_ID_FK, Food_ID_FK, Baggage_ID_FK) 
     VALUES (?, ?, ?, ?)
@@ -193,16 +201,15 @@ foreach ($selectedAddonsForConfirmation as $addon) {
     $baggage_id = null;
 
     // Assign Seat_Selector_ID_FK, Food_ID_FK, Baggage_ID_FK based on addon type
-    if ($addon['Type'] === 'Seat Selector') {  // Ensure this matches the exact type in your array
+    if ($addon['Type'] === 'SeatSelector') {
         $seat_selector_id = $addon['ID'];  // Assign SeatSelector ID
     } elseif ($addon['Type'] === 'Food') {
         $food_id = $addon['ID'];  // Assign Food ID
     } elseif ($addon['Type'] === 'Baggage') {
         $baggage_id = $addon['ID'];  // Assign Baggage ID
     }
-
-    // Log the addon data to verify before insert
-    error_log("Inserting Add_on: FRP_Number_ID_FK = $frp_number_id, Seat_Selector_ID_FK = $seat_selector_id, Food_ID_FK = $food_id, Baggage_ID_FK = $baggage_id");
+        // Log the addon data to verify before insert
+        error_log("Inserting Add_on: FRP_Number_ID_FK = $frp_number_id, Seat_Selector_ID_FK = $seat_selector_id, Food_ID_FK = $food_id, Baggage_ID_FK = $baggage_id");
 
     // For each generated FRP_Number_ID, insert the add-on
     foreach ($frp_number_ids as $frp_number_id) {
@@ -237,9 +244,6 @@ foreach ($selectedAddonsForConfirmation as $addon) {
 }
 
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -298,14 +302,16 @@ foreach ($selectedAddonsForConfirmation as $addon) {
         <p>No departure flight selected.</p>
     <?php endif; ?>
 
-    <?php if ($tripType === 'round-trip' && $selectedReturnFlight): ?>
-        <h3>Return Flight Information</h3>
-        <p>Flight Number: <?php echo htmlspecialchars($selectedReturnFlight['Flight_Number'] ?? 'N/A'); ?></p>
-        <p>Return Date: <?php echo htmlspecialchars($selectedReturnFlight['Departure_Date'] ?? 'N/A'); ?></p>
-        <p>Origin: <?php echo htmlspecialchars($selectedReturnFlight['Origin'] ?? 'N/A'); ?></p>
-        <p>Destination: <?php echo htmlspecialchars($selectedReturnFlight['Destination'] ?? 'N/A'); ?></p>
-        <p>Amount: $<?php echo number_format($selectedReturnFlight['Amount'], 2); ?> per passenger</p>
-    <?php endif; ?>
+    <?php if ($selectedReturnFlight): ?>
+    <h3>Return Flight Information</h3>
+    <p>Flight Number: <?php echo htmlspecialchars($selectedReturnFlight['Flight_Number'] ?? 'N/A'); ?></p>
+    <p>Return Date: <?php echo htmlspecialchars($selectedReturnFlight['Departure_Date'] ?? 'N/A'); ?></p>
+    <p>Origin: <?php echo htmlspecialchars($selectedReturnFlight['Origin'] ?? 'N/A'); ?></p>
+    <p>Destination: <?php echo htmlspecialchars($selectedReturnFlight['Destination'] ?? 'N/A'); ?></p>
+    <p>Amount: $<?php echo number_format($selectedReturnFlight['Amount'] ?? 0, 2); ?> per passenger</p>
+<?php endif; ?>
+
+
 
     <h2>Selected Add-ons</h2>
     <?php if (!empty($selectedAddons)): ?>
