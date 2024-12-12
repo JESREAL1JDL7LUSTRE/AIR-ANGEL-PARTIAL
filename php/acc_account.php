@@ -102,13 +102,13 @@ $flights_result = $stmt_flights->get_result();
 if (isset($_POST['print_ticket'])) {
     $booking_id = $_POST['Booking_ID'];
 
-
-    // If the form is submitted to download the ticket
+    // Fetch ticket details
     $sql_account_print_eticket = "
     SELECT DISTINCT
         rta.Reservation_to_Account_ID AS Booking_ID,
         r.Reservation_ID,
         r.Payment_ID_FK AS Payment_ID,
+        af.Available_Flights_Number_ID,
         af.Flight_Number,
         af.Departure_Date,
         af.Arrival_Date,
@@ -142,143 +142,108 @@ if (isset($_POST['print_ticket'])) {
         die("Ticket details not found.");
     }
 
-    // Initialize total amount
-    $totalAmount = 0;
-    $flightAmount = $ticketDetails[0]['Flight_Amount']; // The amount for the flight (assuming it's the same for all passengers)
-
-    // Fetch add-ons separately for each passenger
-    $addons = [];
+    // Group ticket details by Available_Flight_ID
+    $flights = [];
     foreach ($ticketDetails as $ticket) {
-        $sql_addons = "
-        SELECT
-            add_on.Seat_Selector_ID_FK,
-            add_on.Food_ID_FK,
-            add_on.Baggage_ID_FK,
-            ss.Seat_Selector_Number AS Seat_Selector_Name,
-            ss.Price AS Seat_Selector_Price,
-            f.Food_Name AS Food_Name,
-            f.Price AS Food_Price,
-            b.Baggage_Weight AS Baggage_Name,
-            b.Price AS Baggage_Price
-        FROM add_on
-        LEFT JOIN seat_selector ss ON ss.Seat_Selector_ID = add_on.Seat_Selector_ID_FK
-        LEFT JOIN food f ON f.Food_ID = add_on.Food_ID_FK
-        LEFT JOIN baggage b ON b.Baggage_ID = add_on.Baggage_ID_FK
-        WHERE add_on.FRP_Number_ID_FK = ?
-        ";
-
-        // Prepare the query for each reservation's FRP_Number_ID
-        $stmt_addons = $conn->prepare($sql_addons);
-        $stmt_addons->execute([$ticket['Booking_ID']]);
-        $addonDetails = $stmt_addons->get_result()->fetch_all(MYSQLI_ASSOC);
-        
-        // Add each passenger's add-ons to the addons array
-        $addons[$ticket['Booking_ID']] = $addonDetails;
+        $flights[$ticket['Available_Flights_Number_ID']][] = $ticket;
     }
 
-    // Calculate total amount, add-ons, and passengers
-    $totalAmount = 0;
-    $flightAmount = $ticketDetails[0]['Flight_Amount'];
-    $passengerNames = [];
-    $addonPrices = [];
-
-    foreach ($ticketDetails as $ticket) {
-        // Passenger name
-        $passengerNames[] = $ticket['Passenger_First_Name'] . ' ' . $ticket['Passenger_Last_Name'];
-        
-        // Get add-ons for this passenger
-        $passengerAddons = isset($addons[$ticket['Booking_ID']]) ? $addons[$ticket['Booking_ID']] : [];
-        
-        // Calculate total add-ons for this passenger
-        $totalAddons = 0;
-        foreach ($passengerAddons as $addon) {
-            // Check for non-null add-ons and print only valid ones
-            if ($addon['Seat_Selector_ID_FK'] !== null) {
-                $totalAddons += $addon['Seat_Selector_Price'];
-            }
-            if ($addon['Food_ID_FK'] !== null) {
-                $totalAddons += $addon['Food_Price'];
-            }
-            if ($addon['Baggage_ID_FK'] !== null) {
-                $totalAddons += $addon['Baggage_Price'];
-            }
-        }
-        
-        $addonPrices[] = $totalAddons;
-        $totalAmount += $flightAmount + $totalAddons;
-    }
-
-    // If no ticket found
-    if (empty($ticketDetails)) {
-        die("Ticket details not found.");
-    }
-
-    // Generate the PDF for the specific ticket
+    // Generate the PDF
     require_once __DIR__ . '/../vendor/autoload.php';
     $pdf = new TCPDF();
     $pdf->AddPage();
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->Cell(0, 10, "Air Angel - E-Ticket", 0, 1, 'C');
 
-    // Flight Information
-    $pdf->SetFont('helvetica', '', 12);
-    $pdf->Ln(10);
-    $pdf->Cell(0, 10, "Flight Number: " . $ticketDetails[0]['Flight_Number'], 0, 1);
-    $pdf->Cell(0, 10, "Origin: " . $ticketDetails[0]['Origin'], 0, 1);
-    $pdf->Cell(0, 10, "Destination: " . $ticketDetails[0]['Destination'], 0, 1);
-    $pdf->Cell(0, 10, "Departure Time: " . $ticketDetails[0]['Departure_Time'], 0, 1);
-    $pdf->Cell(0, 10, "Arrival Time: " . $ticketDetails[0]['Arrival_Time'], 0, 1);
-    $pdf->Cell(0, 10, "Amount: \$" . number_format($ticketDetails[0]['Flight_Amount'], 2), 0, 1);
+    foreach ($flights as $flightID => $flightDetails) {
+        // Flight Information Header
+        $pdf->SetFont('helvetica', 'B', 16);
+        $pdf->Cell(0, 10, "AIR ANGEL - E-Ticket", 0, 1, 'C');
+        $pdf->Ln(5);
 
-    // Add-ons
-    $pdf->Ln(10);
-    $pdf->Cell(0, 10, "Add-ons:", 0, 1);
-    foreach ($addons as $bookingID => $addonDetails) {
-        foreach ($addonDetails as $addon) {
-            // Print seat add-on if it exists
-            if ($addon['Seat_Selector_ID_FK'] !== null) {
-                $pdf->Cell(0, 10, "" . $addon['Seat_Selector_Name'] . " - \$" . number_format($addon['Seat_Selector_Price'], 2), 0, 1);
-            }
-            // Print food add-on if it exists
-            if ($addon['Food_ID_FK'] !== null) {
-                $pdf->Cell(0, 10, "" . $addon['Food_Name'] . " - \$" . number_format($addon['Food_Price'], 2), 0, 1);
-            }
-            // Print baggage add-on if it exists
-            if ($addon['Baggage_ID_FK'] !== null) {
-                $pdf->Cell(0, 10, "" . $addon['Baggage_Name'] . " - \$" . number_format($addon['Baggage_Price'], 2), 0, 1);
+        $pdf->SetFont('helvetica', '', 12);
+        $pdf->Cell(0, 10, "Flight Number: " . $flightDetails[0]['Flight_Number'], 0, 1);
+        $pdf->Cell(0, 10, "Origin: " . $flightDetails[0]['Origin'], 0, 1);
+        $pdf->Cell(0, 10, "Destination: " . $flightDetails[0]['Destination'], 0, 1);
+        $pdf->Cell(0, 10, "Departure Time: " . $flightDetails[0]['Departure_Time'], 0, 1);
+        $pdf->Cell(0, 10, "Arrival Time: " . $flightDetails[0]['Arrival_Time'], 0, 1);
+        $pdf->Cell(0, 10, "Amount: $" . number_format($flightDetails[0]['Flight_Amount'], 2) . " per passenger", 0, 1);
+        $pdf->Ln(5);
+
+        // Add-ons and Passenger Information
+        $pdf->Cell(0, 10, "Add-ons:", 0, 1);
+
+        $totalAddons = 0;
+        foreach ($flightDetails as $ticket) {
+            $sql_addons = "
+            SELECT
+                add_on.Seat_Selector_ID_FK,
+                add_on.Food_ID_FK,
+                add_on.Baggage_ID_FK,
+                ss.Seat_Selector_Number AS Seat_Selector_Name,
+                ss.Price AS Seat_Selector_Price,
+                f.Food_Name AS Food_Name,
+                f.Price AS Food_Price,
+                b.Baggage_Weight AS Baggage_Name,
+                b.Price AS Baggage_Price
+            FROM add_on
+            LEFT JOIN seat_selector ss ON ss.Seat_Selector_ID = add_on.Seat_Selector_ID_FK
+            LEFT JOIN food f ON f.Food_ID = add_on.Food_ID_FK
+            LEFT JOIN baggage b ON b.Baggage_ID = add_on.Baggage_ID_FK
+            WHERE add_on.FRP_Number_ID_FK = ?";
+
+            $stmt_addons = $conn->prepare($sql_addons);
+            $stmt_addons->bind_param("i", $ticket['Booking_ID']);
+            $stmt_addons->execute();
+            $addonDetails = $stmt_addons->get_result()->fetch_all(MYSQLI_ASSOC);
+
+            foreach ($addonDetails as $addon) {
+                if ($addon['Baggage_ID_FK'] !== null) {
+                    $pdf->Cell(0, 10, $addon['Baggage_Name'] . "KG - $" . number_format($addon['Baggage_Price'], 2), 0, 1);
+                    $totalAddons += $addon['Baggage_Price'];
+                }
+                if ($addon['Food_ID_FK'] !== null) {
+                    $pdf->Cell(0, 10, $addon['Food_Name'] . " - $" . number_format($addon['Food_Price'], 2), 0, 1);
+                    $totalAddons += $addon['Food_Price'];
+                }
             }
         }
+
+        // Passenger Information
+        $pdf->Ln(5);
+        $pdf->Cell(0, 10, "Passengers:", 0, 1);
+
+        $passengerCounter = 1;
+        foreach ($flightDetails as $ticket) {
+            $passengerName = $ticket['Passenger_First_Name'] . ' ' . $ticket['Passenger_Last_Name'];
+            $pdf->Cell(0, 10, "$passengerCounter. $passengerName", 0, 1);
+            $passengerCounter++;
+        }
+
+        // Total Amount
+        $totalAmount = count($flightDetails) * $flightDetails[0]['Flight_Amount'] + $totalAddons;
+        $pdf->Ln(5);
+        $pdf->Cell(0, 10, "Total Amount: $" . number_format($totalAmount, 2), 0, 1);
+        $pdf->Ln(10); // Add space between flights
     }
 
-    // Passenger Information
-    $pdf->Ln(10);
-    $pdf->Cell(0, 10, "Passenger(s):", 0, 1);
-    foreach ($passengerNames as $index => $name) {
-        $pdf->Cell(0, 10, ($index + 1) . ". $name", 0, 1);
+    // Save and send the PDF as before
+    $ticketDir = $_SERVER['DOCUMENT_ROOT'] . '/ANGEL/etickets/';
+    if (!is_dir($ticketDir)) {
+        mkdir($ticketDir, 0777, true);
     }
 
-     // Total Amount
-     $pdf->Ln(10);
-     $pdf->Cell(0, 10, "Total Amount: \$" . number_format($totalAmount, 2), 0, 1);
- 
-     // Save and download PDF
-     $ticketDir = $_SERVER['DOCUMENT_ROOT'] . '/ANGEL/etickets/';
-     if (!is_dir($ticketDir)) {
-         mkdir($ticketDir, 0777, true);
-     }
- 
-     $ticketFile = $ticketDir . "eticket_" . $ticketDetails[0]['Reservation_ID'] . ".pdf";
-     $pdf->Output($ticketFile, 'F'); // Save PDF to server
- 
-     // Send the file for download
-     header('Content-Type: application/pdf');
-     header('Content-Disposition: attachment; filename="' . basename($ticketFile) . '"');
-     header('Content-Length: ' . filesize($ticketFile));
-     readfile($ticketFile);
- 
-     unlink($ticketFile); // Delete the file after sending
-     exit;
- }
+    $ticketFile = $ticketDir . "eticket_" . $booking_id . ".pdf";
+    $pdf->Output($ticketFile, 'F');
+
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: attachment; filename="' . basename($ticketFile) . '"');
+    header('Content-Length: ' . filesize($ticketFile));
+    readfile($ticketFile);
+
+    unlink($ticketFile);
+    exit;
+}
+
+
 
 // Check if a delete request has been made
 if (isset($_GET['delete'])) {
