@@ -100,9 +100,9 @@ if ($result->num_rows > 0) {
             const roundTrip = document.getElementById('round_trip');
             const returnDateField = document.getElementById('return_date_container');
             if (roundTrip.checked) {
-                returnDateField.style.display = 'block'; // Show return date field for round trip
+                returnDateField.classList.add('show'); // Add the class to animate and show
             } else {
-                returnDateField.style.display = 'none'; // Hide return date field for one way
+                returnDateField.classList.remove('show'); // Remove the class to hide
             }
 }
     </script>
