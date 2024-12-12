@@ -44,8 +44,6 @@ if (isset($_POST['selected_departure_flight'])) {
     header("Location: acc_passenger_info.php");
     exit;
 } else {
-    // Handle the case where no flight was selected
-    echo "No flight selected. Please choose a flight.";
 }
 ?>
 
@@ -105,6 +103,7 @@ if (isset($_POST['selected_departure_flight'])) {
                 <tr>
                     <th>Flight Number</th>
                     <th>Departure Date</th>
+                    <th>Arrival Date</th>
                     <th>Origin</th>
                     <th>Destination</th>
                     <th>Departure Time</th>
@@ -118,6 +117,7 @@ if (isset($_POST['selected_departure_flight'])) {
                         <tr>
                             <td><?= htmlspecialchars($flight['Flight_Number']) ?></td>
                             <td><?= htmlspecialchars($flight['Departure_Date']) ?></td>
+                            <td><?= htmlspecialchars($flight['Arrival_Date']) ?></td>
                             <td><?= htmlspecialchars($flight['Origin']) ?></td>
                             <td><?= htmlspecialchars($flight['Destination']) ?></td>
                             <td><?= htmlspecialchars($flight['Departure_Time']) ?></td>
@@ -137,6 +137,7 @@ if (isset($_POST['selected_departure_flight'])) {
                 <tr>
                     <th>Flight Number</th>
                     <th>Departure Date</th>
+                    <th>Arrival Date</th>
                     <th>Origin</th>
                     <th>Destination</th>
                     <th>Departure Time</th>
@@ -150,6 +151,7 @@ if (isset($_POST['selected_departure_flight'])) {
                         <tr>
                             <td><?= htmlspecialchars($flight['Flight_Number']) ?></td>
                             <td><?= htmlspecialchars($flight['Departure_Date']) ?></td>
+                            <td><?= htmlspecialchars($flight['Arrival_Date']) ?></td>
                             <td><?= htmlspecialchars($flight['Origin']) ?></td>
                             <td><?= htmlspecialchars($flight['Destination']) ?></td>
                             <td><?= htmlspecialchars($flight['Departure_Time']) ?></td>
@@ -172,6 +174,7 @@ if (isset($_POST['selected_departure_flight'])) {
                 <tr>
                     <th>Flight Number</th>
                     <th>Departure Date</th>
+                    <th>Arrival Date</th>
                     <th>Origin</th>
                     <th>Destination</th>
                     <th>Departure Time</th>
@@ -184,6 +187,7 @@ if (isset($_POST['selected_departure_flight'])) {
                         <tr>
                             <td><?= htmlspecialchars($flight['Flight_Number']) ?></td>
                             <td><?= htmlspecialchars($flight['Departure_Date']) ?></td>
+                            <td><?= htmlspecialchars($flight['Arrival_Date']) ?></td>
                             <td><?= htmlspecialchars($flight['Origin']) ?></td>
                             <td><?= htmlspecialchars($flight['Destination']) ?></td>
                             <td><?= htmlspecialchars($flight['Departure_Time']) ?></td>

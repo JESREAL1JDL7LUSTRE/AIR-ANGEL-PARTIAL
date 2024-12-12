@@ -71,9 +71,17 @@ if ($selectedReturnFlight) {
     $totalPrice += $returnFlightPrice;
 }
 
+// Add selected add-ons to the total price
 foreach ($selectedAddons as $addon) {
-    $addonTotal += $addon['Price'];
+    if ($selectedReturnFlight) {
+        $addonTotal += $addon['Price'] * 2;
+    }else {
+        $addonTotal += $addon['Price'];  // Add the price of each selected addon
+    }
+    
+
 }
+
 
 // Add add-ons to the total
 $totalPrice += $addonTotal;
