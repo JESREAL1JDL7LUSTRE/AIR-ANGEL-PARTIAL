@@ -1,0 +1,43 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./signin.html",
+    "./signup.html",
+    "./acc_account.html",
+    "./acc_addons_baggage.html",
+    "./acc_addons_food.html",
+    "./acc_addons_seat_selector.html",
+    "./acc_addons.html",
+    "./acc_booking.html",
+    "./acc_choose_flight.html",
+    "./acc_payment.html",
+    "./acc_dashboard.html",
+    "./acc_eticket.html",
+    "./acc_passenger_info.html",
+    "./add_admins.html",
+    "./admin_add_ad_ons.html",
+    "./admin_add_flight.html",
+    "./admin_see_accounts.html",
+    "./admin.html",
+    "./employee_assign.html",
+    "./employees.html",
+    "./see_flights.html",
+    "./see_reservation.html",
+    "./noacc_addons_baggage.html",
+    "./noacc_addons_food.html",
+    "./noacc_addons_seat_selector.html",
+    "./noacc_addons.html",
+    "./noacc_booking.html",
+    "./noacc_choose_flight.html",
+    "./noacc_payment.html",
+    "./noacc_dashboard.html",
+    "./noacc_eticket.html",
+    "./noacc_passenger_info.html",
+
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
