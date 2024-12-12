@@ -108,15 +108,22 @@ $result = $stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/ANGEL/styles/see_flights.css">
     <title>Admin Dashboard</title>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="admin.php">Home</a></li>
-            <li><a href="logout.php">Logout</a></li>
-        </ul>
-    </nav>
+    <header>
+        <div class="logo-container">
+                <img src="/ANGEL/assets/images/logo.png" alt="AirAngel Logo" id="logo-img">
+                <h1 style="font-size: 25px;">Air Angel</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="admin.php" >Home</a></li>
+                <li><a href="logout.php">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
     <h1>Welcome Admin!</h1>
     <h2>All Available Flights</h2>
 
@@ -132,14 +139,14 @@ $result = $stmt->get_result();
 
     <table border="1">
         <tr>
-            <th>Available_Flights_Number_ID</th>
-            <th>Flight_Number</th>
-            <th>Departure_Date</th>
-            <th>Arrival_Date</th>
+            <th>Flight ID</th>
+            <th>Flight No.</th>
+            <th>Departure Date</th>
+            <th>Arrival Date</th>
             <th>Origin</th>
             <th>Destination</th>
-            <th>Departure_Time</th>
-            <th>Arrival_Time</th>
+            <th>Departure Time</th>
+            <th>Arrival Time</th>
             <th>Amount</th>
             <th>Actions</th>
         </tr>
