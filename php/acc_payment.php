@@ -8,8 +8,32 @@ if (!isset($_SESSION['selected_flight_id'])) {
     exit;
 }
 
+$selectedAddonsForConfirmation = $_SESSION['selected_addons_for_confirmation'] ?? [];
+
 $selectedFlightID = $_SESSION['selected_flight_id'];
 $selected_return_flight_id = $_SESSION['selected_return_flight_id'] ?? null;  // Handle return flight, if exists
+
+// Check if return flight ID exists in the session
+$selected_return_flight_id = $_SESSION['selected_return_flight_id'] ?? null;
+
+if ($selected_return_flight_id) {
+    // Fetch return flight details from the database
+    $stmt = $conn->prepare("SELECT * FROM Available_Flights WHERE Available_Flights_Number_ID = ?");
+    $stmt->bind_param("i", $selected_return_flight_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $selectedReturnFlight = $result->fetch_assoc();
+    
+    if ($selectedReturnFlight) {
+        // Store return flight details in session
+        $_SESSION['return_flights'] = $selectedReturnFlight;
+    } else {
+        echo "Error: Selected return flight not found in the database.";
+        exit;
+    }
+} else {
+    $selectedReturnFlight = null; // No return flight selected
+}
 
 // Fetch departure flight details
 $stmt = $conn->prepare("SELECT * FROM Available_Flights WHERE Available_Flights_Number_ID = ?");
@@ -26,30 +50,20 @@ if ($selectedFlight) {
     exit;
 }
 
-// Fetch return flight details if available
-$selectedReturnFlight = null;
-if ($selected_return_flight_id) {
-    $stmt = $conn->prepare("SELECT * FROM Available_Flights WHERE Available_Flights_Number_ID = ?");
-    $stmt->bind_param("i", $selected_return_flight_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $selectedReturnFlight = $result->fetch_assoc();
-    
-    if ($selectedReturnFlight) {
-        // Store return flight details in session
-        $_SESSION['selected_return_flight'] = $selectedReturnFlight;
-    } else {
-        echo "Error: Selected return flight not found in the database.";
-        exit;
-    }
-}
-
 // Fetch session data
 $selectedFlight = $_SESSION['selected_flight'] ?? null;
-$selectedReturnFlight = $_SESSION['selected_return_flight'] ?? null;
 $numPassengers = $_SESSION['num_passengers'] ?? 0;
 $selectedAddons = $_SESSION['selected_addons'] ?? [];
 $passenger_ids = $_SESSION['passenger_ids'] ?? []; // Array of Passenger IDs
+
+$selectedReturnFlight = $_SESSION['return_flights'] ?? null;
+
+// Check if it's an array and extract the first element
+if (is_array($selectedReturnFlight) && isset($selectedReturnFlight[0])) {
+    $selectedReturnFlight = $selectedReturnFlight[0]; // Extract the first flight data
+} else {
+    $selectedReturnFlight = null; // No valid data available
+}
 
 // Ensure the user is logged in and get account ID
 if (!isset($_SESSION['Account_Email'])) {
@@ -62,22 +76,37 @@ if (!$account_id) {
     die("Error: Account not found.");
 }
 
-// Calculate total price
+// Initialize total price
 $totalPrice = 0;
-$flightPrice = 0;
+$departureFlightPrice = 0;
+$returnFlightPrice = 0;
+$addonTotal = 0;
 
-
+// Add departure flight price (if selected)
 if ($selectedFlight) {
-    $flightPrice = $selectedFlight['Amount'] * $numPassengers;
-    $totalPrice += $flightPrice;
-    
+    $departureFlightPrice = $selectedFlight['Amount'] * $numPassengers;  // Multiply by number of passengers
+    $totalPrice += $departureFlightPrice; // Add departure flight price to total
 }
 
+// Add return flight price (if selected)
+if ($selectedReturnFlight) {
+    $returnFlightPrice = $selectedReturnFlight['Amount'] * $numPassengers;  // Multiply by number of passengers
+    $totalPrice += $returnFlightPrice;  // Add return flight price to total
+}
+
+// Add selected add-ons to the total price
 foreach ($selectedAddons as $addon) {
-    $totalPrice += $addon['Price'];
+    if ($selectedReturnFlight) {
+        $addonTotal += $addon['Price'] * 2;
+    }else {
+        $addonTotal += $addon['Price'];  // Add the price of each selected addon
+    }
+    
+
 }
 
-
+// Add the total add-on cost to the overall total
+$totalPrice += $addonTotal;
 
 // Handle payment submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -139,15 +168,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             INSERT INTO flight_to_reservation_to_passenger (Flight_to_Reservation_ID_FK, Available_Flights_Number_ID_FK) 
             VALUES (?, ?)
         ");
+        $frp_number_ids = []; // Store generated FRP_Number_IDs
         foreach ($reservation_to_passenger_ids as $reservation_to_passenger_id) {
             $stmt->bind_param("ii", $reservation_to_passenger_id, $selectedFlight['Available_Flights_Number_ID']);
             if (!$stmt->execute()) {
                 error_log("Error inserting Flight_to_Reservation_to_Passenger (departure): " . $stmt->error);
                 throw new Exception("Failed to insert flight-to-reservation record for departure.");
             }
+            $frp_number_ids[] = $stmt->insert_id; // Store generated FRP_Number_ID
         }
 
-        // Insert into flight_to_reservation_to_passenger table for return flight (if exists)
+        // Insert into flight_to_reservation_to_passenger table for return flight (if applicable)
         if ($selectedReturnFlight) {
             foreach ($reservation_to_passenger_ids as $reservation_to_passenger_id) {
                 $stmt->bind_param("ii", $reservation_to_passenger_id, $selectedReturnFlight['Available_Flights_Number_ID']);
@@ -155,8 +186,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     error_log("Error inserting Flight_to_Reservation_to_Passenger (return): " . $stmt->error);
                     throw new Exception("Failed to insert flight-to-reservation record for return.");
                 }
+                $frp_number_ids[] = $stmt->insert_id; // Store generated FRP_Number_ID
             }
         }
+
+// Fetch the add-ons selected for confirmation
+$selectedAddonsForConfirmation = $_SESSION['selected_addons_for_confirmation'] ?? [];
+
+// Insert add-ons into Add_on table
+$stmt = $conn->prepare("
+    INSERT INTO add_on (FRP_Number_ID_FK, Seat_Selector_ID_FK, Food_ID_FK, Baggage_ID_FK) 
+    VALUES (?, ?, ?, ?)
+");
+
+foreach ($selectedAddonsForConfirmation as $addon) {
+    // Ensure the addon data is valid (check if the IDs are not null)
+    $seat_selector_id = null;
+    $food_id = null;
+    $baggage_id = null;
+
+    // Assign Seat_Selector_ID_FK, Food_ID_FK, Baggage_ID_FK based on addon type
+    if ($addon['Type'] === 'SeatSelector') {
+        $seat_selector_id = $addon['ID'];  // Assign SeatSelector ID
+    } elseif ($addon['Type'] === 'Food') {
+        $food_id = $addon['ID'];  // Assign Food ID
+    } elseif ($addon['Type'] === 'Baggage') {
+        $baggage_id = $addon['ID'];  // Assign Baggage ID
+    }
+        // Log the addon data to verify before insert
+        error_log("Inserting Add_on: FRP_Number_ID_FK = $frp_number_id, Seat_Selector_ID_FK = $seat_selector_id, Food_ID_FK = $food_id, Baggage_ID_FK = $baggage_id");
+
+    // For each generated FRP_Number_ID, insert the add-on
+    foreach ($frp_number_ids as $frp_number_id) {
+        $stmt->bind_param("iiii", $frp_number_id, $seat_selector_id, $food_id, $baggage_id);
+        if (!$stmt->execute()) {
+            error_log("Error inserting Add_on: " . $stmt->error);
+            throw new Exception("Failed to insert add-on record.");
+        }
+    }
+}
 
         // Insert into Reservation_to_Account table
         $stmt = $conn->prepare("
@@ -181,9 +249,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -239,8 +304,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p>Destination: <?php echo htmlspecialchars($selectedFlight['Destination'] ?? 'N/A'); ?></p>
         <p>Amount: $<?php echo number_format($selectedFlight['Amount'], 2); ?> per passenger</p>
     <?php else: ?>
-        <p>No flight selected.</p>
+        <p>No departure flight selected.</p>
     <?php endif; ?>
+
+    <?php if ($selectedReturnFlight): ?>
+    <h3>Return Flight Information</h3>
+    <p>Flight Number: <?php echo htmlspecialchars($selectedReturnFlight['Flight_Number'] ?? 'N/A'); ?></p>
+    <p>Return Date: <?php echo htmlspecialchars($selectedReturnFlight['Departure_Date'] ?? 'N/A'); ?></p>
+    <p>Origin: <?php echo htmlspecialchars($selectedReturnFlight['Origin'] ?? 'N/A'); ?></p>
+    <p>Destination: <?php echo htmlspecialchars($selectedReturnFlight['Destination'] ?? 'N/A'); ?></p>
+    <p>Amount: $<?php echo number_format($selectedReturnFlight['Amount'] ?? 0, 2); ?> per passenger</p>
+<?php endif; ?>
+
+
 
     <h2>Selected Add-ons</h2>
     <?php if (!empty($selectedAddons)): ?>
@@ -260,12 +336,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p>No add-ons selected.</p>
     <?php endif; ?>
 
-    <h2>Total Price</h2>
-    <p>Flight Price (for <?php echo $numPassengers; ?> passengers): $<?php echo number_format($flightPrice, 2); ?></p>
-    <?php if ($totalPrice > $flightPrice): ?>
-        <p>Add-ons: $<?php echo number_format($totalPrice - $flightPrice, 2); ?></p>
+    <h2>Total Price Breakdown</h2>
+    <p>Departure Flight Price (for <?php echo $numPassengers; ?> passengers): $<?php echo number_format($departureFlightPrice, 2); ?></p>
+
+    <?php if ($returnFlightPrice > 0): ?>
+        <p>Return Flight Price (for <?php echo $numPassengers; ?> passengers): $<?php echo number_format($returnFlightPrice, 2); ?></p>
     <?php endif; ?>
+
+    <?php if ($addonTotal > 0): ?>
+        <p>Add-ons: $<?php echo number_format($addonTotal, 2); ?></p>
+    <?php endif; ?>
+
     <h3>Total: $<?php echo number_format($totalPrice, 2); ?> USD</h3>
+
 
     <h2>Payment Methods</h2>
     <form method="POST">

@@ -105,11 +105,6 @@ $sql_create_tables = [
         Employee_Assignment_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
         Employee_Role VARCHAR(50) NOT NULL
     )",
-    "CREATE TABLE IF NOT EXISTS Department (
-        Department_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
-        Department_Name VARCHAR(30) NOT NULL,
-        Department_Type VARCHAR(20) NOT NULL
-    )",
     "CREATE TABLE IF NOT EXISTS Employees (
         Employee_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
         Department VARCHAR(30) NOT NULL,
@@ -200,20 +195,12 @@ $sql_add_foreign_keys = [
     "ALTER TABLE Reservation ADD FOREIGN KEY (Payment_ID_FK) REFERENCES Payment(Payment_ID)",
     "ALTER TABLE Reservation ADD FOREIGN KEY (Employee_Assignment_ID_FK) REFERENCES Employee_Assignment(Employee_Assignment_ID)",
 
-    // Baggage Table
-    "ALTER TABLE Baggage ADD COLUMN Available_Flights_Number_ID_FK INT(15)",
-    "ALTER TABLE Baggage ADD INDEX (Available_Flights_Number_ID_FK)",
-    "ALTER TABLE Baggage ADD FOREIGN KEY (Available_Flights_Number_ID_FK) REFERENCES Available_Flights(Available_Flights_Number_ID)",
-    
     // Employee_Assignment Table
     "ALTER TABLE Employee_Assignment ADD COLUMN Employee_ID_FK INT(10)",
-    "ALTER TABLE Employee_Assignment ADD COLUMN Department_ID_FK INT(10)",
     "ALTER TABLE Employee_Assignment ADD COLUMN Available_Flights_Number_ID_FK INT(15)",
     "ALTER TABLE Employee_Assignment ADD INDEX (Employee_ID_FK)",
-    "ALTER TABLE Employee_Assignment ADD INDEX (Department_ID_FK)",
     "ALTER TABLE Employee_Assignment ADD INDEX (Available_Flights_Number_ID_FK)",
     "ALTER TABLE Employee_Assignment ADD FOREIGN KEY (Employee_ID_FK) REFERENCES Employees(Employee_ID)",
-    "ALTER TABLE Employee_Assignment ADD FOREIGN KEY (Department_ID_FK) REFERENCES Department(Department_ID)",
     "ALTER TABLE Employee_Assignment ADD FOREIGN KEY (Available_Flights_Number_ID_FK) REFERENCES Available_Flights(Available_Flights_Number_ID)",
 
     // Add_on Table
@@ -229,18 +216,6 @@ $sql_add_foreign_keys = [
     "ALTER TABLE Add_on ADD FOREIGN KEY (Seat_Selector_ID_FK) REFERENCES Seat_Selector(Seat_Selector_ID)",
     "ALTER TABLE Add_on ADD FOREIGN KEY (Food_ID_FK) REFERENCES Food(Food_ID)",
     "ALTER TABLE Add_on ADD FOREIGN KEY (Baggage_ID_FK) REFERENCES Baggage(Baggage_ID)",
-
-    // Seat_Selector Table
-    "ALTER TABLE Seat_Selector ADD COLUMN Passenger_ID_FK INT(10)",
-    "ALTER TABLE Seat_Selector ADD COLUMN Available_Flights_Number_ID_FK INT(15)",
-    "ALTER TABLE Seat_Selector ADD INDEX (Passenger_ID_FK)",
-    "ALTER TABLE Seat_Selector ADD INDEX (Available_Flights_Number_ID_FK)",
-    "ALTER TABLE Seat_Selector ADD FOREIGN KEY (Passenger_ID_FK) REFERENCES Passenger(Passenger_ID)",
-    "ALTER TABLE Seat_Selector ADD FOREIGN KEY (Available_Flights_Number_ID_FK) REFERENCES Available_Flights(Available_Flights_Number_ID)",
-
-    "ALTER TABLE Food ADD COLUMN Available_Flights_Number_FK INT(15)",
-    "ALTER TABLE Food ADD INDEX (Available_Flights_Number_FK)",
-    "ALTER TABLE Food ADD FOREIGN KEY (Available_Flights_Number_FK) REFERENCES Available_Flights(Available_Flights_Number_ID)",
 
     "ALTER TABLE Reservation_to_Passenger ADD COLUMN Passenger_ID_FK INT(10)",
     "ALTER TABLE Reservation_to_Passenger ADD COLUMN Reservation_ID_FK INT(10)",
