@@ -38,25 +38,14 @@ $sql_create_tables = [
         Password VARCHAR(500) NOT NULL,
         Is_Admin INT(1) NOT NULL DEFAULT 0
     )",
-    
     "INSERT INTO Account (Account_ID, Account_Last_Name, Account_First_Name, Account_Email, Account_PhoneNumber, Username, Password, Is_Admin) 
     VALUES (1, 'Lustre', 'Jesreal', 'jsrl.lustre@admin.com', '09750000000', 'BOSS', '$hashed_password', 1)",
 
-    "CREATE TABLE IF NOT EXISTS Saved_Detail (
-        Saved_Detail_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
-        Saved_Detail_LastName VARCHAR(50) NOT NULL,
-        Saved_Detail_FirstName VARCHAR(50) NOT NULL,
-        Saved_Detail_Birthday DATE NOT NULL,
-        Saved_Detail_Phone_Number VARCHAR(11) NOT NULL
-    )",
     "CREATE TABLE IF NOT EXISTS Account_to_Passenger (
         Account_to_Passenger_ID INT(10) AUTO_INCREMENT PRIMARY KEY
     )",
     "CREATE TABLE IF NOT EXISTS Reservation_to_account (
         Reservation_to_Account_ID INT(10) AUTO_INCREMENT PRIMARY KEY
-    )",
-    "CREATE TABLE IF NOT EXISTS Saved_Detail_in_Account (
-        SD_Account_ID INT(10) AUTO_INCREMENT PRIMARY KEY
     )",
     "CREATE TABLE IF NOT EXISTS Payment (
         Payment_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
