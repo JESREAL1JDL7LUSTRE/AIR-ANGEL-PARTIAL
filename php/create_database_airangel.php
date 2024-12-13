@@ -142,13 +142,10 @@ foreach ($sql_create_tables as $sql) {
 // Add foreign key columns and constraints
 $sql_add_foreign_keys = [
     // Account Table
-    "ALTER TABLE Account ADD COLUMN SD_Account_ID_FK INT(10)",
     "ALTER TABLE Account ADD COLUMN Account_to_Passenger_ID_FK INT(10)",
     "ALTER TABLE Account ADD COLUMN Reservation_to_Account_ID_FK INT(10)",
-    "ALTER TABLE Account ADD INDEX (SD_Account_ID_FK)",
     "ALTER TABLE Account ADD INDEX (Account_to_Passenger_ID_FK)",
     "ALTER TABLE Account ADD INDEX (Reservation_to_Account_ID_FK)",
-    "ALTER TABLE Account ADD FOREIGN KEY (SD_Account_ID_FK) REFERENCES Saved_Detail(Saved_Detail_ID)",
     "ALTER TABLE Account ADD FOREIGN KEY (Account_to_Passenger_ID_FK) REFERENCES Account_to_Passenger(Account_to_Passenger_ID)",
     "ALTER TABLE Account ADD FOREIGN KEY (Reservation_to_Account_ID_FK) REFERENCES Reservation_to_account(Reservation_to_Account_ID)",
 
@@ -167,14 +164,6 @@ $sql_add_foreign_keys = [
     "ALTER TABLE Reservation_to_account ADD INDEX (Account_ID_FK)",
     "ALTER TABLE Reservation_to_account ADD FOREIGN KEY (Reservation_ID_FK) REFERENCES Reservation(Reservation_ID)",
     "ALTER TABLE Reservation_to_account ADD FOREIGN KEY (Account_ID_FK) REFERENCES Account(Account_ID)",
-
-    // Saved_Detail_in_Account Table
-    "ALTER TABLE Saved_Detail_in_Account ADD COLUMN Account_ID_FK INT(10)",
-    "ALTER TABLE Saved_Detail_in_Account ADD COLUMN Saved_Detail_ID_FK INT(10)",
-    "ALTER TABLE Saved_Detail_in_Account ADD INDEX (Account_ID_FK)",
-    "ALTER TABLE Saved_Detail_in_Account ADD INDEX (Saved_Detail_ID_FK)",
-    "ALTER TABLE Saved_Detail_in_Account ADD FOREIGN KEY (Account_ID_FK) REFERENCES Account(Account_ID)",
-    "ALTER TABLE Saved_Detail_in_Account ADD FOREIGN KEY (Saved_Detail_ID_FK) REFERENCES Saved_Detail(Saved_Detail_ID)",
 
     // Reservation Table
     "ALTER TABLE Reservation ADD COLUMN Payment_ID_FK INT(10)",
