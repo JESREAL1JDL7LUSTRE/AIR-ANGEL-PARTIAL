@@ -101,12 +101,10 @@ foreach ($selectedAddons as $addon) {
     }else {
         $addonTotal += $addon['Price'];  // Add the price of each selected addon
     }
-    
-
 }
 
 // Add the total add-on cost to the overall total
-$totalPrice += $addonTotal;
+$totalPrice += $addonTotal * $numPassengers;
 
 // Handle payment submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
