@@ -51,6 +51,7 @@ $returnDepartureTime = $selectedReturnFlight['Departure_Time'] ?? 'N/A';
 $returnArrivalTime = $selectedReturnFlight['Arrival_Time'] ?? 'N/A';
 $returnFlightPrice = $selectedReturnFlight['Amount'] ?? 0;
 
+$numPassengers = $_SESSION['num_passengers'] ?? 0;
 
 // Initialize total to 0
 $total = 0;
@@ -61,7 +62,7 @@ $totalAmountReturn = ($returnFlightPrice * $numPassengers); // Return flight cos
 
 foreach ($selectedAddonsForConfirmation as $addon) {
     $addonPrice = $addon['Price'] ?? 0;
-    $total += $addonPrice; // Add each add-on's price
+    $total += $addonPrice * $numPassengers; // Add each add-on's price
 }
 
 $totalAmount += $total; // Add addons cost for the departure flight

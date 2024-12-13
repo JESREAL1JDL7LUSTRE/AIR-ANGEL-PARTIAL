@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
                 <td><?php echo htmlspecialchars($row['Food_Name']); ?></td>
                 <td><?php echo htmlspecialchars($row['Price']); ?></td>
                 <td>
-                <form method="POST" action="acc_addons.php">
+                <form method="POST">
                     <input type="hidden" name="addon_id" value="<?php echo $row['Food_ID']; ?>">
                     <input type="hidden" name="addon_name" value="<?php echo $row['Food_Name']; ?>">
                     <input type="hidden" name="addon_price" value="<?php echo $row['Price']; ?>">

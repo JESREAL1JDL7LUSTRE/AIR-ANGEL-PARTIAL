@@ -2,6 +2,10 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
+    background-image: url('/ANGEL/assets/images/bg.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     margin: 0;
     padding: 0;
     text-align: center;
@@ -10,26 +14,121 @@ body {
     align-items: center;
 }
 
-/* Header styling */
-h1 {
-    font-size: 2.5rem;
-    color: #333;
-    margin: 20px 0;
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 
-/* Links styling */
-a {
+.navbar a {
     text-decoration: none;
-    color: #fff;
-    background-color: #4CAF50;
-    padding: 12px 20px;
-    margin: 10px;
-    border-radius: 5px;
+    color: #bdafaf;
+    background-color: #7b827b;
+    padding: 10px 10px;
+    margin: 25px;
+    justify-content: center;
+    border-radius: 50px;
     font-size: 16px;
     text-align: center;
     display: inline-block;
-    width: 200px; /* Ensure all links have the same width */
+    width: 100px; /* Ensure all links have the same width */
     transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+
+.navbar a:hover {
+    color: rgb(255, 255, 255);
+    transform: scale(0.98); /* Slightly shrink the button */
+}
+
+.logout a {
+    text-decoration: none;
+    color: #000000;
+    background-color: #ffffff;
+    padding: 10px 10px;
+    border-radius: 50px;
+    font-size: 16px;
+    text-align: center;
+    display: inline-block;
+    width: 100px; /* Ensure all links have the same width */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    position: absolute;
+    top: 10px;
+    right: 10px; /* Changed from left to right */
+}
+  
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    margin-top: 10px;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.card-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.card-description {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Color variations for cards */
+.card.available-flights {
+    background-color: #e0f7fa;
+}
+
+.card.total-reservations {
+    background-color: #fff3e0;
+}
+
+.card.users {
+    background-color: #e8f5e9;
+}
+
+.card.add-ons {
+    background-color: #f3e5f5;
+}
+
+.card.add-flight {
+    background-color: #e3f2fd;
+}
+
+.card.add-admin {
+    background-color: #ede7f6;
+}
+
+.card.employees {
+    background-color: #ffebee;
 }
 
 /* Hover effect for links */
@@ -42,4 +141,18 @@ a:hover {
 /* Container for links */
 a {
     margin-top: 10px;
+}
+
+.logo-container {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+}
+
+/* Logo image styling */
+#logo-img {
+    width: 40px;
+    margin-right: 10px;
 }

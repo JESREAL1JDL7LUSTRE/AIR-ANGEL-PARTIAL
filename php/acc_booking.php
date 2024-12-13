@@ -84,7 +84,7 @@ foreach ($selectedAddons as $addon) {
 
 
 // Add add-ons to the total
-$totalPrice += $addonTotal;
+$totalPrice += $addonTotal * $numPassengers;
 ?>
 
 <!DOCTYPE html>
