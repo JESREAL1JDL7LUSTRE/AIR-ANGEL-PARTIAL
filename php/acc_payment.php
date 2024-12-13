@@ -10,11 +10,6 @@ if (!isset($_SESSION['selected_flight_id'])) {
 
 $selectedAddonsForConfirmation = $_SESSION['selected_addons_for_confirmation'] ?? [];
 
-// Output the array in a readable format
-echo '<pre>';
-print_r($selectedAddonsForConfirmation); // This will show the entire array structure
-echo '</pre>';
-
 $selectedFlightID = $_SESSION['selected_flight_id'];
 $selected_return_flight_id = $_SESSION['selected_return_flight_id'] ?? null;  // Handle return flight, if exists
 
