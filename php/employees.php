@@ -113,6 +113,7 @@ $result = $conn->query($sql);
             form.style.display = form.style.display === "none" || form.style.display === "" ? "block" : "none";
         }
     </script>
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
     <header>

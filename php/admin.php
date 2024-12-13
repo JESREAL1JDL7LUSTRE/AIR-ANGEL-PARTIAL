@@ -43,7 +43,6 @@ foreach ($queries as $label => $sql) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="/ANGEL/styles/admin.css">
-
 </head>
 <bod>
     <header>

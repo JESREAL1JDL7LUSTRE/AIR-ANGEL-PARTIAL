@@ -40,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['Account_Email'] = $user['Account_Email'];
                     $_SESSION['Account_ID'] = $user['Account_ID'];
                     header('Location: acc_dashboard.php'); // Redirect to user dashboard
-                    exit;
                 } else {
                     $error = "Invalid email or password.";
                 }
@@ -80,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     </script>
     <link rel="stylesheet" href="/ANGEL/styles/signin.css">
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
     <header>

@@ -94,6 +94,7 @@ if ($result->num_rows > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AirAngel - Airline Reservation</title>
     <link rel="stylesheet" href="/ANGEL/styles/index.css">
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
     <script>
         // Toggle the visibility of the return date field with animation
         function toggleReturnDate() {

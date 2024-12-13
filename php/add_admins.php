@@ -115,8 +115,8 @@ if (isset($_GET['delete'])) {
             }
         }
     </script>
-
     <link rel="stylesheet" href="/ANGEL/styles/signup.css">
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->v
 </head>
 <body>
     <header>

@@ -94,6 +94,7 @@ if ($result->num_rows > 0) {
             }
         }
     </script>
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
     <header>

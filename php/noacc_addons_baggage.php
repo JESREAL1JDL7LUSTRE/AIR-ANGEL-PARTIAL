@@ -29,6 +29,7 @@ $selectedAddons = isset($_SESSION['selected_addons']) ? $_SESSION['selected_addo
             text-align: left;
         }
     </style>
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
 <header>

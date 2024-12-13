@@ -100,6 +100,7 @@ if ($result && $result->num_rows > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - View Reservations</title>
     <link rel="stylesheet" href="/ANGEL/styles/admin.css">
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
     <nav>

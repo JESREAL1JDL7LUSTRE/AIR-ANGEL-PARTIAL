@@ -279,6 +279,7 @@ foreach ($selectedAddonsForConfirmation as $addon) {
             window.history.back();
         }
     </script>
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
 <header>

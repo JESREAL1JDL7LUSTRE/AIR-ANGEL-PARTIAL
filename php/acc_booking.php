@@ -97,6 +97,7 @@ $totalPrice += $addonTotal;
         table { width: 50%; border-collapse: collapse; margin: 20px 0; }
         table, th, td { border: 1px solid black; text-align: left; padding: 8px; }
     </style>
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
 <header>

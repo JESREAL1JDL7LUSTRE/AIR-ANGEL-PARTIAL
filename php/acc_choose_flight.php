@@ -78,6 +78,7 @@ if (isset($_POST['selected_departure_flight'])) {
             window.history.back();
         }
     </script>
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
 <header>

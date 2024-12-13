@@ -63,6 +63,7 @@ foreach ($selectedAddons as $addon) {
         table { width: 50%; border-collapse: collapse; margin: 20px 0; }
         table, th, td { border: 1px solid black; text-align: left; padding: 8px; }
     </style>
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
 <header>
@@ -77,7 +78,7 @@ foreach ($selectedAddons as $addon) {
                 </ul>
             </nav>
         </div>
-    </header>
+</header>
 <h1>Booking Confirmation</h1>
 
 <h2>Flight Information</h2>

@@ -54,6 +54,7 @@ $result = $conn->query($sql);
             <li><a href="logout.php">Logout</a></li>
         </ul>
     </nav>
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
     <h1>Welcome Admin!</h1>

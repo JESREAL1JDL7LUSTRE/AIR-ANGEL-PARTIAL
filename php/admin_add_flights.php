@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Flight</title>
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
     <link rel="stylesheet" href="/ANGEL/styles/admin_add_flights.css">
 </head>
 <body>

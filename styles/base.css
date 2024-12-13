@@ -1,0 +1,58 @@
+html {
+    font-size: 16px; /* Default size for easy rem scaling */
+    scroll-behavior: smooth; /* Smooth scrolling for anchor links */
+    box-sizing: border-box; /* Ensures consistent box model */
+}
+
+body {
+margin: 0; /* Remove default margin */
+padding: 0; /* Remove default padding */
+font-family: Arial, sans-serif; /* Replace with your desired font */
+color: #333; /* A neutral text color for readability */
+background-color: #f9f9f9; /* Soft, neutral background */
+line-height: 1.5; /* Improve text readability */
+}
+
+header {
+    display: flex; /* Use Flexbox to align the container and nav */
+    justify-content: space-between; /* Space items evenly between left and right */
+    align-items: center; /* Align items vertically in the center */
+    padding: 10px 20px; /* Add some padding for spacing */
+    background-color: #2D2D2D; /* Light background for header */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+
+.header-container {
+    flex: 1; /* Allow the title to take up its space */
+}
+
+.site-title {
+    font-size: 1.5rem; /* Adjust title size */
+    color: white; /* Neutral color */
+    margin: 0; /* Remove default margin */
+}
+
+nav {
+    flex: 1; /* Allow the nav to occupy equal space */
+    display: flex; /* Flexbox for navigation */
+    justify-content: flex-end; /* Align links to the right */
+}
+
+nav ul {
+    display: flex; /* Horizontal layout for list items */
+    list-style: none; /* Remove default bullets */
+    gap: 20px; /* Add space between links */
+    margin: 0;
+    padding: 0;
+}
+
+nav a {
+    text-decoration: none; /* Remove underline */
+    color: white; /* Link color */
+    font-size: 1rem;
+    transition: color 0.3s ease; /* Smooth hover effect */
+}
+
+nav a:hover {
+    color: lightblue; /* Darker color on hover */
+}
