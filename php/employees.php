@@ -85,6 +85,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+// Handle employee save (update)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_employee'])) {
+    $employeeID = $_POST['Employee_ID'];
+    $lastName = trim($_POST['Employee_Last_Name']);
+    $firstName = trim($_POST['Employee_First_Name']);
+    $middleName = trim($_POST['Employee_Middle_Name']);
+    $email = trim($_POST['Employee_Email']);
+    $department = trim($_POST['Department']);
+    $sex = trim($_POST['Employee_Sex']);
+    $birthday = trim($_POST['Employee_Birthday']);
+    $nationality = trim($_POST['Employee_Nationality']);
+    $address = trim($_POST['Employee_Address']); // Missing in your code
+    $salary = trim($_POST['Employee_Salary']);
+    $healthInsurance = trim($_POST['Employee_Health_Insurance']);
+    $phoneNumber = trim($_POST['Employee_PhoneNumber']);
+    $emergencyContact = trim($_POST['Employee_Emergency_Contact_No']);
+
+    // Update query
+    $sql = "UPDATE Employees 
+        SET Department = ?, Employee_Last_Name = ?, Employee_First_Name = ?, 
+            Employee_Middle_Name = ?, Employee_Birthday = ?, Employee_Nationality = ?, 
+            Employee_Sex = ?, Employee_Address = ?, Employee_PhoneNumber = ?, 
+            Employee_Emergency_Contact_No = ?, Employee_Salary = ?, 
+            Employee_Health_Insurance = ?, Employee_Email = ? 
+        WHERE Employee_ID = ?";
+
+    $stmt = $conn->prepare($sql);
+
+    if (!$stmt) {
+        die("Prepare failed: " . $conn->error);
+    }
+
+    // Bind parameters
+    $stmt->bind_param(
+        "sssssssssssssi", // Add 'i' for the Employee_ID (integer)
+        $department,
+        $lastName,
+        $firstName,
+        $middleName,
+        $birthday,
+        $nationality,
+        $sex,
+        $address, // Added missing parameter
+        $phoneNumber,
+        $emergencyContact,
+        $salary,
+        $healthInsurance,
+        $email,
+        $employeeID // Employee_ID as the WHERE condition
+    );
+
+    // Execute and handle the result
+    if ($stmt->execute()) {
+        echo "Employee updated successfully!";
+        header("Location: employees.php");
+        exit();
+    } else {
+        echo "Error updating employee: " . $stmt->error;
+    }
+
+    $stmt->close();
+}
+
 // Search functionality
 $searchQuery = '';
 if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
@@ -161,52 +224,68 @@ $result = $conn->query($sql);
     </form>
 
     <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Last Name</th>
-            <th>First Name</th>
-            <th>Middle Name</th>
-            <th>Email</th>
-            <th>Department</th>
-            <th>Sex</th>
-            <th>Birthday</th>
-            <th>Nationality</th>
-            <th>Salary</th>
-            <th>Health Insurance</th>
-            <th>Phone Number</th>
-            <th>Emergency Contact No</th>
-            <th>Action</th>
-        </tr>
-        <?php if ($result->num_rows > 0): ?>
-            <?php while ($row = $result->fetch_assoc()): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($row['Employee_ID']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Employee_Last_Name']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Employee_First_Name']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Employee_Middle_Name']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Employee_Email']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Department']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Employee_Sex']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Employee_Birthday']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Employee_Nationality']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Employee_Salary']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Employee_Health_Insurance']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Employee_PhoneNumber']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Employee_Emergency_Contact_No']); ?></td>
-                    <td>
-                        <!-- Delete Form -->
-                        <form method="POST" action="">
-                            <input type="hidden" name="Employee_ID" value="<?php echo htmlspecialchars($row['Employee_ID']); ?>">
-                            <button type="submit" name="delete_employee" onclick="return confirm('Are you sure you want to delete this employee?');">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            <?php endwhile; ?>
-        <?php else: ?>
+    <tr>
+        <th>ID</th>
+        <th>Last Name</th>
+        <th>First Name</th>
+        <th>Middle Name</th>
+        <th>Email</th>
+        <th>Department</th>
+        <th>Sex</th>
+        <th>Birthday</th>
+        <th>Nationality</th>
+        <th>Salary</th>
+        <th>Health Insurance</th>
+        <th>Phone Number</th>
+        <th>Emergency Contact No</th>
+        <th>Action</th>
+    </tr>
+    <?php if ($result->num_rows > 0): ?>
+        <?php while ($row = $result->fetch_assoc()): ?>
             <tr>
-                <td colspan="14">No employees found.</td>
+                <form method="POST" action="">
+                    <td><?php echo htmlspecialchars($row['Employee_ID']); ?></td>
+                    <td><input type="text" name="Employee_Last_Name" value="<?php echo htmlspecialchars($row['Employee_Last_Name']); ?>" readonly class="view-only"></td>
+                    <td><input type="text" name="Employee_First_Name" value="<?php echo htmlspecialchars($row['Employee_First_Name']); ?>" readonly class="view-only"></td>
+                    <td><input type="text" name="Employee_Middle_Name" value="<?php echo htmlspecialchars($row['Employee_Middle_Name']); ?>" readonly class="view-only"></td>
+                    <td><input type="email" name="Employee_Email" value="<?php echo htmlspecialchars($row['Employee_Email']); ?>" readonly class="view-only"></td>
+                    <td><input type="text" name="Department" value="<?php echo htmlspecialchars($row['Department']); ?>" readonly class="view-only"></td>
+                    <td><input type="text" name="Employee_Sex" value="<?php echo htmlspecialchars($row['Employee_Sex']); ?>" readonly class="view-only"></td>
+                    <td><input type="date" name="Employee_Birthday" value="<?php echo htmlspecialchars($row['Employee_Birthday']); ?>" readonly class="view-only"></td>
+                    <td><input type="text" name="Employee_Nationality" value="<?php echo htmlspecialchars($row['Employee_Nationality']); ?>" readonly class="view-only"></td>
+                    <td><input type="number" name="Employee_Salary" value="<?php echo htmlspecialchars($row['Employee_Salary']); ?>" readonly class="view-only"></td>
+                    <td><input type="text" name="Employee_Health_Insurance" value="<?php echo htmlspecialchars($row['Employee_Health_Insurance']); ?>" readonly class="view-only"></td>
+                    <td><input type="text" name="Employee_PhoneNumber" value="<?php echo htmlspecialchars($row['Employee_PhoneNumber']); ?>" readonly class="view-only"></td>
+                    <td><input type="text" name="Employee_Emergency_Contact_No" value="<?php echo htmlspecialchars($row['Employee_Emergency_Contact_No']); ?>" readonly class="view-only"></td>
+                    <td>
+                        <input type="hidden" name="Employee_ID" value="<?php echo htmlspecialchars($row['Employee_ID']); ?>">
+                        <button type="button" class="editButton">Edit</button>
+                        <button type="submit" name="save_employee" class="saveButton" style="display: none;">Save</button>
+                        <button type="submit" name="delete_employee" onclick="return confirm('Are you sure you want to delete this employee?');">Delete</button>
+                    </td>
+                </form>
             </tr>
-        <?php endif; ?>
-    </table>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <tr>
+            <td colspan="14">No employees found.</td>
+        </tr>
+    <?php endif; ?>
+</table>
+
+<script>
+    document.querySelectorAll('.editButton').forEach(button => {
+        button.addEventListener('click', function () {
+            const row = this.closest('tr');
+            const inputs = row.querySelectorAll('.view-only');
+            inputs.forEach(input => {
+                input.removeAttribute('readonly');
+                input.classList.add('editable');
+            });
+            row.querySelector('.saveButton').style.display = 'inline-block';
+            this.style.display = 'none';
+        });
+    });
+</script>
 </body>
 </html>
