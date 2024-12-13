@@ -61,7 +61,7 @@ $selectedAddons = isset($_SESSION['selected_addons']) ? $_SESSION['selected_addo
                 <td><?php echo htmlspecialchars($row['Baggage_Weight']); ?></td>
                 <td><?php echo htmlspecialchars($row['Price']); ?></td>
                 <td>
-                <form method="POST" action="acc_addons.php">
+                <form method="POST">
                     <input type="hidden" name="addon_id" value="<?php echo $row['Baggage_ID']; ?>">
                     <input type="hidden" name="addon_name" value="<?php echo $row['Baggage_Weight']; ?>">
                     <input type="hidden" name="addon_price" value="<?php echo $row['Price']; ?>">
