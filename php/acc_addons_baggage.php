@@ -8,6 +8,21 @@ $result = $conn->query($sql);
 
 $selectedAddons = isset($_SESSION['selected_addons']) ? $_SESSION['selected_addons'] : [];
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
+    // Add selected add-on to session
+    $addon = [
+        'ID' => $_POST['addon_id'],
+        'Name' => $_POST['addon_name'],
+        'Price' => $_POST['addon_price'],
+        'Type' => 'Baggage' // Set the add-on type as Food
+    ];
+
+    // Append the selected add-on to session array
+    $selectedAddons[] = $addon;
+
+    // Save the selected add-ons back to session
+    $_SESSION['selected_addons'] = $selectedAddons;
+}
 ?>
 
 <!DOCTYPE html>

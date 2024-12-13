@@ -45,7 +45,7 @@ foreach ($queries as $label => $sql) {
     <link rel="stylesheet" href="/ANGEL/styles/admin.css">
 
 </head>
-<bod>
+<body>
     <header>
         
     </header>
