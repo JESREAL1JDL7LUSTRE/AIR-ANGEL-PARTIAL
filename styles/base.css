@@ -32,27 +32,37 @@ header {
     margin: 0; /* Remove default margin */
 }
 
-nav {
-    flex: 1; /* Allow the nav to occupy equal space */
-    display: flex; /* Flexbox for navigation */
-    justify-content: flex-end; /* Align links to the right */
-}
-
-nav ul {
-    display: flex; /* Horizontal layout for list items */
-    list-style: none; /* Remove default bullets */
+ul {
+    display: flex;
+    list-style-type: none; /* Remove default bullets */
     gap: 20px; /* Add space between links */
-    margin: 0;
-    padding: 0;
+    margin: 0 auto;
+    padding: 5px 10px;
+    background-color: #2D2D2D;
+    width: fit-content;
+    border-radius: 100px;
 }
 
-nav a {
+ul li {
+    border-radius: 100px;
+    padding: 5px 10px;
+    transition: color 0.3s ease; /* Smooth hover effect */
+}
+
+ul li:hover {
+    background-color: white;
+    text-align: center;
+}
+
+ul li a {
     text-decoration: none; /* Remove underline */
     color: white; /* Link color */
     font-size: 1rem;
     transition: color 0.3s ease; /* Smooth hover effect */
+    font-weight: bold;
+    margin: 10px;
 }
 
-nav a:hover {
-    color: lightblue; /* Darker color on hover */
+ul li a:hover {
+    color: rgba(0, 0, 0, 1); /* Darker color on hover */
 }
