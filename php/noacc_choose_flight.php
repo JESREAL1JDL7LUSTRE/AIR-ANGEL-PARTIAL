@@ -48,6 +48,7 @@ if (isset($_POST['selected_flight'])) {
         }
     </script>
     <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
+    <link rel="stylesheet" href="/ANGEL/styles/LAYOUT.css"> <!-- base (layout) -->
 </head>
 <body>
 <header>

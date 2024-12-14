@@ -64,6 +64,7 @@ foreach ($selectedAddons as $addon) {
         table, th, td { border: 1px solid black; text-align: left; padding: 8px; }
     </style>
     <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
+    <link rel="stylesheet" href="/ANGEL/styles/LAYOUT.css"> <!-- base (layout) -->
 </head>
 <body>
 <header>

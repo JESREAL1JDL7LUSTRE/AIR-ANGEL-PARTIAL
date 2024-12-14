@@ -30,6 +30,7 @@ $selectedAddons = isset($_SESSION['selected_addons']) ? $_SESSION['selected_addo
         }
     </style>
     <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
+    <link rel="stylesheet" href="/ANGEL/styles/LAYOUT.css"> <!-- base (layout) -->
 </head>
 <body>
 <header>
