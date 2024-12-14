@@ -17,27 +17,35 @@ if (isset($_GET['delete'])) {
     $conn->begin_transaction();
 
     try {
-        // Delete related records from child tables
-        $sql_delete_reservation_to_account = "DELETE FROM reservation_to_account WHERE Reservation_ID_FK = ?";
-        $stmt1 = $conn->prepare($sql_delete_reservation_to_account);
+        // Step 1: Delete from the add_on table (child of flight_to_reservation_to_passenger)
+        $sql_delete_add_on = "DELETE FROM add_on WHERE FRP_Number_ID_FK IN (SELECT FRP_Number_ID FROM flight_to_reservation_to_passenger WHERE Flight_to_Reservation_ID_FK IN (SELECT Reservation_to_Passenger_ID FROM reservation_to_passenger WHERE Reservation_ID_FK = ?))";
+        $stmt1 = $conn->prepare($sql_delete_add_on);
         $stmt1->bind_param("i", $reservation_id);
         $stmt1->execute();
 
-        $sql_delete_reservation_to_passenger = "DELETE FROM reservation_to_passenger WHERE Reservation_ID_FK = ?";
-        $stmt2 = $conn->prepare($sql_delete_reservation_to_passenger);
+        // Step 2: Delete from flight_to_reservation_to_passenger (child of reservation_to_passenger)
+        $sql_delete_flight_to_reservation = "DELETE FROM flight_to_reservation_to_passenger WHERE Flight_to_Reservation_ID_FK IN (SELECT Reservation_to_Passenger_ID FROM reservation_to_passenger WHERE Reservation_ID_FK = ?)";
+        $stmt2 = $conn->prepare($sql_delete_flight_to_reservation);
         $stmt2->bind_param("i", $reservation_id);
         $stmt2->execute();
 
-        $sql_delete_flight_to_reservation = "DELETE FROM flight_to_reservation_to_passenger WHERE Flight_to_Reservation_ID_FK = ?";
-        $stmt3 = $conn->prepare($sql_delete_flight_to_reservation);
+        // Step 3: Delete from reservation_to_passenger
+        $sql_delete_reservation_to_passenger = "DELETE FROM reservation_to_passenger WHERE Reservation_ID_FK = ?";
+        $stmt3 = $conn->prepare($sql_delete_reservation_to_passenger);
         $stmt3->bind_param("i", $reservation_id);
         $stmt3->execute();
 
-        // Delete the reservation from the reservation table
-        $sql_delete_reservation = "DELETE FROM Reservation WHERE Reservation_ID = ?";
-        $stmt4 = $conn->prepare($sql_delete_reservation);
+        // Step 4: Delete from reservation_to_account
+        $sql_delete_reservation_to_account = "DELETE FROM reservation_to_account WHERE Reservation_ID_FK = ?";
+        $stmt4 = $conn->prepare($sql_delete_reservation_to_account);
         $stmt4->bind_param("i", $reservation_id);
         $stmt4->execute();
+
+        // Step 5: Delete the reservation from the reservation table
+        $sql_delete_reservation = "DELETE FROM Reservation WHERE Reservation_ID = ?";
+        $stmt5 = $conn->prepare($sql_delete_reservation);
+        $stmt5->bind_param("i", $reservation_id);
+        $stmt5->execute();
 
         // Commit the transaction
         $conn->commit();
