@@ -32,14 +32,7 @@ header {
 }
 
 /* Header Container */
-.header-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-}
+
 
 /* Logo */
 .logo img {
@@ -58,20 +51,6 @@ header {
 }
 
 /* Navigation */
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 1.5rem;
-}
-
-nav ul li a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 0.5rem 1rem;
-    border: 2px solid transparent;
-    transition: all 0.3s ease;
-}
 
 /* Main Content */
 main {

@@ -1,71 +1,101 @@
-/*--------------------------------------------------------------
-1. FOR THE HEADER
---------------------------------------------------------------*/
-html {
-    font-size: 16px; /* Default size for easy rem scaling */
-    scroll-behavior: smooth; /* Smooth scrolling for anchor links */
-    box-sizing: border-box; /* Ensures consistent box model */
-}
-
-body {
-margin: 0; /* Remove default margin */
-padding: 0; /* Remove default padding */
-font-family: Arial, sans-serif; /* Replace with your desired font */
-color: #333; /* A neutral text color for readability */
-background-color: #f9f9f9; /* Soft, neutral background */
-line-height: 1.5; /* Improve text readability */
-}
-
+/* Header Styles */
 header {
-    display: flex; /* Use Flexbox to align the container and nav */
-    justify-content: space-between; /* Space items evenly between left and right */
-    align-items: center; /* Align items vertically in the center */
-    padding: 10px 20px; /* Add some padding for spacing */
-    background-color: #2D2D2D; /* Light background for header */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: linear-gradient(to right, #FFB84D, #6A7FDB); /* Yellowish to Bluish gradient */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    width: 100%;
+    border-radius: 10px;
 }
 
-.header-container {
-    flex: 1; /* Allow the title to take up its space */
-}
-
+/* Site Title Styling */
 .site-title {
-    font-size: 1.5rem; /* Adjust title size */
-    color: white; /* Neutral color */
-    margin: 0; /* Remove default margin */
+    font-size: 1.5rem;
+    color: white; /* Ensure the title stays white for contrast on gradient */
+    margin: 0;
 }
 
+/* Navigation List */
 ul {
     display: flex;
-    list-style-type: none; /* Remove default bullets */
-    gap: 20px; /* Add space between links */
-    margin: 0 auto;
-    padding: 5px 10px;
-    background-color: #2D2D2D;
-    width: fit-content;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    background-color: transparent; /* Keep it transparent */
     border-radius: 100px;
+    position: relative;
 }
 
+/* List Item Styling */
 ul li {
+    padding: 12px 24px;
     border-radius: 100px;
-    padding: 5px 10px;
-    transition: color 0.3s ease; /* Smooth hover effect */
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.4s ease, transform 0.4s ease;
 }
 
+/* Hover Effect */
 ul li:hover {
-    background-color: white;
-    text-align: center;
+    transform: scale(1.05);
+    background: linear-gradient(to right, #FF6347, #28A745); /* Soft transition from coral to green */
 }
 
+/* Animation for Background Slide */
+ul li::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.3); /* Lighter background for smooth transition */
+    transition: left 0.5s ease-in-out;
+    border-radius: 100px;
+}
+
+/* Slide Effect */
+ul li:hover::before {
+    left: 100%;
+}
+
+/* Link Styling */
 ul li a {
-    text-decoration: none; /* Remove underline */
-    color: white; /* Link color */
+    text-decoration: none;
+    color: #FFB84D; /* Soft yellow color for links */
     font-size: 1rem;
-    transition: color 0.3s ease; /* Smooth hover effect */
     font-weight: bold;
-    margin: 10px;
+    position: relative;
+    z-index: 1;
+    transition: color 0.4s ease, transform 0.3s ease;
 }
 
-ul li a:hover {
-    color: rgba(0, 0, 0, 1); /* Darker color on hover */
+/* Hover Link Color */
+ul li:hover a {
+    color: #FFFFFF; /* White color on hover for contrast */
+    transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+/* Active Click Effect */
+ul li:active {
+    transform: scale(0.98);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Active Link Effect */
+ul li:active a {
+    color: #000; /* Dark color on click for contrast */
+}
+
+/* Focus State */
+ul li:focus-within {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.75);
+}
+
+ul li a:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.75);
 }

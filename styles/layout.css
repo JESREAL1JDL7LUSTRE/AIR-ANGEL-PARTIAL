@@ -14,7 +14,7 @@
 /* Set a base font for the entire page */
 body {
     font-family: 'Arial', sans-serif; /* Change to your desired font */
-    background-color: #f4f4f4; /* Background color for the page */
+    background: linear-gradient(to bottom right, #F2C94C, #56CCF2); /* Yellow to Sky Blue Gradient */
     color: #333; /* Text color */
     line-height: 1.6; /* Line height for better readability */
     min-height: 100vh; /* Make sure the body takes the full height of the viewport */
@@ -81,12 +81,13 @@ ul li a:hover {
 
 /* Booking Form Section */
 .booking-form-section {
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
+    backdrop-filter: blur(10px); /* Apply blur effect to the background */
+    border-radius: 10px;
     padding: 30px;
     margin: 20px auto;
-    border-radius: 10px;
     max-width: 900px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .booking-form-section h2 {
@@ -133,12 +134,17 @@ ul li a:hover {
 }
 
 /* Available Flights Section */
-.available-flights-section {
-    margin-top: 40px;
-    padding: 20px;
-    background-color: #fff;
+.available-flights-section,
+.signin-form-container,
+.signup-form-container {
+    background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+    backdrop-filter: blur(10px); /* Apply blur effect to the background */
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    width: 90%; /* Set width to 90% of the container's width */
+    max-width: 900px; /* Set a max-width to avoid containers becoming too wide */
+    margin: 0 auto; /* Center the container horizontally */
 }
 
 .available-flights-section table {
@@ -202,6 +208,89 @@ footer a {
 
 footer a:hover {
     text-decoration: underline;
+}
+
+/* Universal Button Styles */
+button {
+    padding: 12px 24px; /* Adjust padding to make the button proportional */
+    font-size: 1rem; /* Default font size */
+    border: none; /* Remove default border */
+    border-radius: 50px; /* Rounded corners */
+    background-color: #28a745; /* Default green background */
+    color: white; /* Text color */
+    font-weight: bold; /* Bold text */
+    cursor: pointer; /* Pointer cursor on hover */
+    text-transform: uppercase; /* Capitalize text */
+    outline: none; /* Remove outline on focus */
+    position: relative; /* Required for pseudo-element positioning */
+    overflow: hidden; /* Ensure the animation does not overflow the button */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease; /* Smooth transitions */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Hover Animation */
+button:hover {
+    transform: translateY(-5px); /* Slight lift when hovered */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); /* Shadow expansion */
+    color: #fff; /* Ensure the text color remains visible */
+}
+
+/* Color Transition Animation */
+button:hover {
+    background-color: #ff6347; /* Transition to a different color on hover */
+    background-image: linear-gradient(to right, #ff6347, #28a745); /* Gradient effect */
+}
+
+/* Adding an animation using a pseudo-element */
+button::before {
+    content: ''; /* Empty content for the pseudo-element */
+    position: absolute; /* Position it absolutely inside the button */
+    top: 50%;
+    left: 50%;
+    width: 300%; /* Start width large to hide it */
+    height: 300%; /* Start height large to hide it */
+    background-color: rgba(255, 255, 255, 0.2); /* Soft white background */
+    border-radius: 50%; /* Rounded edges */
+    transition: width 0.4s ease, height 0.4s ease, top 0.4s ease, left 0.4s ease; /* Smooth growth */
+    transform: translate(-50%, -50%); /* Center it inside the button */
+}
+
+/* On hover, expand the pseudo-element to create an interesting animation */
+button:hover::before {
+    width: 0;
+    height: 0;
+    top: 50%;
+    left: 50%;
+}
+
+/* Animation for active state (when clicked) */
+button:active {
+    transform: translateY(2px); /* Slight push down when clicked */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15); /* Smaller shadow */
+}
+
+/* Focus state for better accessibility */
+button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.75); /* Blue outline on focus */
+}
+
+/* Additional animation for background color transition from one side to another */
+button::after {
+    content: ''; /* Empty content for the pseudo-element */
+    position: absolute; /* Position it absolutely inside the button */
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.4); /* Light overlay */
+    transition: all 0.4s ease-in-out; /* Smooth transition */
+    border-radius: 50px;
+}
+
+/* Slide effect from left to right on hover */
+button:hover::after {
+    left: 100%;
 }
 
 /*--------------------------------------------------------------
