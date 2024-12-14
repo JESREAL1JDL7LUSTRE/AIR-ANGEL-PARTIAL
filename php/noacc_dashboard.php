@@ -4,48 +4,52 @@ session_start();  // Start the session to access session data
 include('db.php'); // Include your database connection
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get values from the form and sanitize them
+    // Get values from the form
     $departure_date = $_POST['depart_date'];
     $origin = $_POST['from'];
     $destination = $_POST['to'];
     $flight_type = $_POST['flight_type'];
-    
-    // Since there's no return date column, we use the departure date as the return date
-    $return_date = $_POST['return_date'] ?? $departure_date;  // Handle undefined return date
+    $return_date = $_POST['return_date'] ?? $departure_date;
 
-    // Query the Available_Flights table based on user input
-    $sql = "SELECT * FROM Available_Flights WHERE Departure_Date = ? AND Origin = ? AND Destination = ?";
+    if ($flight_type == "Round Trip") {
+        // Debugging: Display query and parameters
+        echo "Searching for round trip flights...<br>";
+        $sql = "SELECT * FROM Available_Flights 
+                WHERE (Departure_Date = ? AND Origin = ? AND Destination = ?) 
+                OR (Departure_Date = ? AND Origin = ? AND Destination = ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssss", $departure_date, $origin, $destination, $return_date, $destination, $origin);
+        echo "SQL: " . $sql . "<br>";
+        echo "Params: " . $departure_date . " " . $origin . " " . $destination . " " . $return_date . "<br>";
+    } else {
+        echo "Searching for one-way flights...<br>";
+        $sql = "SELECT * FROM Available_Flights WHERE Departure_Date = ? AND Origin = ? AND Destination = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sss", $departure_date, $origin, $destination);
+    }
     
-    // Prepare the statement
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sss", $departure_date, $origin, $destination);
     $stmt->execute();
-    
-    // Get the result of the query
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
-        // If flights are found, store them in the session for use in the choose_flight.php page
         $_SESSION['available_flights'] = [];
         while ($row = $result->fetch_assoc()) {
-            $_SESSION['available_flights'][] = $row;  // Store each available flight in the session
+            $_SESSION['available_flights'][] = $row;
         }
-        
-        // Set session variables for origin, destination, and flight type
+
         $_SESSION['origin'] = $origin;
         $_SESSION['destination'] = $destination;
         $_SESSION['departure_date'] = $departure_date;
         $_SESSION['return_date'] = $return_date;
         $_SESSION['flight_type'] = $flight_type;
 
-        // Redirect to choose_flight.php after successful submission
         header("Location: noacc_choose_flight.php");
-        exit();  // Ensure no further code is executed after redirection
+        exit();
     } else {
-        // If no flights are found, display a message
         echo "<p>No flights found matching your criteria.</p>";
     }
 }
+
 // Check if a search term is provided
 $search_term = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
 
@@ -82,6 +86,8 @@ if ($result->num_rows > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AirAngel - Airline Reservation</title>
     <link rel="stylesheet" href="/ANGEL/styles/index.css">
+    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
+    <link rel="stylesheet" href="/ANGEL/styles/LAYOUT.css"> <!-- base (layout) -->
     <script>
         // Toggle the visibility of the return date field with animation
         function toggleReturnDate() {
@@ -92,10 +98,8 @@ if ($result->num_rows > 0) {
             } else {
                 returnDateField.classList.remove('show'); // Remove the class to hide
             }
-        }
+}
     </script>
-    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
-    <link rel="stylesheet" href="/ANGEL/styles/LAYOUT.css"> <!-- base (layout) -->
 </head>
 <body>
     <header>
@@ -105,14 +109,15 @@ if ($result->num_rows > 0) {
                 <h1 class="site-title">AirAngel - Airline Reservation</h1>
             </div>
             <nav>
-                <ul>
-                <li><a href="signin.php">Sign In</a></li>
-                <li><a href="signup.php">Sign Up</a></li>
-                <li><a href="noacc_dashboard.php">Home</a></li>
+            <ul>
+                        <li><a href="noacc_dashboard.php">Home</a></li>
+                        <li><a href="signin.php">Sign in</a></li>
+                        <li><a href="signup.php">Sign up</a></li>
                 </ul>
             </nav>
         </div>
     </header>
+
 
     <main>
         <section class="booking-form-section">
@@ -121,16 +126,14 @@ if ($result->num_rows > 0) {
                 <!-- Flight Type Selection -->
                 <fieldset>
                     <legend>Select Flight Type:</legend>
-                    <div style="display: flex; justify-content: center; align-items: center; margin: 10px 0;">
-                        <div class="radio-group" style="display: inline-flex; align-items: center; gap: 10px;">
-                            <input type="radio" id="one_way" name="flight_type" value="One Way" onclick="toggleReturnDate()" required>
-                            <label for="one_way" style="margin: 0;">One Way</label>
-                            <input type="radio" id="round_trip" name="flight_type" value="Round Trip" onclick="toggleReturnDate()">
-                            <label for="round_trip" style="margin: 0;">Round Trip</label>
+                        <div style="display: flex; justify-content: center; align-items: center; margin: 10px 0;">
+                            <div class="radio-group" style="display: inline-flex; align-items: center; gap: 10px;">
+                                <input type="radio" id="one_way" name="flight_type" value="One Way" onclick="toggleReturnDate()" required>
+                                <label for="one_way" style="margin: 0;">One Way</label>
+                                <input type="radio" id="round_trip" name="flight_type" value="Round Trip" onclick="toggleReturnDate()">
+                                <label for="round_trip" style="margin: 0;">Round Trip</label>
+                            </div>
                         </div>
-                    </div>
-
-
                 </fieldset>
 
                 <!-- Departure Location and Destination -->
@@ -142,7 +145,7 @@ if ($result->num_rows > 0) {
 
                 <!-- Departure Time -->
                 <label for="depart_date">Departure Date:</label>
-                <input type="date" id="depart_date" name="depart_date" required>
+                <input type="date" id="depart_date" name="depart_date">
 
                 <!-- Return Date (Visible only for Round Trip) -->
                 <div id="return_date_container" class="return-date-container">

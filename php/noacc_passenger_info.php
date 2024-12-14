@@ -126,18 +126,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
 <header>
-        <div class="header-container">
-                <h1 class="site-title">AirAngel - Airline Reservation</h1>
-            </div>
-            <nav>
-                <ul>
-                <li><a href="signin.php">Sign In</a></li>
-                <li><a href="signup.php">Sign Up</a></li>
-                <li><a href="noacc_dashboard.php">Home</a></li>
+    <div class="header-container">
+        <h1 class="site-title">AirAngel - Airline Reservation</h1>
+        <nav>
+        <ul>
+                        <li><a href="noacc_dashboard.php">Home</a></li>
+                        <li><a href="signin.php">Sign in</a></li>
+                        <li><a href="signup.php">Sign up</a></li>
                 </ul>
-            </nav>
-        </div>
-    </header>
+        </nav>
+    </div>
+</header>
 <main>
     <section>
         <h2>How Many Passengers</h2>

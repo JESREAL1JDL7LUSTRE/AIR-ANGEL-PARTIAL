@@ -119,8 +119,7 @@ $sql_create_tables = [
     "CREATE TABLE IF NOT EXISTS Food (
         Food_ID INT(10) AUTO_INCREMENT PRIMARY KEY,
         Food_Name VARCHAR(30) NOT NULL,
-        Price DECIMAL(10,2) NOT NULL,
-        Seat_Type VARCHAR(20) NOT NULL
+        Price DECIMAL(10,2) NOT NULL
     )",
     "CREATE TABLE IF NOT EXISTS Reservation_to_Passenger (
         Reservation_to_Passenger_ID INT(10) AUTO_INCREMENT PRIMARY KEY
@@ -167,11 +166,8 @@ $sql_add_foreign_keys = [
 
     // Reservation Table
     "ALTER TABLE Reservation ADD COLUMN Payment_ID_FK INT(10)",
-    "ALTER TABLE Reservation ADD COLUMN Employee_Assignment_ID_FK INT(10)",
     "ALTER TABLE Reservation ADD INDEX (Payment_ID_FK)",
-    "ALTER TABLE Reservation ADD INDEX (Employee_Assignment_ID_FK)",
     "ALTER TABLE Reservation ADD FOREIGN KEY (Payment_ID_FK) REFERENCES Payment(Payment_ID)",
-    "ALTER TABLE Reservation ADD FOREIGN KEY (Employee_Assignment_ID_FK) REFERENCES Employee_Assignment(Employee_Assignment_ID)",
 
     // Employee_Assignment Table
     "ALTER TABLE Employee_Assignment ADD COLUMN Employee_ID_FK INT(10)",

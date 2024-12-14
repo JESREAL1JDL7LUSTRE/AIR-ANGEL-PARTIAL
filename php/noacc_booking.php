@@ -35,22 +35,49 @@ $numPassengers = $_SESSION['num_passengers'] ?? 0;
 $selectedAddons = $_SESSION['selected_addons'] ?? [];
 $paymentMethod = $_SESSION['payment_method'] ?? null;
 
+$selectedReturnFlight = $_SESSION['return_flights'] ?? null;
+
+// Check if it's an array and extract the first element
+if (is_array($selectedReturnFlight) && isset($selectedReturnFlight[0])) {
+    $selectedReturnFlight = $selectedReturnFlight[0]; // Extract the first flight data
+} else {
+    $selectedReturnFlight = null; // No valid data available
+}
+
+
 // Generate booking date
 $bookingDate = date('Y-m-d');
 
 // Calculate total price
 $totalPrice = 0;
-$flightPrice = 0;
+$departureFlightPrice = 0;
+$returnFlightPrice = 0;
+$addonTotal = 0;
 
 if ($selectedFlight) {
-    $flightPrice = $selectedFlight['Amount'] * $numPassengers;
-    $totalPrice += $flightPrice;
+    $departureFlightPrice = $selectedFlight['Amount'] * $numPassengers;
+    $totalPrice += $departureFlightPrice;
 }
 
+if ($selectedReturnFlight) {
+    $returnFlightPrice = $selectedReturnFlight['Amount'] * $numPassengers;
+    $totalPrice += $returnFlightPrice;
+}
+
+// Add selected add-ons to the total price
 foreach ($selectedAddons as $addon) {
-    $totalPrice += $addon['Price'];
+    if ($selectedReturnFlight) {
+        $addonTotal += $addon['Price'] * 2;
+    }else {
+        $addonTotal += $addon['Price'];  // Add the price of each selected addon
+    }
+    
+
 }
 
+
+// Add add-ons to the total
+$totalPrice += $addonTotal * $numPassengers;
 ?>
 
 <!DOCTYPE html>
@@ -68,18 +95,18 @@ foreach ($selectedAddons as $addon) {
 </head>
 <body>
 <header>
-        <div class="header-container">
-                <h1 class="site-title">AirAngel - Airline Reservation</h1>
-            </div>
-            <nav>
-                <ul>
-                <li><a href="signin.php">Sign In</a></li>
-                <li><a href="signup.php">Sign Up</a></li>
-                <li><a href="noacc_dashboard.php">Home</a></li>
+    <div class="header-container">
+        <h1 class="site-title">AirAngel - Airline Reservation</h1>
+    </div>
+    <nav>
+    <ul>
+                        <li><a href="noacc_dashboard.php">Home</a></li>
+                        <li><a href="signin.php">Sign in</a></li>
+                        <li><a href="signup.php">Sign up</a></li>
                 </ul>
-            </nav>
-        </div>
+    </nav>
 </header>
+
 <h1>Booking Confirmation</h1>
 
 <h2>Flight Information</h2>
@@ -90,8 +117,18 @@ foreach ($selectedAddons as $addon) {
     <p><strong>Destination:</strong> <?php echo htmlspecialchars($selectedFlight['Destination'] ?? 'N/A'); ?></p>
     <p><strong>Amount:</strong> $<?php echo number_format($selectedFlight['Amount'], 2); ?> per passenger</p>
 <?php else: ?>
-    <p>No flight selected.</p>
+    <p>No departure flight selected.</p>
 <?php endif; ?>
+
+<?php if ($selectedReturnFlight): ?>
+    <h3>Return Flight Information</h3>
+    <p>Flight Number: <?php echo htmlspecialchars($selectedReturnFlight['Flight_Number'] ?? 'N/A'); ?></p>
+    <p>Return Date: <?php echo htmlspecialchars($selectedReturnFlight['Departure_Date'] ?? 'N/A'); ?></p>
+    <p>Origin: <?php echo htmlspecialchars($selectedReturnFlight['Origin'] ?? 'N/A'); ?></p>
+    <p>Destination: <?php echo htmlspecialchars($selectedReturnFlight['Destination'] ?? 'N/A'); ?></p>
+    <p>Amount: $<?php echo number_format($selectedReturnFlight['Amount'] ?? 0, 2); ?> per passenger</p>
+<?php endif; ?>
+
 
 <h2>Selected Add-ons</h2>
 <?php if (!empty($selectedAddons)): ?>
@@ -112,10 +149,15 @@ foreach ($selectedAddons as $addon) {
 <?php endif; ?>
 
 <h2>Total Price</h2>
-<p><strong>Flight Price (for <?php echo $numPassengers; ?> passengers):</strong> $<?php echo number_format($flightPrice, 2); ?></p>
-<?php if ($totalPrice > $flightPrice): ?>
-    <p><strong>Add-ons:</strong> $<?php echo number_format($totalPrice - $flightPrice, 2); ?></p>
+<p><strong>Flight Price (for <?php echo $numPassengers; ?> passengers):</strong> $<?php echo number_format($departureFlightPrice, 2); ?></p>
+<?php if ($returnFlightPrice > 0): ?>
+    <p><strong>Return Flight Price (for <?php echo $numPassengers; ?> passengers):</strong> $<?php echo number_format($returnFlightPrice, 2); ?></p>
 <?php endif; ?>
+
+<?php if ($addonTotal > 0): ?>
+    <p><strong>Add-ons:</strong> $<?php echo number_format($addonTotal, 2); ?></p>
+<?php endif; ?>
+
 <p><strong>Total:</strong> $<?php echo number_format($totalPrice, 2); ?> USD</p>
 
 <h2>Payment Information</h2>
@@ -128,6 +170,6 @@ foreach ($selectedAddons as $addon) {
 <p><strong>Reservation ID:</strong> <?php echo htmlspecialchars($reservation['Reservation_ID'] ?? 'N/A'); ?></p>
 <p><strong>Booking Date:</strong> <?php echo htmlspecialchars($reservation['Booking_date'] ?? 'N/A'); ?></p>
 
-</body>
 <button type="button" onclick="window.location.href='noacc_eticket.php'">Print E-ticket</button>
+</body>
 </html>

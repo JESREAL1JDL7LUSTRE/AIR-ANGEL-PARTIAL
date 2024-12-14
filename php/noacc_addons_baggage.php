@@ -8,6 +8,21 @@ $result = $conn->query($sql);
 
 $selectedAddons = isset($_SESSION['selected_addons']) ? $_SESSION['selected_addons'] : [];
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
+    // Add selected add-on to session
+    $addon = [
+        'ID' => $_POST['addon_id'],
+        'Name' => $_POST['addon_name'],
+        'Price' => $_POST['addon_price'],
+        'Type' => 'Baggage' // Set the add-on type as Food
+    ];
+
+    // Append the selected add-on to session array
+    $selectedAddons[] = $addon;
+
+    // Save the selected add-ons back to session
+    $_SESSION['selected_addons'] = $selectedAddons;
+}
 ?>
 
 <!DOCTYPE html>
@@ -31,18 +46,17 @@ $selectedAddons = isset($_SESSION['selected_addons']) ? $_SESSION['selected_addo
     </style>
     <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
     <link rel="stylesheet" href="/ANGEL/styles/LAYOUT.css"> <!-- base (layout) -->
-    <link rel="stylesheet" href="/ANGEL/styles/addonstyles.css">
 </head>
 <body>
-<header>
+    <header>
         <div class="header-container">
                 <h1 class="site-title">AirAngel - Airline Reservation</h1>
             </div>
             <nav>
-                <ul>
-                <li><a href="signin.php">Sign In</a></li>
-                <li><a href="signup.php">Sign Up</a></li>
-                <li><a href="noacc_dashboard.php">Home</a></li>
+            <ul>
+                        <li><a href="noacc_dashboard.php">Home</a></li>
+                        <li><a href="signin.php">Sign in</a></li>
+                        <li><a href="signup.php">Sign up</a></li>
                 </ul>
             </nav>
         </div>
@@ -64,7 +78,7 @@ $selectedAddons = isset($_SESSION['selected_addons']) ? $_SESSION['selected_addo
                 <td><?php echo htmlspecialchars($row['Baggage_Weight']); ?></td>
                 <td><?php echo htmlspecialchars($row['Price']); ?></td>
                 <td>
-                <form method="POST" action="noacc_addons.php">
+                <form method="POST">
                     <input type="hidden" name="addon_id" value="<?php echo $row['Baggage_ID']; ?>">
                     <input type="hidden" name="addon_name" value="<?php echo $row['Baggage_Weight']; ?>">
                     <input type="hidden" name="addon_price" value="<?php echo $row['Price']; ?>">

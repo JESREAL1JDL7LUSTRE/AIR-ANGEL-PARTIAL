@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label for="lastName">Last Name:</label><br>
                 <input type="text" id="lastName" name="Last_Name" required><br>
 
-                <label for="MiddleName">Last Name:</label><br>
+                <label for="MiddleName">Middle Name:</label><br>
                 <input type="text" id="MiddleName" name="Middle_Name" required><br>
 
                 <label for="username">Username:</label><br>
@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label for="Female">Female</label></div>
 
 
-                <label for="Birthday">Last Name:</label><br>
+                <label for="Birthday">Birthday:</label><br>
                 <input type="date" id="Birthday" name="Birthday" required><br>
 
                 <label for="phoneNumber">Phone Number:</label><br>

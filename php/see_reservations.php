@@ -63,7 +63,9 @@ $sql = "
     SELECT 
         r.Reservation_ID, 
         r.Booking_date, 
+        r.Payment_ID_FK,
         af.Flight_Number, 
+        pass.Passenger_First_Name,
         pass.Passenger_Last_Name, 
         pass.Passenger_ID
     FROM Reservation r
@@ -74,14 +76,16 @@ $sql = "
     WHERE 
         r.Reservation_ID LIKE ? OR
         r.Booking_date LIKE ? OR
+        r.Payment_ID_FK LIKE ? OR
         af.Flight_Number LIKE ? OR
+        pass.Passenger_First_Name LIKE ? OR
         pass.Passenger_Last_Name LIKE ? OR
         pass.Passenger_ID LIKE ?
 ";
 
 $stmt = $conn->prepare($sql);
 $search_term = '%' . $search_query . '%';
-$stmt->bind_param("sssss", $search_term, $search_term, $search_term, $search_term, $search_term);
+$stmt->bind_param("sssssss", $search_term, $search_term, $search_term, $search_term, $search_term, $search_term, $search_term);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -132,39 +136,45 @@ if ($result && $result->num_rows > 0) {
     <a href="noacc_dashboard.php" class="add-button">Add Reservation</a>
 </div>
 
-        <?php if (count($reservations) > 0): ?>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Reservation ID</th>
-                        <th>Booking Date</th>
-                        <th>Flight Number</th>
-                        <th>Passenger Last Name</th>
-                        <th>Passenger ID</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($reservations as $reservation): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($reservation['Reservation_ID']); ?></td>
-                            <td><?php echo htmlspecialchars($reservation['Booking_date']); ?></td>
-                            <td><?php echo htmlspecialchars($reservation['Flight_Number'] ?: 'N/A'); ?></td>
-                            <td><?php echo htmlspecialchars($reservation['Passenger_Last_Name'] ?: 'N/A'); ?></td>
-                            <td><?php echo htmlspecialchars($reservation['Passenger_ID'] ?: 'N/A'); ?></td>
-                            <td>
-                                <!-- Delete button with confirmation -->
-                                <a href="?delete=<?php echo $reservation['Reservation_ID']; ?>" onclick="return confirm('Are you sure you want to delete this reservation?');">
-                                    <button type="button">Delete</button>
-                                </a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php else: ?>
-            <p>No reservations found.</p>
-        <?php endif; ?>
+<?php if (count($reservations) > 0): ?>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Reservation ID</th>
+                <th>Booking Date</th>
+                <th>Payment ID</th>
+                <th>Flight Number</th>
+                <th>Passenger First Name</th>
+                <th>Passenger Last Name</th>
+                <th>Passenger ID</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($reservations as $reservation): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($reservation['Reservation_ID']); ?></td>
+                    <td><?php echo htmlspecialchars($reservation['Booking_date']); ?></td>
+                    <td><?php echo htmlspecialchars($reservation['Payment_ID_FK'] ?: 'N/A'); ?></td>
+                    <td><?php echo htmlspecialchars($reservation['Flight_Number'] ?: 'N/A'); ?></td>
+                    <td><?php echo htmlspecialchars($reservation['Passenger_First_Name'] ?: 'N/A'); ?></td>
+                    <td><?php echo htmlspecialchars($reservation['Passenger_Last_Name'] ?: 'N/A'); ?></td>
+                    <td><?php echo htmlspecialchars($reservation['Passenger_ID'] ?: 'N/A'); ?></td>
+                    <td>
+                        <!-- Delete button with confirmation -->
+                        <a href="?delete=<?php echo $reservation['Reservation_ID']; ?>" onclick="return confirm('Are you sure you want to delete this reservation?');">
+                            <button type="button">Delete</button>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php else: ?>
+    <p>No reservations found.</p>
+<?php endif; ?>
+
+
     </main>
 </body>
 </html>

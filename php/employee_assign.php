@@ -147,7 +147,7 @@ $result = $conn->query($sql);
             <input type="text" name="Employee_Role" placeholder="Employee Role" required style="display: block; margin: 10px auto;">
             <input type="text" name="Employee_ID_FK" placeholder="Employee ID" required style="display: block; margin: 10px auto;">
             <input type="text" name="Available_Flights_Number_ID_FK" placeholder="Available Flights Number ID" style="display: block; margin: 10px auto;">
-            <button type="submit" style="background-color: #233D2C; color: white; margin-top: 20px;">Add</button>
+            <button type="submit" name="Assign_employee" style="background-color: #233D2C; color: white; margin-top: 20px;">Add</button>
         </form>
     </div>
 <div class="actions">    

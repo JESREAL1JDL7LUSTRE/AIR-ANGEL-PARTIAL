@@ -210,7 +210,7 @@ $result = $conn->query($sql);
             <input type="text" name="Phone_Number" placeholder="Phone Number" maxlength="11" required>
             <input type="text" name="Emergency_Contact_No" placeholder="Emergency Contact Number" maxlength="11" required>
             <input type="text" name="Department" placeholder="Department" required>
-            <button type="submit" style="background-color: #233D2C; color: white; margin-top: 20px;">Add</button>
+            <button type="submit" name="add_employee" style="background-color: #233D2C; color: white; margin-top: 20px;">Add</button>
         </form>
     </div>
 <div class="actions">
