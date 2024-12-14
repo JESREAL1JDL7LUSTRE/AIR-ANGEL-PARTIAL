@@ -146,7 +146,8 @@ if (isset($_GET['delete'])) {
             value="<?php echo htmlspecialchars(isset($search) ? $search : ''); ?>">
         <button type="submit">Search</button>
     </form>
-    <a><button type="button" onclick="toggleAdminForm()">Add Admin</button></a>
+    <a class="add-button" onclick="toggleAdminForm()">Add Admin</a>
+</div>
     <div id="adminSignupForm" style="display:none;">
         <h2>Create an Admin Account</h2>
         <form method="POST">

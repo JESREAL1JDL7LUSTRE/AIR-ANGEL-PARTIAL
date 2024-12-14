@@ -43,7 +43,7 @@ body {
     list-style: none;
     margin: 0;
     padding: 0;
-    gap: 30px;
+    gap: 50px;
 
 }
 
@@ -101,10 +101,11 @@ body {
 
 .actions form {
     flex-grow: 1; /* Allows the form to occupy the center space */
-    display: flex; /* Centers the search bar and button within the form */
     justify-content: center;
-    margin: 0px 20px;
-    margin-right: 190px;
+    display: flex;
+    margin: 0px 30px;
+    margin-right: 100px;
+    margin-left: 100px;
 }
 
 .actions form input[type="text"] {
@@ -198,3 +199,4 @@ button[onclick*="delete"] {
 button[onclick*="delete"]:hover {
     background-color: #c82333;
 }
+

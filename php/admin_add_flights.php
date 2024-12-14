@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Flight</title>
     <link rel="stylesheet" href="/ANGEL/styles/cards.css">
+
 </head>
 <body>
 <nav class="navbar">
@@ -66,35 +67,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <li><a href="logout.php">Logout</a></li>
     </ul>
 </nav>
+    <div style="text-align: center;">
+        <h2>Add Flight</h2>
+        <form method="POST">
+            <label>Flight Number:</label><br>
+            <input type="text" name="Flight_Number" required><br>
+            
+            <label>Departure Date:</label><br>
+            <input type="date" name="Departure_Date" required><br>
+            
+            <label>Arrival Date:</label><br>
+            <input type="date" name="Arrival_Date" required><br>
+            
+            <label>Origin:</label><br>
+            <input type="text" name="Origin" required><br>
+            
+            <label>Destination:</label><br>
+            <input type="text" name="Destination" required><br>
+            
+            <label>Departure Time:</label><br>
+            <input type="time" name="Departure_Time" required><br>
+            
+            <label>Arrival Time:</label><br>
+            <input type="time" name="Arrival_Time" required><br>
 
-    <h1>Welcome Admin!</h1>
-    <h2>Add Flight</h2>
-    <form method="POST">
-        <label>Flight Number:</label><br>
-        <input type="text" name="Flight_Number" required><br>
-        
-        <label>Departure Date:</label><br>
-        <input type="date" name="Departure_Date" required><br>
-        
-        <label>Arrival Date:</label><br>
-        <input type="date" name="Arrival_Date" required><br>
-        
-        <label>Origin:</label><br>
-        <input type="text" name="Origin" required><br>
-        
-        <label>Destination:</label><br>
-        <input type="text" name="Destination" required><br>
-        
-        <label>Departure Time:</label><br>
-        <input type="time" name="Departure_Time" required><br>
-        
-        <label>Arrival Time:</label><br>
-        <input type="time" name="Arrival_Time" required><br>
-
-        <label>Amount:</label><br>
-        <input type="text" name="Amount" required><br>
-        
-        <button type="submit">Add Flight</button>
-    </form>
+            <label>Amount:</label><br>
+            <input type="text" name="Amount" required><br>
+            
+            <button type="submit" style="background-color: #233D2C; color: white; margin-top: 20px;">Add Flight</button>
+        </form>
+    </div>
 </body>
 </html>

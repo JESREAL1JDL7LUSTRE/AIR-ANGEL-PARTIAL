@@ -120,7 +120,6 @@ $result = $conn->query($sql);
             form.style.display = form.style.display === "none" || form.style.display === "" ? "block" : "none";
         }
     </script>
-    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
 <nav class="navbar">
@@ -140,31 +139,26 @@ $result = $conn->query($sql);
         <li><a href="logout.php">Logout</a></li>
     </ul>
 </nav>
-
-    <h1>Welcome Admin!</h1>
-
-    <h2>Employee Assignment Management</h2>
-    <button onclick="toggleAssignForm()">Assign Employee</button>
-
+    <h1 style="text-align: center;">Employee Assignment Management</h1>
     <!-- Add Employee Form -->
     <div id="adminSignupForm" style="display:none;">
-        <h2>Assign Employee</h2>
-        <form method="POST">
-            <input type="text" name="Employee_Role" placeholder="Employee_Role" required>
-            <input type="text" name="Employee_ID_FK" placeholder="Employee_ID_FK" required>
-            <input type="text" name="Available_Flights_Number_ID_FK" placeholder="Available_Flights_Number_ID_FK">
-            <button type="submit" name="Assign_employee">Add</button>
+        <h2 style="text-align: center;">Assign Employee</h2>
+        <form method="POST" style="text-align: center;">
+            <input type="text" name="Employee_Role" placeholder="Employee Role" required style="display: block; margin: 10px auto;">
+            <input type="text" name="Employee_ID_FK" placeholder="Employee ID" required style="display: block; margin: 10px auto;">
+            <input type="text" name="Available_Flights_Number_ID_FK" placeholder="Available Flights Number ID" style="display: block; margin: 10px auto;">
+            <button type="submit" style="background-color: #233D2C; color: white; margin-top: 20px;">Add</button>
         </form>
     </div>
-    
+<div class="actions">    
     <h2>All Employees</h2>
-
-    <!-- Search Bar -->
     <form method="GET" action="">
         <input type="text" name="search" placeholder="Search" 
                value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
         <button type="submit">Search</button>
     </form>
+    <a class="add-button" onclick="toggleAssignForm()">Assign Employee</a>
+</div>
 
     <table border="1">
         <tr>

@@ -194,16 +194,8 @@ $result = $conn->query($sql);
         <li><a href="logout.php">Logout</a></li>
     </ul>
 </nav>
-<div class="actions">
-    <h1>Employees</h1>
-    <form method="GET" action="">
-        <input type="text" name="search" placeholder="Search employees by name, email, or department" 
-               value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-        <button type="submit">Search</button>
-    </form>
-    <a><button onclick="toggleAdminForm()">Add Employee</button></a>
-    <div id="adminSignupForm" style="display:none;">
-        <h2>Create an Admin Employee</h2>
+<div id="adminSignupForm" style="display:none;">
+        <h2 style="text-align: center;">Add New Employee</h2>
         <form method="POST">
             <input type="text" name="First_Name" placeholder="First Name" required>
             <input type="text" name="Last_Name" placeholder="Last Name" required>
@@ -218,9 +210,18 @@ $result = $conn->query($sql);
             <input type="text" name="Phone_Number" placeholder="Phone Number" maxlength="11" required>
             <input type="text" name="Emergency_Contact_No" placeholder="Emergency Contact Number" maxlength="11" required>
             <input type="text" name="Department" placeholder="Department" required>
-            <button type="submit" name="add_employee">Add</button>
+            <button type="submit" style="background-color: #233D2C; color: white; margin-top: 20px;">Add</button>
         </form>
     </div>
+<div class="actions">
+    <h1>Employees</h1>
+    <form method="GET" action="">
+        <input type="text" name="search" placeholder="Search employees by name, email, or department" 
+               value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+        <button type="submit">Search</button>
+    </form>
+    <a class="add-button" onclick="toggleAdminForm()">Add Employee</a></div>  
+    
 </div>
     <table border="1">
     <tr>

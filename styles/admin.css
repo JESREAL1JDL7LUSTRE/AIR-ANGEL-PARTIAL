@@ -1,8 +1,8 @@
 /* General body styling */
 body {
     font-family: Arial, sans-serif;
+    background-image: url('/ANGEL/assets/images/bg.jpg');
     background-color: #f4f4f4;
-    background-image: url('/assets/images/bgadmin.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -22,8 +22,8 @@ ul {
 
 .navbar a {
     text-decoration: none;
-    color: #bdafaf;
-    background-color: #7b827b;
+    color: #ffffff;
+    background-color: #161616;
     padding: 10px 10px;
     margin: 25px;
     justify-content: center;
@@ -85,6 +85,7 @@ ul {
 .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
 }
 
 .card-title {
@@ -135,8 +136,7 @@ ul {
 
 /* Hover effect for links */
 a:hover {
-    color: white;
-    background-color: #45a049;
+    color: rgb(4, 4, 4);
     transform: scale(0.98); /* Slightly shrink the button */
 }
 

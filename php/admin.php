@@ -43,7 +43,7 @@ foreach ($queries as $label => $sql) {
 <header>
         <div class="logo-container">
             <img src="/ANGEL/assets/images/logo.png" alt="AirAngel Logo" id="logo-img">
-            <h1 style= "font-size: 25px;">Air Angel</h1>
+            <h1 style="font-size: 25px; color: white;">Air Angel</h1>
         </div>
         <nav class="navbar">
             <ul>

@@ -169,68 +169,73 @@ if (isset($_POST['delete'])) {
         <li><a href="logout.php">Logout</a></li>
     </ul>
 </nav>
-    <button type="button" onclick="toggleAddOnForm()">Add Add-ons</button>
-
-    <div id="adminSignupForm" style="display:none;">
-        <h2>Create New Add-ons</h2>
-        <form method="POST" action="">
+<div id="adminSignupForm" style="display:none;">
+        <h2 style="text-align: center;">Create New Add-ons</h2>
+        <form method="POST" action="" style="text-align: center;">
             <legend>Select Add-on Type:</legend>
             <div class="radio-group">
-                <input type="radio" id="baggage" name="addOnType" value="Baggage" onclick="toggleAddOnType('baggage')" required>
-                <label for="baggage">Baggage</label>
-                <input type="radio" id="food" name="addOnType" value="Food" onclick="toggleAddOnType('food')" required>
-                <label for="food">Food</label>
-                <input type="radio" id="seatSelector" name="addOnType" value="SeatSelector" onclick="toggleAddOnType('seatSelector')" required>
-                <label for="seatSelector">Seat Selector</label>
+            <input type="radio" id="baggage" name="addOnType" value="Baggage" onclick="toggleAddOnType('baggage')" required>
+            <label for="baggage">Baggage</label>
+            <input type="radio" id="food" name="addOnType" value="Food" onclick="toggleAddOnType('food')" required>
+            <label for="food">Food</label>
+            <input type="radio" id="seatSelector" name="addOnType" value="SeatSelector" onclick="toggleAddOnType('seatSelector')" required>
+            <label for="seatSelector">Seat Selector</label>
             </div>
 
             <!-- Add-on specific fields here -->
             <div id="baggageWeightContainer" style="display:none;">
-                <label for="baggageWeight">Baggage Weight:</label>
-                <input type="text" id="baggageWeight" name="baggageWeight">
+            <label for="baggageWeight">Baggage Weight:</label>
+            <input type="text" id="baggageWeight" name="baggageWeight">
             </div>
             <div id="baggagePriceContainer" style="display:none;">
-                <label for="baggagePrice">Price:</label>
-                <input type="text" id="baggagePrice" name="baggagePrice">
+            <label for="baggagePrice">Price:</label>
+            <input type="text" id="baggagePrice" name="baggagePrice">
             </div>
 
             <div id="foodNameContainer" style="display:none;">
-                <label for="foodName">Food Name:</label>
-                <input type="text" id="foodName" name="foodName">
+            <label for="foodName">Food Name:</label>
+            <input type="text" id="foodName" name="foodName">
             </div>
             <div id="foodPriceContainer" style="display:none;">
-                <label for="foodPrice">Price:</label>
-                <input type="text" id="foodPrice" name="foodPrice">
+            <label for="foodPrice">Price:</label>
+            <input type="text" id="foodPrice" name="foodPrice">
             </div>
 
             <div id="seatSelectorNumberContainer" style="display:none;">
-                <label for="seatSelectorNumber">Seat Selector Number:</label>
-                <input type="text" id="seatSelectorNumber" name="seatSelectorNumber">
+            <label for="seatSelectorNumber">Seat Selector Number:</label>
+            <input type="text" id="seatSelectorNumber" name="seatSelectorNumber">
             </div>
             <div id="seatSelectorPriceContainer" style="display:none;">
-                <label for="seatSelectorPrice">Price:</label>
-                <input type="text" id="seatSelectorPrice" name="seatSelectorPrice">
+            <label for="seatSelectorPrice">Price:</label>
+            <input type="text" id="seatSelectorPrice" name="seatSelectorPrice">
             </div>
 
-            <button type="submit">Add Add-on</button>
+            <button type="submit" style="background-color: #233D2C; color: white; margin-top: 20px;">Add Add-on</button>
         </form>
-
-    </div>
-    <h2>All Add-ons</h2>
-<legend>Select Add-on Type:</legend>
-<div class="radio-group">
-    <input type="radio" id="baggageView" name="viewAddOnType" value="Baggage" 
-        onclick="changeAddOnType('Baggage')" <?= $selectedType === 'Baggage' ? 'checked' : '' ?>>
-    <label for="baggageView">Baggage</label>
-
-    <input type="radio" id="foodView" name="viewAddOnType" value="Food" 
-        onclick="changeAddOnType('Food')" <?= $selectedType === 'Food' ? 'checked' : '' ?>>
-    <label for="foodView">Food</label>
-
-    <input type="radio" id="seatSelectorView" name="viewAddOnType" value="SeatSelector" 
-        onclick="changeAddOnType('SeatSelector')" <?= $selectedType === 'SeatSelector' ? 'checked' : '' ?>>
-    <label for="seatSelectorView">Seat Selector</label>
+    </div>                                                                         
 </div>
+<div class="actions">
+    <h1>All Add-ons</h1>
+    <a class="add-button" onclick="toggleAddOnForm()">Add Add-ons</a>
+</div>
+
+<div style="text-align: center;">
+    <legend>Select Add-on Type:</legend>
+    <div class="radio-group">
+        <input type="radio" id="baggageView" name="viewAddOnType" value="Baggage" 
+            onclick="changeAddOnType('Baggage')" <?= $selectedType === 'Baggage' ? 'checked' : '' ?>>
+        <label for="baggageView">Baggage</label>
+
+        <input type="radio" id="foodView" name="viewAddOnType" value="Food" 
+            onclick="changeAddOnType('Food')" <?= $selectedType === 'Food' ? 'checked' : '' ?>>
+        <label for="foodView">Food</label>
+
+        <input type="radio" id="seatSelectorView" name="viewAddOnType" value="SeatSelector" 
+            onclick="changeAddOnType('SeatSelector')" <?= $selectedType === 'SeatSelector' ? 'checked' : '' ?>>
+        <label for="seatSelectorView">Seat Selector</label>
+    </div>
+</div>
+
 
 <table border="1">
     <tr>
