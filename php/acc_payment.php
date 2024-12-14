@@ -10,9 +10,7 @@ if (!isset($_SESSION['selected_flight_id'])) {
 
 $selectedAddonsForConfirmation = $_SESSION['selected_addons_for_confirmation'] ?? [];
 
-if (!isset($selectedAddonsForConfirmation['seat_selector_id'])) {
-    die("Error: Seat Selector ID is missing.");
-}
+
 
 $selectedFlightID = $_SESSION['selected_flight_id'];
 $selected_return_flight_id = $_SESSION['selected_return_flight_id'] ?? null;  // Handle return flight, if exists
