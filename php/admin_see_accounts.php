@@ -47,27 +47,37 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/ANGEL/styles/admin_see_accounts.css">
-    <nav>
-        <ul>
-            <li><a href="admin.php">Home</a></li>
-            <li><a href="logout.php">Logout</a></li>
-        </ul>
-    </nav>
-    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
+    <link rel="stylesheet" href="/ANGEL/styles/cards.css">
+    <title>Users</title>
 </head>
 <body>
-    <h1>Welcome Admin!</h1>
-    <h2>All Users</h2>
-
-    <!-- Search Bar -->
+<nav class="navbar">
+    <div class="logo-container">
+        <img src="/ANGEL/assets/images/logo.png" alt="AirAngel Logo" id="logo-img">
+        <h1>Air Angel</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a href="admin.php">Home</a></li>
+        <li><a href="see_flights.php">Flights</a></li>
+        <li><a href="see_reservations.php">Reservations</a></li>
+        <li><a href="admin_see_accounts.php">Users</a></li>
+        <li><a href="admin_add_ad_ons.php">Add-ons</a></li>
+        <li><a href="employees.php">Employees</a></li>
+    </ul>
+    <ul class="logout">
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+</nav>
+ 
+<div class="actions">
+    <h1>Users</h1>
     <form method="GET" action="">
         <input type="text" name="search" placeholder="Search by name or email" 
                value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
         <button type="submit">Search</button>
     </form>
+</div>
 
-    <!-- Users Table -->
     <table border="1">
         <tr>
             <th>ID</th>

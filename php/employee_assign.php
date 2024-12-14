@@ -112,7 +112,7 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Employee Assignment Management</title>
-    <link rel="stylesheet" href="/ANGEL/styles/signup.css">
+    <link rel="stylesheet" href="/ANGEL/styles/cards.css">
     <script>
         // Show or hide the admin signup form
         function toggleAssignForm() {
@@ -123,17 +123,23 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="/ANGEL/assets/images/logo.png" alt="Logo">
-        </div>
-        <nav>
-            <ul>
-                <li><a href="admin.php">Home</a></li>
-                <li><a href="logout.php">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
+<nav class="navbar">
+    <div class="logo-container">
+        <img src="/ANGEL/assets/images/logo.png" alt="AirAngel Logo" id="logo-img">
+        <h1>Air Angel</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a href="admin.php">Home</a></li>
+        <li><a href="see_flights.php">Flights</a></li>
+        <li><a href="see_reservations.php">Reservations</a></li>
+        <li><a href="admin_see_accounts.php">Users</a></li>
+        <li><a href="admin_add_ad_ons.php">Add-ons</a></li>
+        <li><a href="employees.php">Employees</a></li>
+    </ul>
+    <ul class="logout">
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+</nav>
 
     <h1>Welcome Admin!</h1>
 
@@ -150,7 +156,7 @@ $result = $conn->query($sql);
             <button type="submit" name="Assign_employee">Add</button>
         </form>
     </div>
-
+    
     <h2>All Employees</h2>
 
     <!-- Search Bar -->
@@ -162,15 +168,15 @@ $result = $conn->query($sql);
 
     <table border="1">
         <tr>
-            <th>Employee_Assignment_ID</th>
-            <th>Employee_Role</th>
-            <th>Employee_ID_FK</th>
-            <th>Available_Flights_Number_ID_FK</th>
-            <th>Employee_Last_Name</th>
-            <th>Employee_First_Name</th>
-            <th>Employee_Middle_Name</th>
+            <th>Employee Assignment ID</th>
+            <th>Role</th>
+            <th>Employee ID</th>
+            <th>Flights No.</th>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
             <th>Department</th>
-            <th>Flight_Number</th>
+            <th>Flight No.</th>
             <th>Origin</th>
             <th>Destination</th>
         </tr>

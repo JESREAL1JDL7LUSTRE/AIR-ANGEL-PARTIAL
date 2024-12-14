@@ -21,7 +21,7 @@ $queries = [
 $counts = [];
 foreach ($queries as $label => $sql) {
     $result = $conn->query($sql);
-    if ($result) {
+    if ($result) {                                                                                                      
         $counts[$label] = $result->fetch_assoc()['count'];
     } else {
         $counts[$label] = 'Error'; // Handle query error gracefully
@@ -43,7 +43,7 @@ foreach ($queries as $label => $sql) {
 <header>
         <div class="logo-container">
             <img src="/ANGEL/assets/images/logo.png" alt="AirAngel Logo" id="logo-img">
-            <h1 style="font-size: 25px;">Air Angel</h1>
+            <h1 style= "font-size: 25px;">Air Angel</h1>
         </div>
         <nav class="navbar">
             <ul>
@@ -55,8 +55,7 @@ foreach ($queries as $label => $sql) {
                 <li><a href="logout.php">Log Out</a></li>
             </ul>
         </nav>
-    <header>
-    </header>
+</header>
     <main>
         <header>
         <h1 style="font-family: 'Source Serif Pro', serif; font-size: 60px; margin-bottom: 10px; color:rgb(255, 255, 255);">Welcome Admin!</h1>
@@ -127,6 +126,6 @@ foreach ($queries as $label => $sql) {
             <a href="employee_assign.php" class="button">Assign</a>
             </div>
         </div>
-        </main>
+    </main>
 </body>
 </html>

@@ -112,6 +112,7 @@ if (isset($_POST['delete'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/ANGEL/styles/cards.css">
     <title>Add Add-ons</title>
     <script>
         function toggleAddOnForm() {
@@ -148,26 +149,26 @@ if (isset($_POST['delete'])) {
             // Change the URL to reflect the selected add-on type
             window.location.href = "?type=" + type;
         }
-
-
     </script>
-    <link rel="stylesheet" href="/ANGEL/styles/signup.css">
-    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="/ANGEL/assets/images/logo.png" alt="Logo">
-        </div>
-        <nav>
-            <ul>
-                <li><a href="admin.php">Home</a></li>
-                <li><a href="logout.php">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
- 
-    <h1>Welcome Admin!</h1>
+<nav class="navbar">
+    <div class="logo-container">
+        <img src="/ANGEL/assets/images/logo.png" alt="AirAngel Logo" id="logo-img">
+        <h1>Air Angel</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a href="admin.php">Home</a></li>
+        <li><a href="see_flights.php">Flights</a></li>
+        <li><a href="see_reservations.php">Reservations</a></li>
+        <li><a href="admin_see_accounts.php">Users</a></li>
+        <li><a href="admin_add_ad_ons.php">Add-ons</a></li>
+        <li><a href="employees.php">Employees</a></li>
+    </ul>
+    <ul class="logout">
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+</nav>
     <button type="button" onclick="toggleAddOnForm()">Add Add-ons</button>
 
     <div id="adminSignupForm" style="display:none;">
