@@ -121,12 +121,16 @@ if ($result->num_rows > 0) {
                 <!-- Flight Type Selection -->
                 <fieldset>
                     <legend>Select Flight Type:</legend>
-                    <div class="radio-group">
-                        <input type="radio" id="one_way" name="flight_type" value="One Way" onclick="toggleReturnDate()" required>
-                        <label for="one_way">One Way</label>
-                        <input type="radio" id="round_trip" name="flight_type" value="Round Trip" onclick="toggleReturnDate()">
-                        <label for="round_trip">Round Trip</label>
+                    <div style="display: flex; justify-content: center; align-items: center; margin: 10px 0;">
+                        <div class="radio-group" style="display: inline-flex; align-items: center; gap: 10px;">
+                            <input type="radio" id="one_way" name="flight_type" value="One Way" onclick="toggleReturnDate()" required>
+                            <label for="one_way" style="margin: 0;">One Way</label>
+                            <input type="radio" id="round_trip" name="flight_type" value="Round Trip" onclick="toggleReturnDate()">
+                            <label for="round_trip" style="margin: 0;">Round Trip</label>
+                        </div>
                     </div>
+
+
                 </fieldset>
 
                 <!-- Departure Location and Destination -->
