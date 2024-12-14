@@ -87,6 +87,7 @@ if (isset($_GET['delete'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/ANGEL/styles/cards.css">
     <title>Admin Dashboard</title>
     <script>
         function togglePassword() {
@@ -115,31 +116,41 @@ if (isset($_GET['delete'])) {
             }
         }
     </script>
-    <link rel="stylesheet" href="/ANGEL/styles/signup.css">
-    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->v
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="/ANGEL/assets/images/logo.png" alt="Logo">
-        </div>
-        <nav>
-            <ul>
-                <li><a href="admin.php">Home</a></li>
-                <li><a href="logout.php">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
- 
-    <h1>Welcome Admin!</h1>
-        
-    <nav><button type="button" onclick="toggleAdminForm()">Add Admin</button></nav>
-
-    <!-- Admin Signup Form (Initially Hidden) -->
+<body>
+<nav class="navbar">
+    <div class="logo-container">
+        <img src="/ANGEL/assets/images/logo.png" alt="AirAngel Logo" id="logo-img">
+        <h1>Air Angel</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a href="admin.php">Home</a></li>
+        <li><a href="see_flights.php">Flights</a></li>
+        <li><a href="see_reservations.php">Reservations</a></li>
+        <li><a href="admin_see_accounts.php">Users</a></li>
+        <li><a href="admin_add_ad_ons.php">Add-ons</a></li>
+        <li><a href="employees.php">Employees</a></li>
+    </ul>
+    <ul class="logout">
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+</nav>
+<div class="actions">
+    <h1>Admins</h1>
+    <form method="GET" action="">
+        <input 
+            type="text" 
+            name="search" 
+            placeholder="Search by name or email" 
+            value="<?php echo htmlspecialchars(isset($search) ? $search : ''); ?>">
+        <button type="submit">Search</button>
+    </form>
+    <a><button type="button" onclick="toggleAdminForm()">Add Admin</button></a>
     <div id="adminSignupForm" style="display:none;">
         <h2>Create an Admin Account</h2>
         <form method="POST">
-            <label for="firstName">First Name:</label><br>
+            <label for="firstName">First Name:</label><br>s
             <input type="text" id="firstName" name="First_Name" required><br>
 
             <label for="lastName">Last Name:</label><br>
@@ -165,17 +176,8 @@ if (isset($_GET['delete'])) {
             <button type="submit">Add Admin</button>
         </form>
     </div>
+</div>
 
-    <h2>All Users</h2>
-
-    <!-- Search Bar -->
-    <form method="GET" action="">
-        <input type="text" name="search" placeholder="Search by name or email" 
-               value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-        <button type="submit">Search</button>
-    </form>
-
-    <!-- Users Table -->
     <table border="1">
         <tr>
             <th>ID</th>

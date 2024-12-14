@@ -4,68 +4,110 @@ body {
     font-family: 'Arial', sans-serif;
     background-color: #f8f9fa;
     color: #333;
+    padding-top: 90px;
 }
 
-header {
+.navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #1f1f1f;
     color: white;
     padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure the navbar is above other content */
 }
 
-
-header .logo-container {
+.navbar .logo-container {
     display: flex;
     align-items: center;
 }
 
-header .logo-container img {
+.navbar .logo-container img {
     height: 40px;
     margin-right: 10px;
 }
 
-header h1 {
+.navbar h1 {
     font-size: 20px;
     margin: 0;
 }
 
-header nav ul {
+.navbar .nav-links {
+    display: flex;
+    justify-content: center;
+    flex: 1;
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    gap: 15px;
-    justify-content: center; /* Center navigation items */
+    gap: 30px;
 
 }
 
-header nav ul li {
+.navbar .nav-links li {
     display: inline;
 }
 
-header nav ul li a {
+.navbar .nav-links li a {
     color: white;
     text-decoration: none;
     font-size: 14px;
 }
 
+.navbar .logout {
+    list-style: none;
+    margin: 30px;
+    padding: 0;
+}
+
+.navbar .logout li {
+    display: inline;
+}
+
+.navbar .logout li a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    font-size: 14px;
+    background-color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 50px;
+}
+
 /* Page heading */
-h1, h2 {
-    text-align: center;
-    margin: 20px 0;
-    font-weight: 400;
-}
-
-/* Search bar styles */
-form {
+/* Page heading */
+.actions {
     display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+    align-items: center;
+    justify-content: space-between; /* Ensures items are spaced out across the container */
+    margin: 20px;
+    
 }
 
-form input[type="text"] {
+.actions .add-button {
+    background-color: #233D2C;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 0; /* Reset margins to avoid alignment issues */
+}
+
+.actions .add-button:hover {
+    background-color: #024f32;
+}
+
+.actions form {
+    flex-grow: 1; /* Allows the form to occupy the center space */
+    display: flex; /* Centers the search bar and button within the form */
+    justify-content: center;
+    margin: 0px 20px;
+    margin-right: 190px;
+}
+
+.actions form input[type="text"] {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px 0 0 5px;
@@ -73,23 +115,24 @@ form input[type="text"] {
     width: 300px;
 }
 
-form button {
+.actions form button {
     padding: 10px;
     border: none;
-    background-color: #28a745;
+    background-color: #233D2C;
     color: white;
     border-radius: 0 5px 5px 0;
     cursor: pointer;
 }
 
-form button:hover {
+.actions form button:hover {
     background-color: #218838;
 }
+
 
 /* Table styles */
 table {
     width: 100%;
-    margin: 0 auto;
+    margin: 20px auto;
     border-collapse: collapse;
     background: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -130,7 +173,7 @@ button {
 }
 
 button.editButton {
-    background-color: #ffc107;
+    background-color: #233D2C;
     color: #fff;
 }
 
@@ -144,11 +187,11 @@ button.saveButton {
 }
 
 button.saveButton:hover {
-    background-color: #0056b3;
+    background-color: #233D2C;
 }
 
 button[onclick*="delete"] {
-    background-color: #dc3545;
+    background-color: #233D2C;
     color: #fff;
 }
 

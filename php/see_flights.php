@@ -108,27 +108,30 @@ $result = $stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/ANGEL/styles/see_flights.css">
+    <link rel="stylesheet" href="/ANGEL/styles/cards.css">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
 <body>
-    <header>
-        <div class="logo-container">
-                <img src="/ANGEL/assets/images/logo.png" alt="AirAngel Logo" id="logo-img">
-                <h1 style="font-size: 25px;">Air Angel</h1>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="admin.php" >Home</a></li>
-                <li><a href="logout.php">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
-    <h1>Welcome Admin!</h1>
-    <h2>All Available Flights</h2>
-
-    <!-- Search Bar -->
+<nav class="navbar">
+    <div class="logo-container">
+        <img src="/ANGEL/assets/images/logo.png" alt="AirAngel Logo" id="logo-img">
+        <h1>Air Angel</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a href="admin.php">Home</a></li>
+        <li><a href="see_flights.php">Flights</a></li>
+        <li><a href="see_reservations.php">Reservations</a></li>
+        <li><a href="admin_see_accounts.php">Users</a></li>
+        <li><a href="admin_add_ad_ons.php">Add-ons</a></li>
+        <li><a href="employees.php">Employees</a></li>
+    </ul>
+    <ul class="logout">
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+</nav>
+ 
+<div class="actions">
+    <h1>All Available Flights</h1>
     <form method="GET" action="">
         <input 
             type="text" 
@@ -137,6 +140,8 @@ $result = $stmt->get_result();
             value="<?php echo htmlspecialchars($search_query); ?>">
         <button type="submit">Search</button>
     </form>
+    <a href="admin_add_flights.php" class="add-button">Add Flight</a>
+</div>
 
     <table border="1">
         <tr>

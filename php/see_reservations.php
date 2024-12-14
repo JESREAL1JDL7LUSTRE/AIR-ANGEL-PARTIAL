@@ -99,28 +99,41 @@ if ($result && $result->num_rows > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - View Reservations</title>
-    <link rel="stylesheet" href="/ANGEL/styles/admin.css">
-    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
+    <link rel="stylesheet" href="/ANGEL/styles/cards.css">
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="admin.php">Home</a></li>
-            <li><a href="logout.php">Logout</a></li>
-        </ul>
-    </nav>
-    <header>
-        <h1>All Reservations</h1>
-    </header>
-    <main>
-        <!-- Search Bar -->
-        <form method="GET" action="">
-            <input type="text" name="search" placeholder="Search by any field..." value="<?php echo htmlspecialchars($search_query); ?>">
-            <button type="submit">Search</button>
-        </form>
+<nav class="navbar">
+    <div class="logo-container">
+        <img src="/ANGEL/assets/images/logo.png" alt="AirAngel Logo" id="logo-img">
+        <h1>Air Angel</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a href="admin.php">Home</a></li>
+        <li><a href="see_flights.php">Flights</a></li>
+        <li><a href="see_reservations.php">Reservations</a></li>
+        <li><a href="admin_see_accounts.php">Users</a></li>
+        <li><a href="admin_add_ad_ons.php">Add-ons</a></li>
+        <li><a href="employees.php">Employees</a></li>
+    </ul>
+    <ul class="logout">
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+</nav>
+<div class="actions">
+    <h1>Reservations</h1>
+    <form method="GET" action="">
+        <input 
+            type="text" 
+            name="search" 
+            placeholder="Search by Field..." 
+            value="<?php echo htmlspecialchars($search_query); ?>">
+        <button type="submit">Search</button>
+    </form>
+    <a href="noacc_dashboard.php" class="add-button">Add Reservation</a>
+</div>
 
         <?php if (count($reservations) > 0): ?>
-            <table>
+            <table border="1">
                 <thead>
                     <tr>
                         <th>Reservation ID</th>

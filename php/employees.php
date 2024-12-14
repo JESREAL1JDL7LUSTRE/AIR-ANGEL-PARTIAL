@@ -168,7 +168,7 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Add Employee</title>
-    <link rel="stylesheet" href="/ANGEL/styles/signup.css">
+    <link rel="stylesheet" href="/ANGEL/styles/cards.css">
     <script>
         // Show or hide the admin signup form
         function toggleAdminForm() {
@@ -176,25 +176,32 @@ $result = $conn->query($sql);
             form.style.display = form.style.display === "none" || form.style.display === "" ? "block" : "none";
         }
     </script>
-    <link rel="stylesheet" href="/ANGEL/styles/base.css"> <!-- base (header) -->
 </head>
-<body>
-    <header>
-        <div class="logo">
-            <img src="/ANGEL/assets/images/logo.png" alt="Logo">
-        </div>
-        <nav>
-            <ul>
-                <li><a href="admin.php">Home</a></li>
-                <li><a href="logout.php">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <h1>Welcome Admin!</h1>
-    <button onclick="toggleAdminForm()">Add Employee</button>
-
-    <!-- Add Employee Form -->
+<nav class="navbar">
+    <div class="logo-container">
+        <img src="/ANGEL/assets/images/logo.png" alt="AirAngel Logo" id="logo-img">
+        <h1>Air Angel</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a href="admin.php">Home</a></li>
+        <li><a href="see_flights.php">Flights</a></li>
+        <li><a href="see_reservations.php">Reservations</a></li>
+        <li><a href="admin_see_accounts.php">Users</a></li>
+        <li><a href="admin_add_ad_ons.php">Add-ons</a></li>
+        <li><a href="employees.php">Employees</a></li>
+    </ul>
+    <ul class="logout">
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+</nav>
+<div class="actions">
+    <h1>Employees</h1>
+    <form method="GET" action="">
+        <input type="text" name="search" placeholder="Search employees by name, email, or department" 
+               value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+        <button type="submit">Search</button>
+    </form>
+    <a><button onclick="toggleAdminForm()">Add Employee</button></a>
     <div id="adminSignupForm" style="display:none;">
         <h2>Create an Admin Employee</h2>
         <form method="POST">
@@ -214,16 +221,7 @@ $result = $conn->query($sql);
             <button type="submit" name="add_employee">Add</button>
         </form>
     </div>
-
-    <h2>All Employees</h2>
-
-    <!-- Search Bar -->
-    <form method="GET" action="">
-        <input type="text" name="search" placeholder="Search employees by name, email, or department" 
-               value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-        <button type="submit">Search</button>
-    </form>
-
+</div>
     <table border="1">
     <tr>
         <th>ID</th>

@@ -2,7 +2,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
-    background-image: url('/ANGEL/assets/images/bg.jpg');
+    background-image: url('/assets/images/bgadmin.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -32,8 +32,10 @@ ul {
     text-align: center;
     display: inline-block;
     width: 100px; /* Ensure all links have the same width */
+    position: sticky;
+    top: 0;
     transition: background-color 0.3s ease, transform 0.3s ease;
-}
+}   
 
 
 .navbar a:hover {
