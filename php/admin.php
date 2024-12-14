@@ -52,7 +52,7 @@ foreach ($queries as $label => $sql) {
         </nav>
         <nav class="logout">
             <ul>
-                <li><a href="signout.php">Log Out</a></li>
+                <li><a href="logout.php">Log Out</a></li>
             </ul>
         </nav>
     <header>
