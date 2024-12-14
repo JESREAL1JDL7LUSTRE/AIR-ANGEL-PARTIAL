@@ -204,6 +204,10 @@ if (isset($_POST['print_ticket'])) {
                     $pdf->Cell(0, 10, $addon['Food_Name'] . " - $" . number_format($addon['Food_Price'], 2), 0, 1);
                     $totalAddons += $addon['Food_Price'];
                 }
+                if ($addon['Seat_Selector_ID_FK'] !== null) {
+                    $pdf->Cell(0, 10, $addon['Seat_Selector_Name'] . " - $" . number_format($addon['Seat_Selector_Price'], 2), 0, 1);
+                    $totalAddons += $addon['Seat_Selector_Price'];
+                }
             }
         }
 
