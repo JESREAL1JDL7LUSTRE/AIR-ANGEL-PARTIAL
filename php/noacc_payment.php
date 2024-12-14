@@ -9,6 +9,25 @@ if (!isset($_SESSION['selected_flight_id'])) {
 }
 
 $selectedAddonsForConfirmation = $_SESSION['selected_addons_for_confirmation'] ?? [];
+$numPassengers = $_SESSION['num_passengers'] ?? 0;
+
+$hasSeatSelector = false;
+$seatSelectorCount = 0;
+
+foreach ($selectedAddonsForConfirmation as $addon) {
+    if (isset($addon['Type']) && $addon['Type'] === 'Seat Selector') {
+        $seatSelectorCount++;  // Increment for each 'Seat Selector'
+    }
+}
+
+if ($seatSelectorCount === 0) {
+    die("Error: Seat Selector is missing.");
+}
+
+// Check if the number of seat selectors matches the number of passengers
+if ($seatSelectorCount !== $numPassengers) {
+    die("Error: Seat selector count does not match the passenger count.");
+}
 
 
 $selectedFlightID = $_SESSION['selected_flight_id'];
@@ -53,7 +72,6 @@ if ($selectedFlight) {
 
 // Fetch session data
 $selectedFlight = $_SESSION['selected_flight'] ?? null;
-$numPassengers = $_SESSION['num_passengers'] ?? 0;
 $selectedAddons = $_SESSION['selected_addons'] ?? [];
 $passenger_ids = $_SESSION['passenger_ids'] ?? []; // Array of Passenger IDs
 

@@ -58,6 +58,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+// Fetch available seats for a specific flight
+$stmt3 = $conn->prepare("
+    SELECT Seat_Selector_ID, Seat_Selector_Number, Price
+    FROM Seat_Selector
+    WHERE Seat_Selector_ID NOT IN (
+        SELECT COALESCE(Seat_Selector_ID_FK, 0)
+        FROM add_on
+        WHERE FRP_Number_ID_FK IN (
+            SELECT FRP_Number_ID
+            FROM flight_to_reservation_to_passenger
+            WHERE Available_Flights_Number_ID_FK = ?
+        )
+    )");
+$stmt3->bind_param("i", $flightNumberID); // Bind the flight number ID (assuming it is an integer)
+$stmt3->execute();
+$result3 = $stmt3->get_result();
+
+// Fetch all available seats
+$availableSeats = $result3->fetch_all(MYSQLI_ASSOC); // Store available seats as an array
+
+
 // Check if a search term is provided
 $search_term = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
 
@@ -180,30 +201,34 @@ if ($result->num_rows > 0) {
     <?php if (count($all_flights) > 0): ?>
         <table>
             <thead>
-                <tr>
-                    <th>Flight Number</th>
-                    <th>Departure Date</th>
-                    <th>Arrival Date</th>
-                    <th>Origin</th>
-                    <th>Destination</th>
-                    <th>Departure Time</th>
-                    <th>Arrival Time</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($all_flights as $flight): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($flight['Flight_Number']); ?></td>
-                        <td><?php echo htmlspecialchars($flight['Departure_Date']); ?></td>
-                        <td><?php echo htmlspecialchars($flight['Arrival_Date']); ?></td>
-                        <td><?php echo htmlspecialchars($flight['Origin']); ?></td>
-                        <td><?php echo htmlspecialchars($flight['Destination']); ?></td>
-                        <td><?php echo htmlspecialchars($flight['Departure_Time']); ?></td>
-                        <td><?php echo htmlspecialchars($flight['Arrival_Time']); ?></td>
-                        <td><?php echo "$" . htmlspecialchars($flight['Amount']); ?></td>
-                    </tr>
-                <?php endforeach; ?>
+            <?php foreach ($all_flights as $flight): ?>
+    <tr>
+        <td><?php echo htmlspecialchars($flight['Flight_Number']); ?></td>
+        <td><?php echo htmlspecialchars($flight['Departure_Date']); ?></td>
+        <td><?php echo htmlspecialchars($flight['Arrival_Date']); ?></td>
+        <td><?php echo htmlspecialchars($flight['Origin']); ?></td>
+        <td><?php echo htmlspecialchars($flight['Destination']); ?></td>
+        <td><?php echo htmlspecialchars($flight['Departure_Time']); ?></td>
+        <td><?php echo htmlspecialchars($flight['Arrival_Time']); ?></td>
+        <td><?php echo "$" . htmlspecialchars($flight['Amount']); ?></td>
+
+        <!-- Display available seats -->
+        <td>
+            <?php
+                // Assuming you have a way to determine the available seats for this flight
+                $flightNumberID = $flight['Available_Flights_Number_ID']; // or another unique identifier
+                $stmt3->bind_param("i", $flightNumberID);
+                $stmt3->execute();
+                $result3 = $stmt3->get_result();
+                $availableSeats = $result3->fetch_all(MYSQLI_ASSOC);
+
+                // Display the number of available seats
+                echo count($availableSeats) . " seats left";
+            ?>
+        </td>
+    </tr>
+<?php endforeach; ?>
+
             </tbody>
         </table>
     <?php else: ?>

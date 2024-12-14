@@ -176,7 +176,7 @@ $result = $conn->query($sql);
         </tr>
         <?php if ($result->num_rows > 0): ?>
             <?php while ($row = $result->fetch_assoc()): ?>
-                <t>
+                <tr>
                     <td><?php echo htmlspecialchars($row['Employee_Assignment_ID']); ?></td>
                     <td><?php echo htmlspecialchars($row['Employee_Role']); ?></td>
                     <td><?php echo htmlspecialchars($row['Employee_ID_FK']); ?></td>
