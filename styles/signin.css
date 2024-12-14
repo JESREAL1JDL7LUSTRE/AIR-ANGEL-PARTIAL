@@ -53,10 +53,6 @@ nav ul li a {
     transition: background-color 0.3s;
 }
 
-nav ul li a:hover {
-    background-color: #007BFF;
-}
-
 /* Main Sign-In Form Container */
 main {
     display: flex;

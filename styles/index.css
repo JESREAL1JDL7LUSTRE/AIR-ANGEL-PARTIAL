@@ -73,11 +73,6 @@ nav ul li a {
     transition: all 0.3s ease;
 }
 
-nav ul li a:hover {
-    border: 2px solid #fff;
-    border-radius: 5px;
-}
-
 /* Main Content */
 main {
     padding: 2rem 1rem;

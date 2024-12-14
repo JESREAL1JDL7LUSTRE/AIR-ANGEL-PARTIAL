@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------
-1. General Reset and Base Styles
+1. FOR THE LAYOUT
 --------------------------------------------------------------*/
 
 /* Reset margin and padding across all elements */
@@ -22,52 +22,57 @@ body {
 
 /* Header Styles */
 header {
-    background-color: #333; /* Dark background for the header */
-    color: white;
-    padding: 10px 0;
+    display: flex; /* Use Flexbox to align the container and nav */
+    justify-content: space-between; /* Space items evenly between left and right */
+    align-items: center; /* Align items vertically in the center */
+    padding: 10px 20px; /* Add some padding for spacing */
+    background-color: #2D2D2D; /* Light background for header */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
 }
 
 .header-container {
-    display: flex;
-    justify-content: space-between; /* Space between logo and nav */
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
+    flex: 1; /* Allow the title to take up its space */
 }
 
 .site-title {
-    margin-left: 10px;
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 1.5rem; /* Adjust title size */
+    color: white; /* Neutral color */
+    margin: 0; /* Remove default margin */
 }
 
-/* Navigation styles */
-nav ul {
+ul {
     display: flex;
-    justify-content: space-around;
-    align-items: center;
-    list-style-type: none;
+    list-style-type: none; /* Remove default bullets */
+    gap: 20px; /* Add space between links */
+    margin: 0 auto;
+    padding: 5px 10px;
+    background-color: #2D2D2D;
+    width: fit-content;
+    border-radius: 100px;
 }
 
-nav ul li {
-    margin: 0 10px;
+ul li {
+    border-radius: 100px;
+    padding: 5px 10px;
+    transition: color 0.3s ease; /* Smooth hover effect */
 }
 
-nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 1.1rem;
+ul li:hover {
+    background-color: white;
+    text-align: center;
+}
+
+ul li a {
+    text-decoration: none; /* Remove underline */
+    color: white; /* Link color */
+    font-size: 1rem;
+    transition: color 0.3s ease; /* Smooth hover effect */
     font-weight: bold;
+    margin: 10px auto;
 }
 
-nav ul li a:hover {
-    color: #007BFF; /* Change color on hover */
+ul li a:hover {
+    color: black; /* Darker color on hover */
 }
 
 /*--------------------------------------------------------------

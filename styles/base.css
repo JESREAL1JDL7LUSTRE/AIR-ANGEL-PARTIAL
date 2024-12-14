@@ -1,3 +1,6 @@
+/*--------------------------------------------------------------
+1. FOR THE HEADER
+--------------------------------------------------------------*/
 html {
     font-size: 16px; /* Default size for easy rem scaling */
     scroll-behavior: smooth; /* Smooth scrolling for anchor links */
