@@ -169,9 +169,8 @@ if ($result && $result->num_rows > 0) {
                     <td><?php echo htmlspecialchars($reservation['Passenger_Last_Name'] ?: 'N/A'); ?></td>
                     <td><?php echo htmlspecialchars($reservation['Passenger_ID'] ?: 'N/A'); ?></td>
                     <td>
-                        <!-- Delete button with confirmation -->
-                        <a href="?delete=<?php echo $reservation['Reservation_ID']; ?>" onclick="return confirm('Are you sure you want to delete this reservation?');">
-                            <button type="button">Delete</button>
+                        <input type="hidden" name="Reservation_ID" value="<?php echo $row['Reservation_ID']; ?>">
+                        <button type="submit" name="action" value="delete" onclick="return confirm('Are you sure you want to delete this reservation?')">Delete</button>
                         </a>
                     </td>
                 </tr>

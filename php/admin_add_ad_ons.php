@@ -268,7 +268,7 @@ if (isset($_POST['delete'])) {
                     <td>
                         <button type="button" class="editButton" onclick="editRow(this)">Edit</button>
                         <button type="submit" name="save" style="display:none;">Save</button>
-                        <button type="submit" name="delete" style="display:inline;">Delete</button>
+                        <button type="submit" name="delete" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
                     </td>
                     <input type="hidden" name="ID" value="<?php echo $row['ID']; ?>">
                 </form>
